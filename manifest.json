@@ -1,0 +1,14 @@
+{
+  "name": "FerSoluciones",
+  "short_name": "FerSoluciones",
+  "description": "Organizador de trabajos y clientes",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F5F0E8",
+  "theme_color": "#5A3A1A",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

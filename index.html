@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="FerSoluciones">
+<meta name="theme-color" content="#5A3A1A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>FerSoluciones</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --madera: #5A3A1A;
+    --madera-mid: #C8956C;
+    --madera-light: #F5F0E8;
+    --madera-dark: #3d2510;
+    --verde: #3B6D11;
+    --verde-bg: #EAF3DE;
+    --azul: #0C447C;
+    --azul-bg: #E6F1FB;
+    --amber: #854F0B;
+    --amber-bg: #FAEEDA;
+    --gris: #888780;
+    --gris-bg: #F1EFE8;
+    --rojo: #A32D2D;
+    --rojo-bg: #FCEBEB;
+    --bg: #F5F0E8;
+    --card: #FFFFFF;
+    --text: #2C2C2A;
+    --text-soft: #5F5E5A;
+    --border: #D3D1C7;
+    --shadow: 0 2px 12px rgba(90,58,26,.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 90px; }
+
+  /* HEADER */
+  .header { background: var(--madera); padding: 14px 16px 12px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+  .header-top { display: flex; align-items: center; justify-content: space-between; }
+  .header-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: #fff; letter-spacing: -.3px; }
+  .header-sub { font-size: 11px; color: rgba(255,255,255,.6); margin-top: 1px; }
+  .sync-btn { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.3); background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: #fff; transition: all .2s; }
+  .sync-btn:active { background: rgba(255,255,255,.2); }
+  .sync-btn.syncing { animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TABS */
+  .tab-nav { display: flex; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 66px; z-index: 99; }
+  .tab-btn { flex: 1; padding: 11px 4px; font-size: 13px; font-weight: 500; color: var(--gris); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; font-family: 'DM Sans', sans-serif; }
+  .tab-btn.active { color: var(--madera); border-bottom-color: var(--madera); }
+
+  /* SECTIONS */
+  .section { display: none; padding: 14px; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  .card-title { padding: 12px 14px 0; font-size: 11px; font-weight: 600; color: var(--gris); text-transform: uppercase; letter-spacing: .08em; }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .stat { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 14px; box-shadow: var(--shadow); }
+  .stat-label { font-size: 11px; color: var(--gris); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+  .stat-val { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text); }
+  .stat-sub { font-size: 11px; color: var(--gris); margin-top: 2px; }
+
+  /* FORM */
+  .add-form { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .form-title { font-size: 13px; font-weight: 600; color: var(--text-soft); margin-bottom: 12px; }
+  .form-label { font-size: 11px; color: var(--gris); margin-bottom: 3px; font-weight: 500; }
+  .form-input { width: 100%; font-size: 14px; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; transition: border-color .15s; }
+  .form-input:focus { outline: none; border-color: var(--madera-mid); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .form-field { margin-bottom: 8px; }
+  .tipo-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tipo-chip { font-size: 12px; font-weight: 500; padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--border); background: transparent; color: var(--text-soft); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .tipo-chip.sel { background: var(--madera-light); color: var(--madera); border-color: var(--madera-mid); }
+  .btn-add { width: 100%; padding: 12px; background: var(--madera); color: #fff; border: none; border-radius: 11px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 6px; font-family: 'DM Sans', sans-serif; transition: background .15s; }
+  .btn-add:active { background: var(--madera-dark); }
+  .btn-add.loading { opacity: .7; }
+
+  /* TRABAJO ITEMS */
+  .trabajo-item { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .trabajo-item:last-of-type { border-bottom: none; }
+  .trabajo-top { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .est-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .dot-verde { background: var(--verde); }
+  .dot-amber { background: #BA7517; }
+  .dot-azul { background: #185FA5; }
+  .dot-gris { background: var(--gris); }
+  .trabajo-info { flex: 1; min-width: 0; }
+  .trabajo-cliente { font-size: 14px; font-weight: 600; color: var(--text); }
+  .trabajo-desc { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+  .monto-chip { font-size: 12px; font-weight: 600; background: var(--gris-bg); color: var(--text); padding: 3px 10px; border-radius: 8px; white-space: nowrap; }
+  .estado-select { font-size: 12px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text-soft); width: 100%; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .del-btn { background: none; border: none; font-size: 17px; color: var(--gris); padding: 3px 6px; border-radius: 6px; cursor: pointer; flex-shrink: 0; }
+  .del-btn:active { background: var(--rojo-bg); color: var(--rojo); }
+
+  /* LLAMAR */
+  .llamar-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .llamar-item:last-of-type { border-bottom: none; }
+  .llamar-item.hecho { opacity: .45; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--azul-bg); color: var(--azul); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .llamar-info { flex: 1; min-width: 0; }
+  .llamar-nombre { font-size: 14px; font-weight: 600; }
+  .llamar-motivo { font-size: 12px; color: var(--text-soft); margin-top: 1px; }
+  .btn-ok { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 8px; border: 1.5px solid var(--verde); color: var(--verde); background: none; cursor: pointer; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+  .btn-ok.hecho { border-color: var(--gris); color: var(--gris); }
+
+  /* TAREA */
+  .tarea-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+  .tarea-row:last-of-type { border-bottom: none; }
+  .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all .15s; }
+  .check-circle.done { background: var(--verde); border-color: var(--verde); }
+  .check-tick { display: none; }
+  .check-circle.done .check-tick { display: block; }
+  .tarea-body { flex: 1; min-width: 0; }
+  .tarea-texto { font-size: 14px; color: var(--text); }
+  .tarea-texto.done { color: var(--gris); text-decoration: line-through; }
+  .tarea-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; margin-top: 3px; display: inline-block; }
+  .tag-obra { background: var(--madera-light); color: var(--madera); }
+  .tag-llam { background: var(--azul-bg); color: var(--azul); }
+  .tag-cobr { background: var(--verde-bg); color: var(--verde); }
+  .tag-pres { background: var(--amber-bg); color: var(--amber); }
+
+  /* RESUMEN */
+  .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .hist-item:last-of-type { border-bottom: none; }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 24px; color: var(--gris); font-size: 13px; }
+
+  /* SYNC STATUS */
+  .sync-status { font-size: 11px; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 10px; }
+  .sync-ok { background: var(--verde-bg); color: var(--verde); }
+  .sync-err { background: var(--rojo-bg); color: var(--rojo); }
+  .sync-pend { background: var(--amber-bg); color: var(--amber); }
+
+  /* SNACK */
+  .snack { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #2C2C2A; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 300; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+  .snack.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-title">FerSoluciones</div>
+      <div class="header-sub" id="h-fecha"></div>
+    </div>
+    <button class="sync-btn" onclick="sincronizarTodo()" title="Sincronizar con Google Sheets" id="sync-btn">⟳</button>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="setTab('hoy',this)">Hoy</button>
+  <button class="tab-btn" onclick="setTab('trabajos',this)">Trabajos</button>
+  <button class="tab-btn" onclick="setTab('llamar',this)">Llamar</button>
+  <button class="tab-btn" onclick="setTab('resumen',this)">Resumen</button>
+</div>
+
+<!-- HOY -->
+<div class="section active" id="tab-hoy">
+  <div id="sync-indicator"></div>
+  <div class="card">
+    <div class="card-title" style="padding:12px 14px 8px">Tareas del día</div>
+    <div id="lista-tareas"><div class="empty">Agregá una tarea para hoy</div></div>
+  </div>
+  <div class="add-form">
+    <div class="form-title">Nueva tarea</div>
+    <div class="tipo-chips" id="chips-tag">
+      <button class="tipo-chip sel" onclick="selTag(this,'obra')">En obra</button>
+      <button class="tipo-chip" onclick="selTag(this,'llam')">Llamar</button>
+      <button class="tipo-chip" onclick="selTag(this,'cobr')">Cobrar</button>
+      <button class="tipo-chip" onclick="selTag(this,'pres')">Presupuesto</button>
+    </div>
+    <div class="form-field">
+      <div class="form-label">Descripción</div>
+      <input class="form-input" id="f-tarea" type="text" placeholder="Ej: ir a casa de García...">
+    </div>
+    <button class="btn-add" onclick="addTarea()">+ Agregar tarea</button>
+  </div>
+</div>
+
+<!-- TRABAJOS -->
+<div class="section" id="tab-trabajos">
+  <div class="card">
+    <div class="card-title" style="padding:12px 14px 8px">En curso</div>
+    <div id="lista-trabajos"><div class="empty">Agregá un trabajo activo</div></div>
+  </div>
+  <div class="add-form">
+    <div class="form-title">Nuevo trabajo</div>
+    <div class="tipo-chips" id="chips-tipo">
+      <button class="tipo-chip sel" onclick="selTipo(this,'Carpintería')">Carpintería</button>
+      <button class="tipo-chip" onclick="selTipo(this,'Mantenimiento')">Mantenimiento</button>
+      <button class="tipo-chip" onclick="selTipo(this,'Cerrajería')">Cerrajería</button>
+      <button class="tipo-chip" onclick="selTipo(this,'Instalación')">Instalación</button>
+      <button class="tipo-chip" onclick="selTipo(this,'Otro')">Otro</button>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <div class="form-label">Cliente / dirección</div>
+        <input class="form-input" id="w-cliente" type="text" placeholder="Nombre">
+      </div>
+      <div class="form-field">
+        <div class="form-label">Monto ($)</div>
+        <input class="form-input" id="w-monto" type="number" inputmode="numeric" placeholder="0">
+      </div>
+    </div>
+    <div class="form-field">
+      <div class="form-label">Descripción del trabajo</div>
+      <input class="form-input" id="w-desc" type="text" placeholder="Ej: ajuste puerta, placard...">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <div class="form-label">Materiales ($)</div>
+        <input class="form-input" id="w-mat" type="number" inputmode="numeric" placeholder="0">
+      </div>
+      <div class="form-field">
+        <div class="form-label">Estado</div>
+        <select class="form-input" id="w-estado">
+          <option value="Visita pendiente">Visita pendiente</option>
+          <option value="Presup. enviado">Presup. enviado</option>
+          <option value="En obra">En obra</option>
+          <option value="Terminado">Terminado</option>
+          <option value="Cobrado">Cobrado</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-add" id="btn-add-trabajo" onclick="addTrabajo()">+ Registrar trabajo</button>
+  </div>
+</div>
+
+<!-- LLAMAR -->
+<div class="section" id="tab-llamar">
+  <div class="card">
+    <div class="card-title" style="padding:12px 14px 8px">Pendientes de contacto</div>
+    <div id="lista-llamar"><div class="empty">Nadie pendiente</div></div>
+  </div>
+  <div class="add-form">
+    <div class="form-title">Agregar contacto</div>
+    <div class="form-field">
+      <div class="form-label">Nombre</div>
+      <input class="form-input" id="l-nombre" type="text" placeholder="Cliente o contacto">
+    </div>
+    <div class="form-field">
+      <div class="form-label">Por qué llamar</div>
+      <input class="form-input" id="l-motivo" type="text" placeholder="Ej: confirmar visita, cobrar...">
+    </div>
+    <button class="btn-add" onclick="addLlamar()">+ Agregar</button>
+  </div>
+</div>
+
+<!-- RESUMEN -->
+<div class="section" id="tab-resumen">
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-label">Cobrado mes</div><div class="stat-val" id="r-mes">$0</div><div class="stat-sub" id="r-mes-n">0 trabajos</div></div>
+    <div class="stat"><div class="stat-label">Por cobrar</div><div class="stat-val" id="r-porcobr">$0</div><div class="stat-sub" id="r-porcobr-n">terminados</div></div>
+    <div class="stat"><div class="stat-label">En curso</div><div class="stat-val" id="r-encurso">0</div><div class="stat-sub">activos</div></div>
+    <div class="stat"><div class="stat-label">Esta semana</div><div class="stat-val" id="r-semana">$0</div><div class="stat-sub" id="r-semana-n">cobrado</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="padding:12px 14px 8px">Historial</div>
+    <div id="r-historial"><div class="empty">Sin trabajos registrados</div></div>
+  </div>
+</div>
+
+<div class="snack" id="snack"></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqej6vB7AGJFnDvgI14f_yIxRtTh8mlwZsdglx1bkTla-DIYYzSB9PBwlTB4Ijo1JEQw/exec';
+const STORAGE_KEY = 'fersoluciones_v2';
+let data = { tareas:[], trabajos:[], llamadas:[] };
+let tagSel = 'obra', tipoSel = 'Carpintería';
+let pendienteSync = [];
+
+function guardar(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function cargar(){ try { const d = localStorage.getItem(STORAGE_KEY); if(d) data = JSON.parse(d); } catch(e){} }
+function pesos(n){ return '$' + Math.round(n||0).toLocaleString('es-AR'); }
+function hoy(){ return new Date().toISOString().split('T')[0]; }
+function initials(n){ return (n||'?').trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+
+function snack(msg){
+  const el = document.getElementById('snack');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2500);
+}
+
+function fechaHoy(){
+  const d = new Date();
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return dias[d.getDay()]+' '+d.getDate()+' '+meses[d.getMonth()];
+}
+
+function semanaRango(){
+  const d = new Date(); d.setHours(12,0,0,0);
+  const lu = new Date(d); lu.setDate(d.getDate()-((d.getDay()+6)%7));
+  const do2 = new Date(lu); do2.setDate(lu.getDate()+6);
+  return { desde: lu.toISOString().split('T')[0], hasta: do2.toISOString().split('T')[0] };
+}
+function mesRango(){
+  const d = new Date();
+  const desde = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+  const ul = new Date(d.getFullYear(), d.getMonth()+1, 0);
+  return { desde, hasta: ul.toISOString().split('T')[0] };
+}
+
+// ── SYNC ─────────────────────────────────────────────
+async function enviarASheets(trabajo) {
+  try {
+    const formData = new FormData();
+    formData.append('fecha', trabajo.fecha || hoy());
+    formData.append('cliente', trabajo.cliente || '');
+    formData.append('desc', trabajo.desc || '');
+    formData.append('tipo', trabajo.tipo || '');
+    formData.append('monto', trabajo.monto || 0);
+    formData.append('estado', trabajo.estado || '');
+    formData.append('materiales', trabajo.materiales || 0);
+
+    await fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+async function sincronizarTodo() {
+  const btn = document.getElementById('sync-btn');
+  btn.classList.add('syncing');
+  snack('Sincronizando con Google Sheets...');
+
+  let ok = 0;
+  for(const t of data.trabajos) {
+    if(!t.sincronizado) {
+      const res = await enviarASheets(t);
+      if(res) { t.sincronizado = true; ok++; }
+    }
+  }
+
+  guardar();
+  btn.classList.remove('syncing');
+
+  if(ok > 0) snack(`✓ ${ok} trabajo${ok>1?'s':''} enviado${ok>1?'s':''} a Google Sheets`);
+  else snack('Todo sincronizado');
+  actualizarIndicador();
+}
+
+function actualizarIndicador() {
+  const pend = data.trabajos.filter(t=>!t.sincronizado).length;
+  const el = document.getElementById('sync-indicator');
+  if(pend > 0) {
+    el.innerHTML = `<span class="sync-status sync-pend">⏳ ${pend} trabajo${pend>1?'s':''} pendiente${pend>1?'s':''} de sincronizar</span>`;
+  } else if(data.trabajos.length > 0) {
+    el.innerHTML = `<span class="sync-status sync-ok">✓ Sincronizado con Google Sheets</span>`;
+  } else {
+    el.innerHTML = '';
+  }
+}
+
+// ── TABS ────────────────────────────────────────────
+function setTab(tab, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+  if(tab==='resumen') renderResumen();
+}
+
+function selTag(btn, tag){ tagSel=tag; document.querySelectorAll('#chips-tag .tipo-chip').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); }
+function selTipo(btn, tipo){ tipoSel=tipo; document.querySelectorAll('#chips-tipo .tipo-chip').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); }
+
+// ── RENDERS ─────────────────────────────────────────
+const tagInfo = { obra:{cls:'tag-obra',lbl:'En obra'}, llam:{cls:'tag-llam',lbl:'Llamar'}, cobr:{cls:'tag-cobr',lbl:'Cobrar'}, pres:{cls:'tag-pres',lbl:'Presupuesto'} };
+const estInfo = { 'Visita pendiente':{dot:'dot-amber',lbl:'Visita pendiente'}, 'Presup. enviado':{dot:'dot-azul',lbl:'Presup. enviado'}, 'En obra':{dot:'dot-verde',lbl:'En obra'}, 'Terminado':{dot:'dot-amber',lbl:'Terminado'}, 'Cobrado':{dot:'dot-gris',lbl:'Cobrado'} };
+
+function renderTareas(){
+  const el = document.getElementById('lista-tareas');
+  if(!data.tareas.length){ el.innerHTML='<div class="empty">Agregá una tarea para hoy</div>'; return; }
+  el.innerHTML = data.tareas.map((t,i)=>`
+    <div class="tarea-row">
+      <div class="check-circle ${t.done?'done':''}" onclick="toggleTarea(${i})">
+        <svg class="check-tick" width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="tarea-body">
+        <div class="tarea-texto ${t.done?'done':''}">${t.texto}</div>
+        <span class="tarea-tag ${tagInfo[t.tag].cls}">${tagInfo[t.tag].lbl}</span>
+      </div>
+      <button class="del-btn" onclick="delTarea(${i})">×</button>
+    </div>`).join('');
+}
+
+function renderTrabajos(){
+  const el = document.getElementById('lista-trabajos');
+  const activos = data.trabajos.filter(t=>t.estado!=='Cobrado');
+  if(!activos.length){ el.innerHTML='<div class="empty">Agregá un trabajo activo</div>'; return; }
+  el.innerHTML = activos.map(t=>{ const i=data.trabajos.indexOf(t); const est=estInfo[t.estado]||{dot:'dot-gris',lbl:t.estado}; return `
+    <div class="trabajo-item">
+      <div class="trabajo-top">
+        <div class="est-dot ${est.dot}"></div>
+        <div class="trabajo-info">
+          <div class="trabajo-cliente">${t.cliente}</div>
+          <div class="trabajo-desc">${t.tipo}${t.desc?' · '+t.desc:''}</div>
+        </div>
+        ${t.monto?`<div class="monto-chip">${pesos(t.monto)}</div>`:''}
+        <button class="del-btn" onclick="delTrabajo(${i})">×</button>
+      </div>
+      <select class="estado-select" onchange="cambiarEstado(${i},this.value)">
+        <option value="Visita pendiente" ${t.estado==='Visita pendiente'?'selected':''}>Visita pendiente</option>
+        <option value="Presup. enviado" ${t.estado==='Presup. enviado'?'selected':''}>Presup. enviado</option>
+        <option value="En obra" ${t.estado==='En obra'?'selected':''}>En obra</option>
+        <option value="Terminado" ${t.estado==='Terminado'?'selected':''}>Terminado</option>
+        <option value="Cobrado" ${t.estado==='Cobrado'?'selected':''}>Cobrado</option>
+      </select>
+    </div>`; }).join('');
+  actualizarIndicador();
+}
+
+function renderLlamar(){
+  const el = document.getElementById('lista-llamar');
+  if(!data.llamadas.length){ el.innerHTML='<div class="empty">Nadie pendiente</div>'; return; }
+  el.innerHTML = data.llamadas.map((l,i)=>`
+    <div class="llamar-item ${l.hecho?'hecho':''}">
+      <div class="avatar">${initials(l.nombre)}</div>
+      <div class="llamar-info">
+        <div class="llamar-nombre">${l.nombre}</div>
+        <div class="llamar-motivo">${l.motivo||'sin motivo'}</div>
+      </div>
+      <button class="btn-ok ${l.hecho?'hecho':''}" onclick="toggleLlamar(${i})">${l.hecho?'Listo':'Llamar'}</button>
+      <button class="del-btn" onclick="delLlamar(${i})">×</button>
+    </div>`).join('');
+}
+
+function renderResumen(){
+  const mr = mesRango(), sr = semanaRango();
+  const cobrMes = data.trabajos.filter(t=>t.estado==='Cobrado'&&t.fecha>=mr.desde&&t.fecha<=mr.hasta);
+  const cobrSem = data.trabajos.filter(t=>t.estado==='Cobrado'&&t.fecha>=sr.desde&&t.fecha<=sr.hasta);
+  const term = data.trabajos.filter(t=>t.estado==='Terminado');
+  const activos = data.trabajos.filter(t=>!['Cobrado'].includes(t.estado));
+  document.getElementById('r-mes').textContent = pesos(cobrMes.reduce((a,t)=>a+t.monto,0));
+  document.getElementById('r-mes-n').textContent = cobrMes.length+' trabajo'+(cobrMes.length!==1?'s':'');
+  document.getElementById('r-porcobr').textContent = pesos(term.reduce((a,t)=>a+t.monto,0));
+  document.getElementById('r-porcobr-n').textContent = term.length+' terminado'+(term.length!==1?'s':'');
+  document.getElementById('r-encurso').textContent = activos.length;
+  document.getElementById('r-semana').textContent = pesos(cobrSem.reduce((a,t)=>a+t.monto,0));
+  document.getElementById('r-semana-n').textContent = cobrSem.length+' cobrado'+(cobrSem.length!==1?'s':'');
+  const hist = document.getElementById('r-historial');
+  const todos = [...data.trabajos].reverse();
+  if(!todos.length){ hist.innerHTML='<div class="empty">Sin trabajos registrados</div>'; return; }
+  hist.innerHTML = todos.map(t=>`
+    <div class="hist-item">
+      <div>
+        <div style="font-size:13px;font-weight:600">${t.cliente}</div>
+        <div style="font-size:11px;color:var(--gris)">${t.tipo}${t.desc?' · '+t.desc:''} · ${t.fecha||''}</div>
+      </div>
+      <div style="text-align:right">
+        ${t.monto?`<div style="font-size:13px;font-weight:600">${pesos(t.monto)}</div>`:''}
+        <div style="font-size:11px;color:var(--gris)">${t.estado}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── ACCIONES ────────────────────────────────────────
+function addTarea(){
+  const txt = document.getElementById('f-tarea').value.trim();
+  if(!txt){ snack('Escribí la tarea'); return; }
+  data.tareas.push({ texto:txt, tag:tagSel, done:false });
+  document.getElementById('f-tarea').value='';
+  guardar(); renderTareas(); snack('Tarea agregada');
+}
+function toggleTarea(i){ data.tareas[i].done=!data.tareas[i].done; guardar(); renderTareas(); }
+function delTarea(i){ data.tareas.splice(i,1); guardar(); renderTareas(); }
+
+async function addTrabajo(){
+  const cliente = document.getElementById('w-cliente').value.trim();
+  if(!cliente){ snack('Escribí el nombre del cliente'); return; }
+  const btn = document.getElementById('btn-add-trabajo');
+  btn.textContent = 'Guardando...'; btn.classList.add('loading'); btn.disabled = true;
+
+  const trabajo = {
+    cliente,
+    desc: document.getElementById('w-desc').value.trim(),
+    tipo: tipoSel,
+    monto: parseFloat(document.getElementById('w-monto').value)||0,
+    materiales: parseFloat(document.getElementById('w-mat').value)||0,
+    estado: document.getElementById('w-estado').value,
+    fecha: hoy(),
+    sincronizado: false
+  };
+
+  data.trabajos.push(trabajo);
+  guardar();
+
+  // Intentar sync inmediato
+  const ok = await enviarASheets(trabajo);
+  if(ok) { trabajo.sincronizado = true; guardar(); snack('✓ Guardado y enviado a Google Sheets'); }
+  else { snack('Guardado localmente — sincronizá cuando tengas internet'); }
+
+  document.getElementById('w-cliente').value='';
+  document.getElementById('w-desc').value='';
+  document.getElementById('w-monto').value='';
+  document.getElementById('w-mat').value='';
+  document.getElementById('w-estado').value='Visita pendiente';
+  btn.textContent='+ Registrar trabajo'; btn.classList.remove('loading'); btn.disabled=false;
+  renderTrabajos();
+}
+
+function cambiarEstado(i, v){
+  data.trabajos[i].estado = v;
+  data.trabajos[i].sincronizado = false; // marcar para re-sync
+  if(v==='Cobrado') data.trabajos[i].fechaCobro = hoy();
+  guardar(); renderTrabajos(); snack('Estado actualizado');
+}
+function delTrabajo(i){ data.trabajos.splice(i,1); guardar(); renderTrabajos(); }
+function addLlamar(){
+  const nombre = document.getElementById('l-nombre').value.trim();
+  if(!nombre){ snack('Escribí el nombre'); return; }
+  data.llamadas.push({ nombre, motivo: document.getElementById('l-motivo').value.trim(), hecho:false });
+  document.getElementById('l-nombre').value=''; document.getElementById('l-motivo').value='';
+  guardar(); renderLlamar(); snack('Contacto agregado');
+}
+function toggleLlamar(i){ data.llamadas[i].hecho=!data.llamadas[i].hecho; guardar(); renderLlamar(); }
+function delLlamar(i){ data.llamadas.splice(i,1); guardar(); renderLlamar(); }
+
+// ── INIT ────────────────────────────────────────────
+document.getElementById('h-fecha').textContent = fechaHoy();
+cargar();
+renderTareas(); renderTrabajos(); renderLlamar(); actualizarIndicador();
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+document.addEventListener('keydown', e => {
+  if(e.key==='Enter'){
+    if(document.activeElement===document.getElementById('f-tarea')) addTarea();
+    if(document.activeElement===document.getElementById('l-nombre')||document.activeElement===document.getElementById('l-motivo')) addLlamar();
+  }
+});
+</script>
+</body>
+</html>
