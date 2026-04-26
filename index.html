@@ -312,9 +312,10 @@ function mesRango(){
 }
 
 // ── SYNC ─────────────────────────────────────────────
-async function enviarASheets(trabajo) {
+async function enviarASheets(trabajo, accion='agregar') {
   try {
     const formData = new FormData();
+    formData.append('accion', accion);
     formData.append('fecha', trabajo.fecha || hoy());
     formData.append('cliente', trabajo.cliente || '');
     formData.append('desc', trabajo.desc || '');
@@ -512,11 +513,12 @@ async function addTrabajo(){
   renderTrabajos();
 }
 
-function cambiarEstado(i, v){
+async function cambiarEstado(i, v){
   data.trabajos[i].estado = v;
-  data.trabajos[i].sincronizado = false; // marcar para re-sync
   if(v==='Cobrado') data.trabajos[i].fechaCobro = hoy();
-  guardar(); renderTrabajos(); snack('Estado actualizado');
+  guardar(); renderTrabajos();
+  const ok = await enviarASheets(data.trabajos[i], 'actualizar');
+  snack(ok ? '✓ Estado actualizado en Google Sheets' : 'Estado guardado localmente');
 }
 function delTrabajo(i){ data.trabajos.splice(i,1); guardar(); renderTrabajos(); }
 function addLlamar(){
