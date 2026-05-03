@@ -763,7 +763,7 @@ function renderResumen(){
   document.getElementById('r-porcobr-det').textContent = detPorCobr.join(' + ')||'sin pendientes';
 
   document.getElementById('r-senas').textContent = pesos(totalSenas);
-  document.getElementById('r-senas-n').textContent = senas.length+' trabajo'+(senas.length!==1?'s'||'');
+  document.getElementById('r-senas-n').textContent = senas.length+' trabajo'+(senas.length!==1?'s':'');
 
   document.getElementById('r-semana').textContent = pesos(totalSemana);
   let detSem = [];
@@ -821,16 +821,43 @@ async function sincronizarTodo(){
   const btn = document.getElementById('sync-btn');
   btn.classList.add('syncing');
   snack('Sincronizando...');
-  let ok=0;
+
+  // 1. Subir los que están pendientes localmente
+  let subidos = 0;
   for(const t of data.trabajos){
     if(!t.sincronizado){
-      const res = await enviarASheets(t,'agregar');
-      if(res){ t.sincronizado=true; ok++; }
+      const res = await enviarASheets(t, 'agregar');
+      if(res){ t.sincronizado=true; subidos++; }
     }
   }
-  guardar(); btn.classList.remove('syncing');
-  snack(ok>0?`✓ ${ok} trabajo${ok>1?'s':''} sincronizado${ok>1?'s':''}`:'Todo ya sincronizado');
+
+  // 2. Bajar todos los datos desde Sheets (para tu compañera o cambios externos)
+  try {
+    const res = await fetch(SCRIPT_URL + '?accion=leer');
+    const json = await res.json();
+    if(json.ok && json.trabajos && json.trabajos.length > 0){
+      // Merge: los datos de Sheets son la fuente de verdad
+      // Conservamos trabajos locales que aún no se enviaron
+      const pendientes = data.trabajos.filter(t => !t.sincronizado);
+      data.trabajos = json.trabajos;
+      // Agregamos los pendientes que no están en Sheets todavía
+      for(const p of pendientes){
+        if(!data.trabajos.find(t => t.id === p.id)){
+          data.trabajos.push(p);
+        }
+      }
+      guardar();
+    }
+  } catch(e){
+    // Sin internet o error — no pasa nada, los datos locales quedan
+  }
+
+  guardar();
+  btn.classList.remove('syncing');
+  snack(subidos > 0 ? `✓ Sincronizado — ${subidos} enviado${subidos>1?'s':''}` : '✓ Datos actualizados');
   actualizarIndicador();
+  renderTrabajos();
+  renderResumen();
 }
 
 function actualizarIndicador(){
