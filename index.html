@@ -10,110 +10,154 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>FerSoluciones</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --madera:#5A3A1A;--madera-mid:#C8956C;--madera-light:#F5F0E8;--madera-dark:#3d2510;
-    --verde:#3B6D11;--verde-bg:#EAF3DE;--azul:#0C447C;--azul-bg:#E6F1FB;
-    --amber:#854F0B;--amber-bg:#FAEEDA;--gris:#888780;--gris-bg:#F1EFE8;
-    --rojo:#A32D2D;--rojo-bg:#FCEBEB;--bg:#F5F0E8;--card:#FFFFFF;
-    --text:#2C2C2A;--text-soft:#5F5E5A;--border:#D3D1C7;--shadow:0 2px 12px rgba(90,58,26,.10);
-  }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:90px}
-  .header{background:var(--madera);padding:14px 16px 12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-  .header-top{display:flex;align-items:center;justify-content:space-between}
-  .header-title{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;letter-spacing:-.3px}
-  .header-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px}
-  .sync-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;transition:all .2s}
-  .sync-btn.syncing{animation:spin .8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .tab-nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:66px;z-index:99}
-  .tab-btn{flex:1;padding:11px 2px;font-size:12px;font-weight:500;color:var(--gris);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif}
-  .tab-btn.active{color:var(--madera);border-bottom-color:var(--madera)}
-  .section{display:none;padding:14px}
-  .section.active{display:block}
-  .card{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
-  .card-title{padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.08em}
-  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-  .stat{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:14px;box-shadow:var(--shadow)}
-  .stat-label{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
-  .stat-val{font-family:'DM Serif Display',serif;font-size:24px;color:var(--text)}
-  .stat-sub{font-size:11px;color:var(--gris);margin-top:2px}
-  .add-form{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
-  .form-title{font-size:13px;font-weight:600;color:var(--text-soft);margin-bottom:12px}
-  .form-label{font-size:11px;color:var(--gris);margin-bottom:3px;font-weight:500}
-  .form-input{width:100%;font-size:14px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;transition:border-color .15s}
-  .form-input:focus{outline:none;border-color:var(--madera-mid)}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-  .form-field{margin-bottom:8px}
-  .tipo-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-  .tipo-chip{font-size:12px;font-weight:500;padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--text-soft);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
-  .tipo-chip.sel{background:var(--madera-light);color:var(--madera);border-color:var(--madera-mid)}
-  .btn-add{width:100%;padding:12px;background:var(--madera);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;font-family:'DM Sans',sans-serif;transition:background .15s}
-  .btn-add:active{background:var(--madera-dark)}
-  .btn-add.loading{opacity:.7}
+:root {
+  --madera:#5A3A1A;--madera-mid:#C8956C;--madera-light:#F5F0E8;--madera-dark:#3d2510;
+  --verde:#2E6B0E;--verde-bg:#E8F5E0;--azul:#0C447C;--azul-bg:#E6F1FB;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--gris:#7A7875;--gris-bg:#F0EDE6;
+  --rojo:#A32D2D;--rojo-bg:#FCEBEB;--violeta:#6B3BAD;--violeta-bg:#F0E8FA;
+  --bg:#F5F0E8;--card:#FFFFFF;--text:#2C2C2A;--text-soft:#5F5E5A;
+  --border:#D8D4CC;--shadow:0 2px 14px rgba(90,58,26,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
 
-  /* SEMANA */
-  .semana-nav{display:flex;gap:6px;overflow-x:auto;padding:0 0 8px;margin-bottom:12px;scrollbar-width:none}
-  .semana-nav::-webkit-scrollbar{display:none}
-  .dia-btn{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--text-soft);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
-  .dia-btn.hoy-btn{border-color:var(--madera-mid);color:var(--madera);background:var(--madera-light)}
-  .dia-btn.active{background:var(--madera);color:#fff;border-color:var(--madera)}
-  .hora-chip{font-size:12px;font-weight:600;color:var(--madera);background:var(--madera-light);padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+/* HEADER */
+.header{background:var(--madera);padding:14px 16px 12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.22)}
+.header-top{display:flex;align-items:center;justify-content:space-between}
+.header-title{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;letter-spacing:-.3px}
+.header-sub{font-size:11px;color:rgba(255,255,255,.55);margin-top:1px}
+.sync-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.sync-btn.syncing{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  /* TRABAJO ITEMS */
-  .trabajo-item{padding:12px 14px;border-bottom:1px solid var(--border)}
-  .trabajo-item:last-of-type{border-bottom:none}
-  .trabajo-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
-  .est-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
-  .dot-verde{background:var(--verde)}.dot-amber{background:#BA7517}.dot-azul{background:#185FA5}.dot-gris{background:var(--gris)}.dot-violeta{background:#7B3FAD}
-  .trabajo-info{flex:1;min-width:0}
-  .trabajo-cliente{font-size:14px;font-weight:600;color:var(--text)}
-  .trabajo-desc{font-size:12px;color:var(--text-soft);margin-top:2px}
-  .monto-chip{font-size:12px;font-weight:600;background:var(--gris-bg);color:var(--text);padding:3px 10px;border-radius:8px;white-space:nowrap}
-  .estado-select{font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text-soft);width:100%;cursor:pointer;font-family:'DM Sans',sans-serif}
-  .sena-badge{font-size:11px;font-weight:600;background:#EDE0F5;color:#7B3FAD;padding:2px 8px;border-radius:6px;margin-top:4px;display:inline-block}
-  .del-btn{background:none;border:none;font-size:17px;color:var(--gris);padding:3px 6px;border-radius:6px;cursor:pointer;flex-shrink:0}
-  .del-btn:active{background:var(--rojo-bg);color:var(--rojo)}
+/* TABS */
+.tab-nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:62px;z-index:99}
+.tab-btn{flex:1;padding:11px 2px;font-size:12px;font-weight:500;color:var(--gris);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif}
+.tab-btn.active{color:var(--madera);border-bottom-color:var(--madera);font-weight:600}
 
-  /* LLAMAR */
-  .llamar-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
-  .llamar-item:last-of-type{border-bottom:none}
-  .llamar-item.hecho{opacity:.45}
-  .avatar{width:36px;height:36px;border-radius:50%;background:var(--azul-bg);color:var(--azul);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
-  .llamar-info{flex:1;min-width:0}
-  .llamar-nombre{font-size:14px;font-weight:600}
-  .llamar-motivo{font-size:12px;color:var(--text-soft);margin-top:1px}
-  .btn-ok{font-size:12px;font-weight:600;padding:5px 12px;border-radius:8px;border:1.5px solid var(--verde);color:var(--verde);background:none;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif}
-  .btn-ok.hecho{border-color:var(--gris);color:var(--gris)}
+/* SECCIONES */
+.section{display:none;padding:14px}
+.section.active{display:block}
 
-  /* TAREA */
-  .tarea-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border)}
-  .tarea-row:last-of-type{border-bottom:none}
-  .check-circle{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
-  .check-circle.done{background:var(--verde);border-color:var(--verde)}
-  .check-tick{display:none}
-  .check-circle.done .check-tick{display:block}
-  .tarea-body{flex:1;min-width:0}
-  .tarea-texto{font-size:14px;color:var(--text)}
-  .tarea-texto.done{color:var(--gris);text-decoration:line-through}
-  .tarea-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;margin-top:3px;display:inline-block}
-  .tag-obra{background:var(--madera-light);color:var(--madera)}
-  .tag-llam{background:var(--azul-bg);color:var(--azul)}
-  .tag-cobr{background:var(--verde-bg);color:var(--verde)}
-  .tag-pres{background:var(--amber-bg);color:var(--amber)}
-  .tarea-hora{font-size:11px;font-weight:600;color:var(--madera);margin-left:2px;white-space:nowrap}
+/* CARDS */
+.card{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
+.card-title{padding:12px 14px 8px;font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
 
-  /* RESUMEN */
-  .hist-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border)}
-  .hist-item:last-of-type{border-bottom:none}
-  .empty{text-align:center;padding:24px;color:var(--gris);font-size:13px}
-  .sync-status{font-size:11px;padding:6px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;margin-bottom:10px}
-  .sync-ok{background:var(--verde-bg);color:var(--verde)}
-  .sync-pend{background:var(--amber-bg);color:var(--amber)}
-  .snack{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#2C2C2A;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:300;white-space:nowrap;font-family:'DM Sans',sans-serif}
-  .snack.show{opacity:1}
+/* FORMS */
+.add-form{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.form-title{font-size:13px;font-weight:600;color:var(--text-soft);margin-bottom:12px}
+.form-label{font-size:11px;color:var(--gris);margin-bottom:4px;font-weight:500;display:block}
+.form-input{width:100%;font-size:14px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;transition:border-color .15s;-webkit-appearance:none}
+.form-input:focus{outline:none;border-color:var(--madera-mid)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.form-field{margin-bottom:8px}
+
+/* CHIPS */
+.tipo-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tipo-chip{font-size:12px;font-weight:500;padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--text-soft);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.tipo-chip.sel{background:var(--madera-light);color:var(--madera);border-color:var(--madera-mid)}
+
+/* BOTONES */
+.btn-add{width:100%;padding:12px;background:var(--madera);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-add:active{background:var(--madera-dark)}
+.btn-add.loading{opacity:.7}
+.btn-sm{font-size:12px;font-weight:600;padding:5px 12px;border-radius:8px;border:1.5px solid;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:all .15s;background:none}
+.btn-verde{border-color:var(--verde);color:var(--verde)}
+.btn-verde.hecho{border-color:var(--gris);color:var(--gris)}
+.del-btn{background:none;border:none;font-size:18px;color:var(--gris);padding:3px 6px;border-radius:6px;cursor:pointer;flex-shrink:0;line-height:1}
+.del-btn:active{background:var(--rojo-bg);color:var(--rojo)}
+
+/* SEMANA NAV */
+.semana-nav{display:flex;gap:6px;overflow-x:auto;padding:0 0 8px;margin-bottom:12px;scrollbar-width:none}
+.semana-nav::-webkit-scrollbar{display:none}
+.dia-btn{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--text-soft);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.dia-btn.hoy-btn{border-color:var(--madera-mid);color:var(--madera);background:var(--madera-light)}
+.dia-btn.active{background:var(--madera);color:#fff;border-color:var(--madera)}
+
+/* SUB-TABS (dentro de semana) */
+.sub-tabs{display:flex;gap:8px;margin-bottom:12px}
+.sub-tab{flex:1;padding:8px 4px;font-size:12px;font-weight:500;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text-soft);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;text-align:center}
+.sub-tab.active{background:var(--madera);color:#fff;border-color:var(--madera)}
+
+/* TAREA ROW */
+.tarea-row{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border)}
+.tarea-row:last-of-type{border-bottom:none}
+.check-circle{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s;margin-top:2px}
+.check-circle.done{background:var(--verde);border-color:var(--verde)}
+.check-tick{display:none}
+.check-circle.done .check-tick{display:block}
+.tarea-body{flex:1;min-width:0}
+.tarea-texto{font-size:14px;color:var(--text);line-height:1.3}
+.tarea-texto.done{color:var(--gris);text-decoration:line-through}
+.tarea-meta{font-size:11px;color:var(--text-soft);margin-top:3px;line-height:1.5}
+.tarea-meta span{margin-right:8px}
+.tarea-tags{display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap}
+.tarea-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;display:inline-block}
+.tag-obra{background:var(--madera-light);color:var(--madera)}
+.tag-llam{background:var(--azul-bg);color:var(--azul)}
+.tag-cobr{background:var(--verde-bg);color:var(--verde)}
+.tag-pres{background:var(--amber-bg);color:var(--amber)}
+.tarea-hora{font-size:11px;font-weight:600;color:var(--madera);background:var(--madera-light);padding:2px 8px;border-radius:6px;white-space:nowrap}
+.vinculo-chip{font-size:10px;font-weight:600;background:var(--violeta-bg);color:var(--violeta);padding:2px 8px;border-radius:10px;cursor:pointer}
+
+/* CONTACTO ITEM (dentro de semana) */
+.contacto-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.contacto-item:last-of-type{border-bottom:none}
+.contacto-item.hecho{opacity:.45}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--azul-bg);color:var(--azul);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.contacto-info{flex:1;min-width:0}
+.contacto-nombre{font-size:14px;font-weight:600;color:var(--text)}
+.contacto-motivo{font-size:12px;color:var(--text-soft);margin-top:1px}
+
+/* TRABAJO ITEM */
+.trabajo-item{padding:12px 14px;border-bottom:1px solid var(--border)}
+.trabajo-item:last-of-type{border-bottom:none}
+.trabajo-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+.est-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.dot-verde{background:var(--verde)}.dot-amber{background:#BA7517}.dot-azul{background:#185FA5}
+.dot-gris{background:var(--gris)}.dot-violeta{background:var(--violeta)}
+.trabajo-info{flex:1;min-width:0}
+.trabajo-cliente{font-size:14px;font-weight:600;color:var(--text)}
+.trabajo-desc{font-size:12px;color:var(--text-soft);margin-top:2px}
+.trabajo-extra{font-size:11px;color:var(--gris);margin-top:2px}
+.monto-chip{font-size:12px;font-weight:600;background:var(--gris-bg);color:var(--text);padding:3px 10px;border-radius:8px;white-space:nowrap}
+.estado-select{font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text-soft);width:100%;cursor:pointer;font-family:'DM Sans',sans-serif}
+.sena-badge{font-size:11px;font-weight:600;background:var(--violeta-bg);color:var(--violeta);padding:2px 8px;border-radius:6px;margin-top:4px;display:inline-block}
+
+/* RESUMEN */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:14px;box-shadow:var(--shadow)}
+.stat-label{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.stat-val{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);line-height:1.1}
+.stat-sub{font-size:11px;color:var(--gris);margin-top:3px}
+.stat-detail{font-size:10px;color:var(--madera-mid);margin-top:4px;font-style:italic}
+.hist-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px;border-bottom:1px solid var(--border)}
+.hist-item:last-of-type{border-bottom:none}
+
+/* SYNC */
+.sync-status{font-size:11px;padding:5px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;margin-bottom:10px}
+.sync-ok{background:var(--verde-bg);color:var(--verde)}
+.sync-pend{background:var(--amber-bg);color:var(--amber)}
+
+/* MODAL DE VÍNCULO */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:18px 18px 0 0;width:100%;max-height:70vh;overflow-y:auto;padding:16px}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text)}
+.modal-item{padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all .15s}
+.modal-item:active{background:var(--madera-light);border-color:var(--madera-mid)}
+.modal-item-nombre{font-size:13px;font-weight:600;color:var(--text)}
+.modal-item-desc{font-size:11px;color:var(--gris);margin-top:2px}
+.modal-cancel{width:100%;padding:12px;background:var(--gris-bg);color:var(--text-soft);border:none;border-radius:11px;font-size:14px;font-weight:500;cursor:pointer;margin-top:4px;font-family:'DM Sans',sans-serif}
+
+/* MISC */
+.empty{text-align:center;padding:24px;color:var(--gris);font-size:13px;line-height:1.5}
+.snack{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#2C2C2A;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:300;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.snack.show{opacity:1}
+.section-divider{height:1px;background:var(--border);margin:4px 0 12px}
 </style>
 </head>
 <body>
@@ -124,75 +168,110 @@
       <div class="header-title">FerSoluciones</div>
       <div class="header-sub" id="h-fecha"></div>
     </div>
-    <button class="sync-btn" onclick="sincronizarTodo()" id="sync-btn">⟳</button>
+    <button class="sync-btn" onclick="sincronizarTodo()" id="sync-btn" title="Sincronizar">⟳</button>
   </div>
 </div>
 
 <div class="tab-nav">
-  <button class="tab-btn active" onclick="setTab('hoy',this)">Semana</button>
-  <button class="tab-btn" onclick="setTab('contactos',this)">Contactos</button>
-  <button class="tab-btn" onclick="setTab('trabajos',this)">Trabajos</button>
-  <button class="tab-btn" onclick="setTab('resumen',this)">Resumen</button>
+  <button class="tab-btn active" onclick="setTab('semana',this)">📅 Semana</button>
+  <button class="tab-btn" onclick="setTab('trabajos',this)">🔨 Trabajos</button>
+  <button class="tab-btn" onclick="setTab('resumen',this)">📊 Resumen</button>
 </div>
 
-<!-- SEMANA / HOY -->
-<div class="section active" id="tab-hoy">
+<!-- ══════════ SEMANA ══════════ -->
+<div class="section active" id="tab-semana">
   <div id="sync-indicator"></div>
   <div class="semana-nav" id="semana-nav"></div>
-  <div class="card">
-    <div class="card-title" id="titulo-dia-actual" style="padding:12px 14px 8px">Hoy</div>
-    <div id="lista-tareas"><div class="empty">Sin tareas para este día</div></div>
+
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="setSubTab('tareas',this)" id="subtab-tareas-btn">Tareas del día</button>
+    <button class="sub-tab" onclick="setSubTab('contactos',this)" id="subtab-contactos-btn">Contactos</button>
   </div>
-  <div class="add-form">
-    <div class="form-title">Agregar tarea</div>
-    <div class="tipo-chips" id="chips-tag">
-      <button class="tipo-chip sel" onclick="selTag(this,'obra')">En obra</button>
-      <button class="tipo-chip" onclick="selTag(this,'llam')">Llamar</button>
-      <button class="tipo-chip" onclick="selTag(this,'cobr')">Cobrar</button>
-      <button class="tipo-chip" onclick="selTag(this,'pres')">Presupuesto</button>
+
+  <!-- Sub: TAREAS -->
+  <div id="subtab-tareas">
+    <div class="card">
+      <div class="card-title" id="titulo-dia-actual">Hoy</div>
+      <div id="lista-tareas"><div class="empty">Sin tareas para este día</div></div>
     </div>
-    <div class="form-row">
-      <div class="form-field">
-        <div class="form-label">Descripción</div>
-        <input class="form-input" id="f-tarea" type="text" placeholder="Ej: ir a casa de García...">
+    <div class="add-form">
+      <div class="form-title">Nueva tarea</div>
+      <div class="tipo-chips" id="chips-tag">
+        <button class="tipo-chip sel" onclick="selTag(this,'obra')">En obra</button>
+        <button class="tipo-chip" onclick="selTag(this,'llam')">Llamar</button>
+        <button class="tipo-chip" onclick="selTag(this,'cobr')">Cobrar</button>
+        <button class="tipo-chip" onclick="selTag(this,'pres')">Presupuesto</button>
       </div>
       <div class="form-field">
-        <div class="form-label">Hora (opcional)</div>
-        <input class="form-input" id="f-hora" type="time" placeholder="09:00">
+        <label class="form-label">Descripción *</label>
+        <input class="form-input" id="f-tarea" type="text" placeholder="Ej: ir a casa de García, puerta">
       </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">Nombre del cliente</label>
+          <input class="form-input" id="f-tcli" type="text" placeholder="Opcional">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Teléfono</label>
+          <input class="form-input" id="f-ttel" type="tel" placeholder="2494 000 000">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">Dirección</label>
+          <input class="form-input" id="f-tdir" type="text" placeholder="Calle y número">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Hora</label>
+          <input class="form-input" id="f-hora" type="time">
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Vincular a trabajo existente (opcional)</label>
+        <div style="display:flex;gap:8px">
+          <input class="form-input" id="f-tvinculo-label" type="text" placeholder="Sin vínculo" readonly style="cursor:pointer;flex:1" onclick="abrirModalVinculo()">
+          <button class="btn-sm btn-verde" onclick="abrirModalVinculo()" style="padding:6px 14px">Buscar</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addTarea()">+ Agregar tarea</button>
     </div>
-    <button class="btn-add" onclick="addTarea()">+ Agregar tarea</button>
+  </div>
+
+  <!-- Sub: CONTACTOS -->
+  <div id="subtab-contactos" style="display:none">
+    <div class="card">
+      <div class="card-title">Pendientes de contacto</div>
+      <div id="lista-llamar"><div class="empty">Nadie pendiente</div></div>
+    </div>
+    <div class="add-form">
+      <div class="form-title">Nuevo contacto</div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">Nombre *</label>
+          <input class="form-input" id="l-nombre" type="text" placeholder="Cliente o contacto">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Teléfono</label>
+          <input class="form-input" id="l-tel" type="tel" placeholder="2494 000 000">
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Por qué contactar *</label>
+        <input class="form-input" id="l-motivo" type="text" placeholder="Ej: confirmar visita, cobrar seña...">
+      </div>
+      <button class="btn-add" onclick="addLlamar()">+ Agregar contacto</button>
+    </div>
   </div>
 </div>
 
-<!-- CONTACTOS -->
-<div class="section" id="tab-contactos">
-  <div class="card">
-    <div class="card-title" style="padding:12px 14px 8px">Pendientes de contacto</div>
-    <div id="lista-llamar"><div class="empty">Nadie pendiente</div></div>
-  </div>
-  <div class="add-form">
-    <div class="form-title">Agregar contacto</div>
-    <div class="form-field">
-      <div class="form-label">Nombre</div>
-      <input class="form-input" id="l-nombre" type="text" placeholder="Cliente o contacto">
-    </div>
-    <div class="form-field">
-      <div class="form-label">Por qué llamar</div>
-      <input class="form-input" id="l-motivo" type="text" placeholder="Ej: confirmar visita, cobrar...">
-    </div>
-    <button class="btn-add" onclick="addLlamar()">+ Agregar</button>
-  </div>
-</div>
-
-<!-- TRABAJOS -->
+<!-- ══════════ TRABAJOS ══════════ -->
 <div class="section" id="tab-trabajos">
   <div class="card">
-    <div class="card-title" style="padding:12px 14px 8px">En curso</div>
-    <div id="lista-trabajos"><div class="empty">Agregá un trabajo activo</div></div>
+    <div class="card-title">En curso</div>
+    <div id="lista-trabajos"><div class="empty">No hay trabajos activos</div></div>
   </div>
   <div class="add-form">
-    <div class="form-title">Nuevo trabajo</div>
+    <div class="form-title">Registrar trabajo</div>
     <div class="tipo-chips" id="chips-tipo">
       <button class="tipo-chip sel" onclick="selTipo(this,'Carpintería')">Carpintería</button>
       <button class="tipo-chip" onclick="selTipo(this,'Mantenimiento')">Mantenimiento</button>
@@ -202,50 +281,84 @@
     </div>
     <div class="form-row">
       <div class="form-field">
-        <div class="form-label">Cliente / dirección</div>
+        <label class="form-label">Cliente *</label>
         <input class="form-input" id="w-cliente" type="text" placeholder="Nombre">
       </div>
       <div class="form-field">
-        <div class="form-label">Monto total ($)</div>
-        <input class="form-input" id="w-monto" type="number" inputmode="numeric" placeholder="0">
+        <label class="form-label">Teléfono</label>
+        <input class="form-input" id="w-tel" type="tel" placeholder="2494 000 000">
       </div>
     </div>
     <div class="form-field">
-      <div class="form-label">Descripción del trabajo</div>
-      <input class="form-input" id="w-desc" type="text" placeholder="Ej: ajuste puerta, placard...">
+      <label class="form-label">Dirección</label>
+      <input class="form-input" id="w-dir" type="text" placeholder="Calle y número">
+    </div>
+    <div class="form-field">
+      <label class="form-label">Descripción del trabajo</label>
+      <input class="form-input" id="w-desc" type="text" placeholder="Ej: ajuste puerta, placard a medida...">
     </div>
     <div class="form-row">
       <div class="form-field">
-        <div class="form-label">Materiales ($)</div>
-        <input class="form-input" id="w-mat" type="number" inputmode="numeric" placeholder="0">
+        <label class="form-label">Monto total ($)</label>
+        <input class="form-input" id="w-monto" type="number" inputmode="numeric" placeholder="0">
       </div>
       <div class="form-field">
-        <div class="form-label">Estado</div>
-        <select class="form-input" id="w-estado">
-          <option value="Visita pendiente">Visita pendiente</option>
-          <option value="Presup. enviado">Presup. enviado</option>
-          <option value="Seña cobrada">Seña cobrada (50%)</option>
-          <option value="En obra">En obra</option>
-          <option value="Terminado">Terminado</option>
-          <option value="Cobrado">Cobrado</option>
-        </select>
+        <label class="form-label">Materiales ($)</label>
+        <input class="form-input" id="w-mat" type="number" inputmode="numeric" placeholder="0">
       </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Estado inicial</label>
+      <select class="form-input" id="w-estado">
+        <option value="Visita pendiente">Visita pendiente</option>
+        <option value="Presup. enviado">Presup. enviado</option>
+        <option value="Seña cobrada">Seña cobrada (50%)</option>
+        <option value="En obra">En obra</option>
+        <option value="Terminado">Terminado</option>
+        <option value="Cobrado">Cobrado</option>
+      </select>
     </div>
     <button class="btn-add" id="btn-add-trabajo" onclick="addTrabajo()">+ Registrar trabajo</button>
   </div>
 </div>
 
-<!-- RESUMEN -->
+<!-- ══════════ RESUMEN ══════════ -->
 <div class="section" id="tab-resumen">
   <div class="stats-grid">
-    <div class="stat"><div class="stat-label">Cobrado mes</div><div class="stat-val" id="r-mes">$0</div><div class="stat-sub" id="r-mes-n">0 trabajos</div></div>
-    <div class="stat"><div class="stat-label">Por cobrar</div><div class="stat-val" id="r-porcobr">$0</div><div class="stat-sub" id="r-porcobr-n">terminados</div></div>
-    <div class="stat"><div class="stat-label">Señas cobradas</div><div class="stat-val" id="r-senas">$0</div><div class="stat-sub">50% adelantado</div></div>
-    <div class="stat"><div class="stat-label">Esta semana</div><div class="stat-val" id="r-semana">$0</div><div class="stat-sub" id="r-semana-n">cobrado</div></div>
+    <div class="stat">
+      <div class="stat-label">Cobrado este mes</div>
+      <div class="stat-val" id="r-mes">$0</div>
+      <div class="stat-sub" id="r-mes-n">0 trabajos</div>
+      <div class="stat-detail" id="r-mes-det"></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Por cobrar</div>
+      <div class="stat-val" id="r-porcobr">$0</div>
+      <div class="stat-sub" id="r-porcobr-det">terminados + saldos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Señas cobradas</div>
+      <div class="stat-val" id="r-senas">$0</div>
+      <div class="stat-sub" id="r-senas-n">50% adelantado</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Esta semana</div>
+      <div class="stat-val" id="r-semana">$0</div>
+      <div class="stat-sub" id="r-semana-det">cobros + señas</div>
+    </div>
   </div>
   <div class="card">
-    <div class="card-title" style="padding:12px 14px 8px">Historial</div>
+    <div class="card-title">Historial de trabajos</div>
     <div id="r-historial"><div class="empty">Sin trabajos registrados</div></div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL VÍNCULO ══════════ -->
+<div class="modal-overlay" id="modal-vinculo">
+  <div class="modal">
+    <div class="modal-title">Vincular a trabajo existente</div>
+    <div id="modal-lista"></div>
+    <button class="modal-cancel" onclick="cerrarModalVinculo()">Cancelar</button>
   </div>
 </div>
 
@@ -253,42 +366,70 @@
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqej6vB7AGJFnDvgI14f_yIxRtTh8mlwZsdglx1bkTla-DIYYzSB9PBwlTB4Ijo1JEQw/exec';
-const STORAGE_KEY = 'fersoluciones_v3';
+const STORAGE_KEY = 'fersoluciones_v4';
+
 let data = { semana:{}, trabajos:[], llamadas:[] };
-let tagSel = 'obra', tipoSel = 'Carpintería';
+let tagSel = 'obra';
+let tipoSel = 'Carpintería';
 let diaActivo = '';
+let vincTareaTemp = null; // id del trabajo seleccionado para vincular
 
 const DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 const DIAS_CORTO = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const MESES_CORTO = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
+// ── UTILS ────────────────────────────────────────────
 function guardar(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-function cargar(){ try { const d = localStorage.getItem(STORAGE_KEY); if(d) data = JSON.parse(d); if(!data.semana) data.semana={}; } catch(e){} }
+function cargar(){
+  try {
+    const d = localStorage.getItem(STORAGE_KEY);
+    if(d){ data = JSON.parse(d); }
+    if(!data.semana) data.semana = {};
+    if(!data.trabajos) data.trabajos = [];
+    if(!data.llamadas) data.llamadas = [];
+  } catch(e){}
+}
 function pesos(n){ return '$' + Math.round(n||0).toLocaleString('es-AR'); }
 function hoy(){ return new Date().toISOString().split('T')[0]; }
-function generarID(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+function generarID(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function initials(n){ return (n||'?').trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2); }
-
 function snack(msg){
   const el = document.getElementById('snack');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'), 2500);
+  setTimeout(()=>el.classList.remove('show'), 2600);
+}
+function fechaLarga(d){
+  return DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()];
 }
 
-function fechaHoy(){
-  const d = new Date();
-  return DIAS[d.getDay()]+' '+d.getDate()+' '+MESES[d.getMonth()];
+// ── TABS ─────────────────────────────────────────────
+function setTab(tab, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+  if(tab==='resumen') renderResumen();
 }
 
-// ── SEMANA ──────────────────────────────────────────
+// ── SUB-TABS (Semana) ────────────────────────────────
+let subTabActivo = 'tareas';
+function setSubTab(tab, btn){
+  subTabActivo = tab;
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('subtab-tareas').style.display = tab==='tareas'?'block':'none';
+  document.getElementById('subtab-contactos').style.display = tab==='contactos'?'block':'none';
+}
+
+// ── SEMANA NAV ───────────────────────────────────────
 function getLunesDeHoy(){
   const d = new Date(); d.setHours(12,0,0,0);
   const lunes = new Date(d);
   lunes.setDate(d.getDate() - ((d.getDay()+6)%7));
   return lunes;
 }
-
 function getDiasSemana(){
   const lunes = getLunesDeHoy();
   return Array.from({length:7}, (_,i) => {
@@ -297,7 +438,6 @@ function getDiasSemana(){
     return d.toISOString().split('T')[0];
   });
 }
-
 function buildSemanaNav(){
   const dias = getDiasSemana();
   const todayStr = hoy();
@@ -306,34 +446,51 @@ function buildSemanaNav(){
     const d = new Date(fecha+'T12:00:00');
     const esHoy = fecha === todayStr;
     const tareas = (data.semana[fecha]||[]).length;
-    const cls = fecha === diaActivo ? 'dia-btn active' : esHoy ? 'dia-btn hoy-btn' : 'dia-btn';
-    return `<button class="${cls}" onclick="setDia('${fecha}')">${DIAS_CORTO[d.getDay()]} ${d.getDate()}${tareas>0?` <span style="background:var(--madera-mid);color:#fff;border-radius:10px;padding:0 5px;font-size:10px">${tareas}</span>`:''}
-    </button>`;
+    const cls = fecha===diaActivo?'dia-btn active':esHoy?'dia-btn hoy-btn':'dia-btn';
+    const badge = tareas>0?` <span style="background:rgba(255,255,255,.35);border-radius:10px;padding:0 5px;font-size:10px">${tareas}</span>`:'';
+    return `<button class="${cls}" onclick="setDia('${fecha}')">${DIAS_CORTO[d.getDay()]} ${d.getDate()}${badge}</button>`;
   }).join('');
 }
-
 function setDia(fecha){
   diaActivo = fecha;
   buildSemanaNav();
   renderTareas();
   const d = new Date(fecha+'T12:00:00');
   const todayStr = hoy();
-  document.getElementById('titulo-dia-actual').textContent =
-    fecha === todayStr ? 'Hoy — '+DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()] :
-    DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()];
+  const titulo = fecha===todayStr ? 'Hoy — '+fechaLarga(d) : fechaLarga(d);
+  document.getElementById('titulo-dia-actual').textContent = titulo;
 }
+
+// ── TAREAS ───────────────────────────────────────────
+const tagInfo = {
+  obra:{cls:'tag-obra',lbl:'En obra'},
+  llam:{cls:'tag-llam',lbl:'Llamar'},
+  cobr:{cls:'tag-cobr',lbl:'Cobrar'},
+  pres:{cls:'tag-pres',lbl:'Presupuesto'}
+};
 
 function renderTareas(){
   const el = document.getElementById('lista-tareas');
   const tareas = (data.semana[diaActivo]||[]).slice().sort((a,b)=>{
-    if(!a.hora && !b.hora) return 0;
-    if(!a.hora) return 1;
-    if(!b.hora) return -1;
+    if(!a.hora&&!b.hora) return 0;
+    if(!a.hora) return 1; if(!b.hora) return -1;
     return a.hora.localeCompare(b.hora);
   });
   if(!tareas.length){ el.innerHTML='<div class="empty">Sin tareas — agregá una abajo</div>'; return; }
-  const tagInfo = { obra:{cls:'tag-obra',lbl:'En obra'}, llam:{cls:'tag-llam',lbl:'Llamar'}, cobr:{cls:'tag-cobr',lbl:'Cobrar'}, pres:{cls:'tag-pres',lbl:'Presupuesto'} };
-  el.innerHTML = tareas.map((t,i)=>`
+  el.innerHTML = tareas.map((t,i)=>{
+    const ti = tagInfo[t.tag]||{cls:'tag-obra',lbl:t.tag};
+    // Buscar trabajo vinculado
+    let vinculoHtml = '';
+    if(t.vinculoId){
+      const w = data.trabajos.find(x=>x.id===t.vinculoId);
+      vinculoHtml = w ? `<span class="vinculo-chip" title="${w.cliente}">🔗 ${w.cliente}</span>` : '';
+    }
+    // Línea de meta (tel, dir)
+    let meta = '';
+    if(t.cliente) meta += `<span>👤 ${t.cliente}</span>`;
+    if(t.tel) meta += `<span><a href="tel:${t.tel}" style="color:var(--azul);text-decoration:none">${t.tel}</a></span>`;
+    if(t.dir) meta += `<span>📍 ${t.dir}</span>`;
+    return `
     <div class="tarea-row">
       <div class="check-circle ${t.done?'done':''}" onclick="toggleTarea(${i})">
         <svg class="check-tick" width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -341,24 +498,40 @@ function renderTareas(){
         </svg>
       </div>
       <div class="tarea-body">
-        <div style="display:flex;align-items:center;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
           <span class="tarea-texto ${t.done?'done':''}">${t.texto}</span>
           ${t.hora?`<span class="tarea-hora">${t.hora}</span>`:''}
         </div>
-        <span class="tarea-tag ${tagInfo[t.tag]?tagInfo[t.tag].cls:'tag-obra'}">${tagInfo[t.tag]?tagInfo[t.tag].lbl:t.tag}</span>
+        ${meta?`<div class="tarea-meta">${meta}</div>`:''}
+        <div class="tarea-tags">
+          <span class="tarea-tag ${ti.cls}">${ti.lbl}</span>
+          ${vinculoHtml}
+        </div>
       </div>
       <button class="del-btn" onclick="delTarea(${i})">×</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function addTarea(){
   const txt = document.getElementById('f-tarea').value.trim();
-  if(!txt){ snack('Escribí la tarea'); return; }
+  if(!txt){ snack('Escribí la descripción'); return; }
   if(!data.semana[diaActivo]) data.semana[diaActivo] = [];
-  data.semana[diaActivo].push({ texto:txt, tag:tagSel, hora:document.getElementById('f-hora').value||'', done:false });
-  document.getElementById('f-tarea').value='';
-  document.getElementById('f-hora').value='';
-  guardar(); buildSemanaNav(); renderTareas(); snack('Tarea agregada');
+  data.semana[diaActivo].push({
+    texto: txt,
+    tag: tagSel,
+    hora: document.getElementById('f-hora').value||'',
+    cliente: document.getElementById('f-tcli').value.trim(),
+    tel: document.getElementById('f-ttel').value.trim(),
+    dir: document.getElementById('f-tdir').value.trim(),
+    vinculoId: vincTareaTemp||null,
+    done: false
+  });
+  // limpiar
+  ['f-tarea','f-tcli','f-ttel','f-tdir','f-hora'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-tvinculo-label').value='';
+  vincTareaTemp = null;
+  guardar(); buildSemanaNav(); renderTareas(); snack('✓ Tarea agregada');
 }
 
 function toggleTarea(i){
@@ -384,34 +557,63 @@ function delTarea(i){
 }
 
 function selTag(btn, tag){
-  tagSel=tag;
+  tagSel = tag;
   document.querySelectorAll('#chips-tag .tipo-chip').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');
 }
 
-// ── CONTACTOS ───────────────────────────────────────
+// ── MODAL VÍNCULO ────────────────────────────────────
+function abrirModalVinculo(){
+  const activos = data.trabajos.filter(t=>t.estado!=='Cobrado');
+  const lista = document.getElementById('modal-lista');
+  if(!activos.length){
+    lista.innerHTML = '<div class="empty">No hay trabajos activos para vincular</div>';
+  } else {
+    lista.innerHTML = activos.map(w=>`
+      <div class="modal-item" onclick="selVinculo('${w.id}','${w.cliente.replace(/'/g,"\\'")}')">
+        <div class="modal-item-nombre">${w.cliente}</div>
+        <div class="modal-item-desc">${w.tipo}${w.desc?' · '+w.desc:''} · ${w.estado}</div>
+      </div>`).join('');
+  }
+  document.getElementById('modal-vinculo').classList.add('open');
+}
+function selVinculo(id, nombre){
+  vincTareaTemp = id;
+  document.getElementById('f-tvinculo-label').value = nombre;
+  cerrarModalVinculo();
+}
+function cerrarModalVinculo(){
+  document.getElementById('modal-vinculo').classList.remove('open');
+}
+
+// ── CONTACTOS ────────────────────────────────────────
 function renderLlamar(){
   const el = document.getElementById('lista-llamar');
-  if(!data.llamadas.length){ el.innerHTML='<div class="empty">Nadie pendiente</div>'; return; }
+  if(!data.llamadas.length){ el.innerHTML='<div class="empty">Nadie pendiente de contactar</div>'; return; }
   el.innerHTML = data.llamadas.map((l,i)=>`
-    <div class="llamar-item ${l.hecho?'hecho':''}">
+    <div class="contacto-item ${l.hecho?'hecho':''}">
       <div class="avatar">${initials(l.nombre)}</div>
-      <div class="llamar-info">
-        <div class="llamar-nombre">${l.nombre}</div>
-        <div class="llamar-motivo">${l.motivo||'sin motivo'}</div>
+      <div class="contacto-info">
+        <div class="contacto-nombre">${l.nombre}${l.tel?` · <a href="tel:${l.tel}" style="color:var(--azul);font-weight:400;font-size:12px;text-decoration:none">${l.tel}</a>`:''}</div>
+        <div class="contacto-motivo">${l.motivo||'sin motivo'}</div>
       </div>
-      <button class="btn-ok ${l.hecho?'hecho':''}" onclick="toggleLlamar(${i})">${l.hecho?'Listo':'Llamar'}</button>
+      <button class="btn-sm btn-verde ${l.hecho?'hecho':''}" onclick="toggleLlamar(${i})">${l.hecho?'Listo':'Llamar'}</button>
       <button class="del-btn" onclick="delLlamar(${i})">×</button>
     </div>`).join('');
 }
-
 function addLlamar(){
   const nombre = document.getElementById('l-nombre').value.trim();
   if(!nombre){ snack('Escribí el nombre'); return; }
-  data.llamadas.push({ nombre, motivo:document.getElementById('l-motivo').value.trim(), hecho:false });
+  data.llamadas.push({
+    nombre,
+    tel: document.getElementById('l-tel').value.trim(),
+    motivo: document.getElementById('l-motivo').value.trim(),
+    hecho: false
+  });
   document.getElementById('l-nombre').value='';
+  document.getElementById('l-tel').value='';
   document.getElementById('l-motivo').value='';
-  guardar(); renderLlamar(); snack('Contacto agregado');
+  guardar(); renderLlamar(); snack('✓ Contacto agregado');
 }
 function toggleLlamar(i){ data.llamadas[i].hecho=!data.llamadas[i].hecho; guardar(); renderLlamar(); }
 function delLlamar(i){ data.llamadas.splice(i,1); guardar(); renderLlamar(); }
@@ -427,7 +629,7 @@ const estInfo = {
 };
 
 function selTipo(btn, tipo){
-  tipoSel=tipo;
+  tipoSel = tipo;
   document.querySelectorAll('#chips-tipo .tipo-chip').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');
 }
@@ -435,15 +637,19 @@ function selTipo(btn, tipo){
 function renderTrabajos(){
   const el = document.getElementById('lista-trabajos');
   const activos = data.trabajos.filter(t=>t.estado!=='Cobrado');
-  if(!activos.length){ el.innerHTML='<div class="empty">Agregá un trabajo activo</div>'; return; }
-  el.innerHTML = activos.map(t=>{ const i=data.trabajos.indexOf(t); const est=estInfo[t.estado]||{dot:'dot-gris',lbl:t.estado}; return `
+  if(!activos.length){ el.innerHTML='<div class="empty">No hay trabajos activos</div>'; return; }
+  el.innerHTML = activos.map(t=>{
+    const i = data.trabajos.indexOf(t);
+    const est = estInfo[t.estado]||{dot:'dot-gris',lbl:t.estado};
+    return `
     <div class="trabajo-item">
       <div class="trabajo-top">
         <div class="est-dot ${est.dot}"></div>
         <div class="trabajo-info">
           <div class="trabajo-cliente">${t.cliente}</div>
           <div class="trabajo-desc">${t.tipo}${t.desc?' · '+t.desc:''}</div>
-          ${t.estado==='Seña cobrada'?`<span class="sena-badge">Seña: ${pesos(t.monto/2)}</span>`:''}
+          ${t.tel||t.dir?`<div class="trabajo-extra">${t.tel?`📞 ${t.tel}`:''} ${t.dir?`📍 ${t.dir}`:''}</div>`:''}
+          ${t.estado==='Seña cobrada'?`<span class="sena-badge">Seña cobrada: ${pesos(t.monto/2)} — Saldo: ${pesos(t.monto/2)}</span>`:''}
         </div>
         ${t.monto?`<div class="monto-chip">${pesos(t.monto)}</div>`:''}
         <button class="del-btn" onclick="delTrabajo(${i})">×</button>
@@ -456,7 +662,8 @@ function renderTrabajos(){
         <option value="Terminado" ${t.estado==='Terminado'?'selected':''}>Terminado</option>
         <option value="Cobrado" ${t.estado==='Cobrado'?'selected':''}>Cobrado</option>
       </select>
-    </div>`; }).join('');
+    </div>`;
+  }).join('');
   actualizarIndicador();
 }
 
@@ -468,6 +675,8 @@ async function addTrabajo(){
   const trabajo = {
     id: generarID(),
     cliente,
+    tel: document.getElementById('w-tel').value.trim(),
+    dir: document.getElementById('w-dir').value.trim(),
     desc: document.getElementById('w-desc').value.trim(),
     tipo: tipoSel,
     monto: parseFloat(document.getElementById('w-monto').value)||0,
@@ -479,72 +688,114 @@ async function addTrabajo(){
   data.trabajos.push(trabajo);
   guardar();
   const ok = await enviarASheets(trabajo, 'agregar');
-  if(ok){ trabajo.sincronizado=true; guardar(); snack('✓ Guardado y enviado a Google Sheets'); }
-  else snack('Guardado — sincronizá cuando tengas internet');
-  document.getElementById('w-cliente').value='';
-  document.getElementById('w-desc').value='';
-  document.getElementById('w-monto').value='';
-  document.getElementById('w-mat').value='';
+  if(ok){ trabajo.sincronizado=true; guardar(); snack('✓ Guardado y enviado a Sheets'); }
+  else snack('✓ Guardado localmente — sincronizá cuando tengas internet');
+  ['w-cliente','w-tel','w-dir','w-desc','w-monto','w-mat'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('w-estado').value='Visita pendiente';
   btn.textContent='+ Registrar trabajo'; btn.classList.remove('loading'); btn.disabled=false;
   renderTrabajos();
 }
 
 async function cambiarEstado(i, v){
-  data.trabajos[i].estado=v;
-  if(v==='Cobrado') data.trabajos[i].fechaCobro=hoy();
+  data.trabajos[i].estado = v;
+  if(v==='Cobrado') data.trabajos[i].fechaCobro = hoy();
+  if(v==='Seña cobrada') data.trabajos[i].fechaSena = hoy();
   guardar(); renderTrabajos();
   const ok = await enviarASheets(data.trabajos[i], 'actualizar');
-  snack(ok?'✓ Estado actualizado en Google Sheets':'Estado guardado localmente');
+  snack(ok ? '✓ Estado actualizado en Sheets' : '✓ Estado guardado localmente');
 }
-function delTrabajo(i){ data.trabajos.splice(i,1); guardar(); renderTrabajos(); }
 
-// ── RESUMEN ─────────────────────────────────────────
+function delTrabajo(i){
+  if(!confirm('¿Eliminar este trabajo?')) return;
+  data.trabajos.splice(i,1);
+  guardar(); renderTrabajos();
+}
+
+// ── RESUMEN ──────────────────────────────────────────
+function mesRango(){
+  const d = new Date();
+  const desde = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+  const ul = new Date(d.getFullYear(), d.getMonth()+1, 0);
+  return { desde, hasta:ul.toISOString().split('T')[0] };
+}
+function semanaRango(){
+  const d = new Date(); d.setHours(12,0,0,0);
+  const lu = new Date(d); lu.setDate(d.getDate()-((d.getDay()+6)%7));
+  const do2 = new Date(lu); do2.setDate(lu.getDate()+6);
+  return { desde:lu.toISOString().split('T')[0], hasta:do2.toISOString().split('T')[0] };
+}
+function enRango(fecha, rango){
+  return fecha >= rango.desde && fecha <= rango.hasta;
+}
+
 function renderResumen(){
   const mr = mesRango(), sr = semanaRango();
-  const cobrMes = data.trabajos.filter(t=>t.estado==='Cobrado'&&t.fecha>=mr.desde&&t.fecha<=mr.hasta);
-  const cobrSem = data.trabajos.filter(t=>t.estado==='Cobrado'&&t.fecha>=sr.desde&&t.fecha<=sr.hasta);
-  const term = data.trabajos.filter(t=>t.estado==='Terminado');
+
+  // 1. COBRADO ESTE MES: trabajos con estado Cobrado cuya fechaCobro está en el mes
+  const cobrMes = data.trabajos.filter(t => t.estado==='Cobrado' && t.fechaCobro && enRango(t.fechaCobro, mr));
+  const totalCobrMes = cobrMes.reduce((a,t)=>a+t.monto,0);
+
+  // 2. POR COBRAR: trabajos Terminados + saldo restante de Seña cobrada
+  const terminados = data.trabajos.filter(t=>t.estado==='Terminado');
+  const totalTerminados = terminados.reduce((a,t)=>a+t.monto,0);
+  const conSena = data.trabajos.filter(t=>t.estado==='Seña cobrada');
+  const totalSaldosSena = conSena.reduce((a,t)=>a+(t.monto/2),0); // saldo = 50%
+  const totalPorCobrar = totalTerminados + totalSaldosSena;
+
+  // 3. SEÑAS COBRADAS: todos los trabajos con Seña cobrada
   const senas = data.trabajos.filter(t=>t.estado==='Seña cobrada');
-  const activos = data.trabajos.filter(t=>!['Cobrado'].includes(t.estado));
-  document.getElementById('r-mes').textContent = pesos(cobrMes.reduce((a,t)=>a+t.monto,0));
+  const totalSenas = senas.reduce((a,t)=>a+(t.monto/2),0);
+
+  // 4. ESTA SEMANA: cobros completados esta semana + señas cobradas esta semana
+  const cobrSem = data.trabajos.filter(t => t.estado==='Cobrado' && t.fechaCobro && enRango(t.fechaCobro, sr));
+  const senasSem = data.trabajos.filter(t => t.fechaSena && enRango(t.fechaSena, sr)); // cualquier estado que tuvo sena esta semana
+  const totalSemCobr = cobrSem.reduce((a,t)=>a+t.monto,0);
+  const totalSemSena = senasSem.reduce((a,t)=>a+(t.monto/2),0);
+  const totalSemana = totalSemCobr + totalSemSena;
+
+  document.getElementById('r-mes').textContent = pesos(totalCobrMes);
   document.getElementById('r-mes-n').textContent = cobrMes.length+' trabajo'+(cobrMes.length!==1?'s':'');
-  document.getElementById('r-porcobr').textContent = pesos(term.reduce((a,t)=>a+t.monto,0));
-  document.getElementById('r-senas').textContent = pesos(senas.reduce((a,t)=>a+(t.monto/2),0));
-  document.getElementById('r-semana').textContent = pesos(cobrSem.reduce((a,t)=>a+t.monto,0));
-  document.getElementById('r-semana-n').textContent = cobrSem.length+' cobrado'+(cobrSem.length!==1?'s':'');
+
+  document.getElementById('r-porcobr').textContent = pesos(totalPorCobrar);
+  let detPorCobr = [];
+  if(totalTerminados>0) detPorCobr.push(`${terminados.length} terminado${terminados.length>1?'s':''}: ${pesos(totalTerminados)}`);
+  if(totalSaldosSena>0) detPorCobr.push(`${conSena.length} saldo${conSena.length>1?'s':''}: ${pesos(totalSaldosSena)}`);
+  document.getElementById('r-porcobr-det').textContent = detPorCobr.join(' + ')||'sin pendientes';
+
+  document.getElementById('r-senas').textContent = pesos(totalSenas);
+  document.getElementById('r-senas-n').textContent = senas.length+' trabajo'+(senas.length!==1?'s'||'');
+
+  document.getElementById('r-semana').textContent = pesos(totalSemana);
+  let detSem = [];
+  if(totalSemCobr>0) detSem.push(`cobros: ${pesos(totalSemCobr)}`);
+  if(totalSemSena>0) detSem.push(`señas: ${pesos(totalSemSena)}`);
+  document.getElementById('r-semana-det').textContent = detSem.join(' + ')||'sin movimientos';
+
+  // Historial
   const hist = document.getElementById('r-historial');
   const todos = [...data.trabajos].reverse();
   if(!todos.length){ hist.innerHTML='<div class="empty">Sin trabajos registrados</div>'; return; }
-  hist.innerHTML = todos.map(t=>`
+  hist.innerHTML = todos.map(t=>{
+    const est = estInfo[t.estado]||{dot:'dot-gris'};
+    return `
     <div class="hist-item">
-      <div>
-        <div style="font-size:13px;font-weight:600">${t.cliente}</div>
-        <div style="font-size:11px;color:var(--gris)">${t.tipo}${t.desc?' · '+t.desc:''} · ${t.fecha||''}</div>
+      <div style="display:flex;align-items:flex-start;gap:8px;flex:1">
+        <div class="est-dot ${est.dot}" style="margin-top:5px"></div>
+        <div>
+          <div style="font-size:13px;font-weight:600">${t.cliente}</div>
+          <div style="font-size:11px;color:var(--gris)">${t.tipo}${t.desc?' · '+t.desc:''}</div>
+          <div style="font-size:11px;color:var(--gris)">${t.fecha||''}</div>
+        </div>
       </div>
-      <div style="text-align:right">
+      <div style="text-align:right;flex-shrink:0">
         ${t.monto?`<div style="font-size:13px;font-weight:600">${pesos(t.monto)}</div>`:''}
         <div style="font-size:11px;color:var(--gris)">${t.estado}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-function semanaRango(){
-  const d=new Date(); d.setHours(12,0,0,0);
-  const lu=new Date(d); lu.setDate(d.getDate()-((d.getDay()+6)%7));
-  const do2=new Date(lu); do2.setDate(lu.getDate()+6);
-  return { desde:lu.toISOString().split('T')[0], hasta:do2.toISOString().split('T')[0] };
-}
-function mesRango(){
-  const d=new Date();
-  const desde=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
-  const ul=new Date(d.getFullYear(),d.getMonth()+1,0);
-  return { desde, hasta:ul.toISOString().split('T')[0] };
-}
-
-// ── SYNC ────────────────────────────────────────────
-function generarID(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
-
+// ── SYNC ─────────────────────────────────────────────
 async function enviarASheets(trabajo, accion='agregar'){
   try {
     const formData = new FormData();
@@ -552,11 +803,15 @@ async function enviarASheets(trabajo, accion='agregar'){
     formData.append('id', trabajo.id||'');
     formData.append('fecha', trabajo.fecha||hoy());
     formData.append('cliente', trabajo.cliente||'');
+    formData.append('tel', trabajo.tel||'');
+    formData.append('dir', trabajo.dir||'');
     formData.append('desc', trabajo.desc||'');
     formData.append('tipo', trabajo.tipo||'');
     formData.append('monto', trabajo.monto||0);
     formData.append('estado', trabajo.estado||'');
     formData.append('materiales', trabajo.materiales||0);
+    formData.append('fechaCobro', trabajo.fechaCobro||'');
+    formData.append('fechaSena', trabajo.fechaSena||'');
     await fetch(SCRIPT_URL, { method:'POST', body:formData, mode:'no-cors' });
     return true;
   } catch(e){ return false; }
@@ -574,7 +829,7 @@ async function sincronizarTodo(){
     }
   }
   guardar(); btn.classList.remove('syncing');
-  snack(ok>0?`✓ ${ok} trabajo${ok>1?'s':''} enviado${ok>1?'s':''} a Sheets`:'Todo sincronizado');
+  snack(ok>0?`✓ ${ok} trabajo${ok>1?'s':''} sincronizado${ok>1?'s':''}`:'Todo ya sincronizado');
   actualizarIndicador();
 }
 
@@ -582,23 +837,19 @@ function actualizarIndicador(){
   const pend = data.trabajos.filter(t=>!t.sincronizado).length;
   const el = document.getElementById('sync-indicator');
   if(pend>0) el.innerHTML=`<span class="sync-status sync-pend">⏳ ${pend} pendiente${pend>1?'s':''} de sincronizar</span>`;
-  else if(data.trabajos.length>0) el.innerHTML='<span class="sync-status sync-ok">✓ Sincronizado</span>';
+  else if(data.trabajos.length>0) el.innerHTML='<span class="sync-status sync-ok">✓ Todo sincronizado</span>';
   else el.innerHTML='';
 }
 
-function setTab(tab, btn){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  btn.classList.add('active');
-  if(tab==='resumen') renderResumen();
-}
-
-// ── INIT ────────────────────────────────────────────
-document.getElementById('h-fecha').textContent = fechaHoy();
+// ── INIT ─────────────────────────────────────────────
 cargar();
+document.getElementById('h-fecha').textContent = (()=>{
+  const d = new Date();
+  return DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()];
+})();
 diaActivo = hoy();
 buildSemanaNav();
+setDia(diaActivo);
 renderTareas();
 renderLlamar();
 renderTrabajos();
