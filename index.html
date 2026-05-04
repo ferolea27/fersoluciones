@@ -156,6 +156,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 /* SNACK */
 .snack{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:#2C2C2A;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:999;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .snack.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* TRABAJO VINCULADO */
+.evt-vinculo{display:flex;align-items:center;gap:5px;margin-top:5px;padding:4px 8px;background:var(--madera-light);border-radius:7px;border-left:3px solid var(--madera-mid)}
+.evt-vinculo-lbl{font-size:10px;font-weight:700;color:var(--madera);white-space:nowrap}
+.evt-vinculo-est{font-size:10px;color:var(--text-soft)}
+.evt-vinculo-monto{font-size:10px;font-weight:700;color:var(--verde);margin-left:auto}
 </style>
 </head>
 <body>
@@ -193,6 +199,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         <span>Agregar evento</span><span class="coll-arrow">▼</span>
       </div>
       <div class="coll-body open" id="body-agenda">
+        <div class="form-field">
+          <div class="form-label">Vincular a trabajo (opcional)</div>
+          <select class="form-input" id="e-trabajo" onchange="vincularTrabajo(this.value)">
+            <option value="">— Evento sin trabajo vinculado —</option>
+          </select>
+        </div>
         <div class="form-field">
           <div class="form-label">Tipo</div>
           <div class="tipo-chips" id="chips-etipo">
@@ -290,6 +302,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
             <option value="Terminado">Terminado</option>
             <option value="Cobrado">Cobrado</option>
           </select>
+        </div>
+        <!-- Agendar -->
+        <div style="background:var(--madera-light);border-radius:10px;padding:10px 12px;margin-bottom:8px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--madera)">
+            <input type="checkbox" id="w-agendar" onchange="toggleAgendar()" style="width:16px;height:16px;cursor:pointer;accent-color:var(--madera)">
+            Agendar este trabajo en la agenda
+          </label>
+          <div id="w-agendar-fields" style="display:none;margin-top:10px">
+            <div class="form-row">
+              <div class="form-field">
+                <div class="form-label">Fecha</div>
+                <input class="form-input" id="w-ag-fecha" type="date">
+              </div>
+              <div class="form-field">
+                <div class="form-label">Hora (opcional)</div>
+                <input class="form-input" id="w-ag-hora" type="time">
+              </div>
+            </div>
+          </div>
         </div>
         <button class="btn-add" id="btn-add-trabajo" onclick="addTrabajo()">+ Registrar trabajo</button>
       </div>
@@ -397,6 +428,7 @@ function initFirebase(){
     db.ref('trabajos').on('value', snap=>{
       data.trabajos = snap.val()||{};
       guardarLocal(); renderTrabajos(); renderResumen(); setDot('online');
+      populateTrabajoSelect();
     });
     db.ref('eventos').on('value', snap=>{
       data.eventos = snap.val()||{};
@@ -409,6 +441,7 @@ function initFirebase(){
     setBanner('local');
     cargarLocal();
     buildDiasNav(); renderEventos(); renderTrabajos(); renderResumen();
+    populateTrabajoSelect();
   }
 }
 
@@ -438,6 +471,40 @@ window.selChip = function(btn,grupo,val){
   btn.classList.add('sel');
   if(grupo==='etipo') tipoEvento=val;
   if(grupo==='ttipo') tipoTrabajo=val;
+};
+
+// ── VINCULACIÓN EVENTO ↔ TRABAJO ─────────────────────────
+function populateTrabajoSelect(){
+  const sel=document.getElementById('e-trabajo');
+  if(!sel) return;
+  const actual=sel.value;
+  const trabajos=Object.entries(data.trabajos||{})
+    .filter(([,t])=>t.estado!=='Cobrado')
+    .sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
+  sel.innerHTML='<option value="">— Evento sin trabajo vinculado —</option>'
+    +trabajos.map(([id,t])=>
+      `<option value="${id}">${t.cliente} · ${t.tipo} · ${t.estado}</option>`
+    ).join('');
+  if(actual) sel.value=actual;
+}
+
+window.vincularTrabajo = function(trabajoId){
+  if(!trabajoId){ return; }
+  const t=data.trabajos[trabajoId];
+  if(!t) return;
+  document.getElementById('e-cliente').value=t.cliente||'';
+  document.getElementById('e-tel').value=t.tel||'';
+  document.getElementById('e-dir').value=t.dir||'';
+  if(t.desc) document.getElementById('e-desc').value=t.desc;
+};
+
+window.toggleAgendar = function(){
+  const chk=document.getElementById('w-agendar');
+  const fields=document.getElementById('w-agendar-fields');
+  fields.style.display=chk.checked?'block':'none';
+  if(chk.checked){
+    document.getElementById('w-ag-fecha').value=hoy();
+  }
 };
 
 // ── AGENDA ───────────────────────────────────────────────
@@ -513,6 +580,14 @@ function renderEventos(){
           ${e.tel?`<span class="evt-tag tag-tel" onclick="window.open('tel:${e.tel}')">${e.tel}</span>`:''}
           ${e.dir?`<span class="evt-tag tag-dir">${e.dir}</span>`:''}
         </div>
+        ${e.trabajoId && data.trabajos[e.trabajoId] ? (()=>{
+          const tr=data.trabajos[e.trabajoId];
+          return `<div class="evt-vinculo">
+            <span class="evt-vinculo-lbl">📋 ${tr.tipo}</span>
+            <span class="evt-vinculo-est">${tr.estado}</span>
+            ${tr.monto?`<span class="evt-vinculo-monto">${pesos(tr.monto)}</span>`:''}
+          </div>`;
+        })():''}
         <div class="evt-actions">
           <button class="btn-check ${e.done?'done':''}" onclick="toggleEvento('${id}')">${e.done?'✓ Listo':'Marcar listo'}</button>
         </div>
@@ -525,18 +600,21 @@ function renderEventos(){
 window.addEvento = async function(){
   const cliente=document.getElementById('e-cliente').value.trim();
   if(!cliente){ snack('Escribí el nombre'); return; }
+  const trabajoId=document.getElementById('e-trabajo').value||'';
   const ev={
     fecha:diaActivo, tipo:tipoEvento, cliente,
     tel:document.getElementById('e-tel').value.trim(),
     dir:document.getElementById('e-dir').value.trim(),
     desc:document.getElementById('e-desc').value.trim(),
     hora:document.getElementById('e-hora').value||'',
+    trabajoId,
     done:false, ts:Date.now()
   };
   const id=uid();
   if(fbOk){ await fbSet('eventos/'+id,ev); }
   else { data.eventos[id]=ev; guardarLocal(); buildDiasNav(); renderEventos(); }
   ['e-cliente','e-tel','e-dir','e-desc','e-hora'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('e-trabajo').value='';
   snack('✓ Evento agregado');
 };
 window.toggleEvento = async function(id){
@@ -600,8 +678,9 @@ window.addTrabajo = async function(){
   if(!cliente){ snack('Escribí el nombre del cliente'); return; }
   const btn=document.getElementById('btn-add-trabajo');
   btn.textContent='Guardando...'; btn.classList.add('loading');
+  const tId=uid();
   const t={
-    id:uid(), cliente,
+    id:tId, cliente,
     tel:document.getElementById('w-tel').value.trim(),
     dir:document.getElementById('w-dir').value.trim(),
     tipo:tipoTrabajo,
@@ -612,12 +691,34 @@ window.addTrabajo = async function(){
     fecha:hoy(), fechaCobro:'', fechaSena:'', ts:Date.now()
   };
   if(t.estado==='Seña cobrada') t.fechaSena=hoy();
-  if(fbOk){ await fbSet('trabajos/'+t.id,t); }
-  else { data.trabajos[t.id]=t; guardarLocal(); renderTrabajos(); renderResumen(); }
+
+  if(fbOk){ await fbSet('trabajos/'+tId,t); }
+  else { data.trabajos[tId]=t; guardarLocal(); renderTrabajos(); renderResumen(); }
+
+  // ── Crear evento en agenda si está marcado ──
+  const agendar=document.getElementById('w-agendar').checked;
+  if(agendar){
+    const fechaEv=document.getElementById('w-ag-fecha').value||hoy();
+    const horaEv=document.getElementById('w-ag-hora').value||'';
+    const ev={
+      fecha:fechaEv, tipo:'obra', cliente:t.cliente,
+      tel:t.tel, dir:t.dir, desc:t.desc,
+      hora:horaEv, trabajoId:tId, done:false, ts:Date.now()
+    };
+    const evId=uid();
+    if(fbOk){ await fbSet('eventos/'+evId,ev); }
+    else { data.eventos[evId]=ev; guardarLocal(); buildDiasNav(); }
+    snack('✓ Trabajo registrado y agendado para '+(fechaEv===hoy()?'hoy':fechaEv));
+  } else {
+    snack('✓ Trabajo registrado');
+  }
+
   ['w-cliente','w-tel','w-dir','w-desc','w-monto','w-mat'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('w-estado').value='Visita pendiente';
+  document.getElementById('w-agendar').checked=false;
+  document.getElementById('w-agendar-fields').style.display='none';
   btn.textContent='+ Registrar trabajo'; btn.classList.remove('loading');
-  snack('✓ Trabajo registrado');
+  populateTrabajoSelect();
 };
 
 window.cambiarEstado = async function(id,val){
