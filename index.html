@@ -157,6 +157,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .snack{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:#2C2C2A;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:999;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .snack.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* MODAL SHEET */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .22s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-sheet{background:var(--card);border-radius:20px 20px 0 0;padding:0 0 32px;width:100%;transform:translateY(100%);transition:transform .26s cubic-bezier(.32,1,.23,1);max-height:90vh;overflow-y:auto}
+.modal-overlay.open .modal-sheet{transform:translateY(0)}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:15px;font-weight:700;color:var(--text)}
+.modal-close{background:none;border:none;font-size:22px;color:var(--gris);cursor:pointer;padding:0 4px;line-height:1}
+.modal-body{padding:14px 16px}
+.btn-guardar{width:100%;padding:12px;background:var(--madera);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px}
+.btn-guardar:active{background:var(--madera-dark)}
+
 /* TRABAJO VINCULADO */
 .evt-vinculo{display:flex;align-items:center;gap:5px;margin-top:5px;padding:4px 8px;background:var(--madera-light);border-radius:7px;border-left:3px solid var(--madera-mid)}
 .evt-vinculo-lbl{font-size:10px;font-weight:700;color:var(--madera);white-space:nowrap}
@@ -362,6 +375,122 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 
 <div class="snack" id="snack"></div>
 
+<!-- MODAL EDITAR TRABAJO -->
+<div class="modal-overlay" id="modal-trabajo" onclick="cerrarModal('trabajo')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Editar trabajo</div>
+      <button class="modal-close" onclick="cerrarModal('trabajo')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <div class="form-label">Tipo</div>
+        <div class="tipo-chips" id="chips-etipo-m">
+          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Carpintería')">Carpintería</button>
+          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Mantenimiento')">Mantenimiento</button>
+          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Cerrajería')">Cerrajería</button>
+          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Instalación')">Instalación</button>
+          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Otro')">Otro</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <div class="form-label">Cliente</div>
+          <input class="form-input" id="m-t-cliente" type="text">
+        </div>
+        <div class="form-field">
+          <div class="form-label">Teléfono</div>
+          <input class="form-input" id="m-t-tel" type="tel">
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Dirección</div>
+        <input class="form-input" id="m-t-dir" type="text">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <div class="form-label">Monto total ($)</div>
+          <input class="form-input" id="m-t-monto" type="number" inputmode="numeric">
+        </div>
+        <div class="form-field">
+          <div class="form-label">Materiales ($)</div>
+          <input class="form-input" id="m-t-mat" type="number" inputmode="numeric">
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Descripción</div>
+        <input class="form-input" id="m-t-desc" type="text">
+      </div>
+      <div class="form-field">
+        <div class="form-label">Estado</div>
+        <select class="form-input" id="m-t-estado">
+          <option value="Visita pendiente">Visita pendiente</option>
+          <option value="Presup. enviado">Presup. enviado</option>
+          <option value="Seña cobrada">Seña cobrada (50%)</option>
+          <option value="En obra">En obra</option>
+          <option value="Terminado">Terminado</option>
+          <option value="Cobrado">Cobrado</option>
+        </select>
+      </div>
+      <input type="hidden" id="m-t-id">
+      <button class="btn-guardar" onclick="guardarTrabajo()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR EVENTO -->
+<div class="modal-overlay" id="modal-evento" onclick="cerrarModal('evento')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Editar evento</div>
+      <button class="modal-close" onclick="cerrarModal('evento')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <div class="form-label">Tipo</div>
+        <div class="tipo-chips" id="chips-eevt-m">
+          <button class="tipo-chip" onclick="selChip(this,'eevt-m','obra')">En obra</button>
+          <button class="tipo-chip" onclick="selChip(this,'eevt-m','llam')">Llamar</button>
+          <button class="tipo-chip" onclick="selChip(this,'eevt-m','cobr')">Cobrar</button>
+          <button class="tipo-chip" onclick="selChip(this,'eevt-m','pres')">Presupuesto</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <div class="form-label">Cliente</div>
+          <input class="form-input" id="m-e-cliente" type="text">
+        </div>
+        <div class="form-field">
+          <div class="form-label">Hora</div>
+          <input class="form-input" id="m-e-hora" type="time">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <div class="form-label">Teléfono</div>
+          <input class="form-input" id="m-e-tel" type="tel">
+        </div>
+        <div class="form-field">
+          <div class="form-label">Fecha</div>
+          <input class="form-input" id="m-e-fecha" type="date">
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Dirección</div>
+        <input class="form-input" id="m-e-dir" type="text">
+      </div>
+      <div class="form-field">
+        <div class="form-label">Descripción</div>
+        <input class="form-input" id="m-e-desc" type="text">
+      </div>
+      <input type="hidden" id="m-e-id">
+      <button class="btn-guardar" onclick="guardarEvento()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase compat (no requiere type="module", funciona con onclick normales) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -465,12 +594,6 @@ async function fbUpdate(path,val){
 window.toggleColl = function(n){
   document.getElementById('trig-'+n).classList.toggle('open');
   document.getElementById('body-'+n).classList.toggle('open');
-};
-window.selChip = function(btn,grupo,val){
-  document.querySelectorAll('#chips-'+grupo+' .tipo-chip').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
-  if(grupo==='etipo') tipoEvento=val;
-  if(grupo==='ttipo') tipoTrabajo=val;
 };
 
 // ── VINCULACIÓN EVENTO ↔ TRABAJO ─────────────────────────
@@ -592,6 +715,7 @@ function renderEventos(){
           <button class="btn-check ${e.done?'done':''}" onclick="toggleEvento('${id}')">${e.done?'✓ Listo':'Marcar listo'}</button>
         </div>
       </div>
+      <button class="del-btn" onclick="editarEvento('${id}')" style="color:var(--madera-mid);font-size:16px;margin-right:2px">✏️</button>
       <button class="del-btn" onclick="delEvento('${id}')">×</button>
     </div>`;
   }).join('');
@@ -659,6 +783,7 @@ function renderTrabajos(){
           ${t.estado==='Seña cobrada'?`<span class="sena-badge">Seña: ${pesos((t.monto||0)/2)}</span>`:''}
         </div>
         ${t.monto?`<div class="monto-chip">${pesos(t.monto)}</div>`:''}
+        <button class="del-btn" onclick="editarTrabajo('${id}')" title="Editar" style="color:var(--madera-mid);font-size:16px">✏️</button>
         <button class="del-btn" onclick="delTrabajo('${id}')">×</button>
       </div>
       <select class="estado-select" onchange="cambiarEstado('${id}',this.value)">
@@ -737,6 +862,111 @@ window.delTrabajo = async function(id){
   if(fbOk){ await fbRemove('trabajos/'+id); }
   else { delete data.trabajos[id]; guardarLocal(); renderTrabajos(); renderResumen(); }
   snack('Trabajo eliminado');
+};
+
+// ── MODALES DE EDICIÓN ────────────────────────────────────
+let tipoTrabajoModal = 'Carpintería', tipoEventoModal = 'obra';
+
+function abrirModal(nombre){
+  document.getElementById('modal-'+nombre).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+window.cerrarModal = function(nombre){
+  document.getElementById('modal-'+nombre).classList.remove('open');
+  document.body.style.overflow='';
+};
+
+window.editarTrabajo = function(id){
+  const t=data.trabajos[id]; if(!t) return;
+  tipoTrabajoModal=t.tipo||'Carpintería';
+  // Chips
+  document.querySelectorAll('#chips-etipo-m .tipo-chip').forEach(b=>{
+    b.classList.toggle('sel', b.textContent===tipoTrabajoModal);
+  });
+  document.getElementById('m-t-cliente').value=t.cliente||'';
+  document.getElementById('m-t-tel').value=t.tel||'';
+  document.getElementById('m-t-dir').value=t.dir||'';
+  document.getElementById('m-t-monto').value=t.monto||'';
+  document.getElementById('m-t-mat').value=t.materiales||'';
+  document.getElementById('m-t-desc').value=t.desc||'';
+  document.getElementById('m-t-estado').value=t.estado||'Visita pendiente';
+  document.getElementById('m-t-id').value=id;
+  abrirModal('trabajo');
+};
+
+window.guardarTrabajo = async function(){
+  const id=document.getElementById('m-t-id').value; if(!id) return;
+  const estadoNuevo=document.getElementById('m-t-estado').value;
+  const estadoViejo=data.trabajos[id]?.estado;
+  const upd={
+    tipo:tipoTrabajoModal,
+    cliente:document.getElementById('m-t-cliente').value.trim(),
+    tel:document.getElementById('m-t-tel').value.trim(),
+    dir:document.getElementById('m-t-dir').value.trim(),
+    monto:parseFloat(document.getElementById('m-t-monto').value)||0,
+    materiales:parseFloat(document.getElementById('m-t-mat').value)||0,
+    desc:document.getElementById('m-t-desc').value.trim(),
+    estado:estadoNuevo
+  };
+  if(estadoNuevo==='Cobrado' && estadoViejo!=='Cobrado') upd.fechaCobro=hoy();
+  if(estadoNuevo==='Seña cobrada' && estadoViejo!=='Seña cobrada') upd.fechaSena=hoy();
+  if(fbOk){ await fbUpdate('trabajos/'+id, upd); }
+  else { Object.assign(data.trabajos[id],upd); guardarLocal(); renderTrabajos(); renderResumen(); populateTrabajoSelect(); }
+  cerrarModal('trabajo');
+  snack('✓ Trabajo actualizado');
+};
+
+window.editarEvento = function(id){
+  const e=data.eventos[id]; if(!e) return;
+  tipoEventoModal=e.tipo||'obra';
+  document.querySelectorAll('#chips-eevt-m .tipo-chip').forEach(b=>{
+    const map={'obra':'En obra','llam':'Llamar','cobr':'Cobrar','pres':'Presupuesto'};
+    b.classList.toggle('sel', map[tipoEventoModal]===b.textContent);
+  });
+  document.getElementById('m-e-cliente').value=e.cliente||'';
+  document.getElementById('m-e-hora').value=e.hora||'';
+  document.getElementById('m-e-tel').value=e.tel||'';
+  document.getElementById('m-e-fecha').value=e.fecha||hoy();
+  document.getElementById('m-e-dir').value=e.dir||'';
+  document.getElementById('m-e-desc').value=e.desc||'';
+  document.getElementById('m-e-id').value=id;
+  abrirModal('evento');
+};
+
+window.guardarEvento = async function(){
+  const id=document.getElementById('m-e-id').value; if(!id) return;
+  const fechaNueva=document.getElementById('m-e-fecha').value||hoy();
+  const upd={
+    tipo:tipoEventoModal,
+    cliente:document.getElementById('m-e-cliente').value.trim(),
+    hora:document.getElementById('m-e-hora').value||'',
+    tel:document.getElementById('m-e-tel').value.trim(),
+    dir:document.getElementById('m-e-dir').value.trim(),
+    desc:document.getElementById('m-e-desc').value.trim(),
+    fecha:fechaNueva
+  };
+  if(fbOk){ await fbUpdate('eventos/'+id, upd); }
+  else {
+    Object.assign(data.eventos[id],upd);
+    guardarLocal();
+    if(fechaNueva!==diaActivo){ buildDiasNav(); renderEventos(); }
+    else { buildDiasNav(); renderEventos(); }
+  }
+  cerrarModal('evento');
+  // Si cambió la fecha, ir al día nuevo
+  if(fechaNueva && fechaNueva!==diaActivo) setDia(fechaNueva);
+  snack('✓ Evento actualizado');
+};
+
+// selChip también maneja los modales
+const _selChipOrig = window.selChip;
+window.selChip = function(btn,grupo,val){
+  document.querySelectorAll('#chips-'+grupo+' .tipo-chip').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  if(grupo==='etipo') tipoEvento=val;
+  if(grupo==='ttipo') tipoTrabajo=val;
+  if(grupo==='etipo-m') tipoTrabajoModal=val;
+  if(grupo==='eevt-m') tipoEventoModal=val;
 };
 
 // ── RESUMEN ───────────────────────────────────────────────
