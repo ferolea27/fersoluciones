@@ -170,6 +170,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .btn-guardar{width:100%;padding:12px;background:var(--madera);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px}
 .btn-guardar:active{background:var(--madera-dark)}
 
+.stat-neta{font-size:11px;font-weight:700;color:var(--verde);margin-top:4px}
+.stat-neta span{color:var(--gris);font-weight:400}
+
 /* TRABAJO VINCULADO */
 .evt-vinculo{display:flex;align-items:center;gap:5px;margin-top:5px;padding:4px 8px;background:var(--madera-light);border-radius:7px;border-left:3px solid var(--madera-mid)}
 .evt-vinculo-lbl{font-size:10px;font-weight:700;color:var(--madera);white-space:nowrap}
@@ -359,6 +362,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         <div class="stat-lbl">Cobrado este mes</div>
         <div class="stat-val" id="r-mes">$0</div>
         <div class="stat-sub" id="r-mes-n">0 trabajos</div>
+        <div class="stat-neta" id="r-mes-neta"></div>
       </div>
       <div class="stat">
         <div class="stat-lbl">Por cobrar</div>
@@ -374,6 +378,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         <div class="stat-lbl">Esta semana</div>
         <div class="stat-val" id="r-semana">$0</div>
         <div class="stat-sub" id="r-semana-n">cobros + señas</div>
+        <div class="stat-neta" id="r-semana-neta"></div>
       </div>
     </div>
     <div class="card">
@@ -1050,6 +1055,13 @@ function renderResumen(){
   document.getElementById('r-mes-n').textContent=
     cobrMes.length+' cobrado'+(cobrMes.length!==1?'s':'')+
     (senasMes.length?' + '+senasMes.length+' seña'+(senasMes.length!==1?'s':''):'');
+  // Ganancia neta mes = totalMes - materiales de los trabajos cobrados este mes
+  const matMes=cobrMes.reduce((a,t)=>a+(t.materiales||0),0);
+  const netaMes=totalMes-matMes;
+  const elNetaMes=document.getElementById('r-mes-neta');
+  if(matMes>0) elNetaMes.innerHTML=`Neto: ${pesos(netaMes)} <span>- ${pesos(matMes)} mat.</span>`;
+  else elNetaMes.innerHTML='';
+
   document.getElementById('r-porcobr').textContent=pesos(porCobrar);
   document.getElementById('r-porcobr-n').textContent=
     terminados.length+' terminado'+(terminados.length!==1?'s':'')+
@@ -1060,6 +1072,12 @@ function renderResumen(){
     +(senasSem.length?(cobrSem.length?' + ':'')+senasSem.length+' seña'+(senasSem.length!==1?'s':''):'')
     ||'sin movimientos';
   document.getElementById('r-semana-n').textContent=sDesc;
+  // Ganancia neta semana
+  const matSem=cobrSem.reduce((a,t)=>a+(t.materiales||0),0);
+  const netaSem=totalSem-matSem;
+  const elNetaSem=document.getElementById('r-semana-neta');
+  if(matSem>0) elNetaSem.innerHTML=`Neto: ${pesos(netaSem)} <span>- ${pesos(matSem)} mat.</span>`;
+  else elNetaSem.innerHTML='';
 
   const hist=document.getElementById('r-historial');
   const todos=[...ts].sort((a,b)=>(b.ts||0)-(a.ts||0));
