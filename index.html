@@ -262,6 +262,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       <div class="card-title">En curso</div>
       <div id="lista-trabajos"><div class="empty">Agregá un trabajo activo</div></div>
     </div>
+
+    <!-- COBRADOS COLAPSABLE -->
+    <div class="add-form" style="margin-bottom:12px">
+      <div class="coll-trig" id="trig-cobrados" onclick="toggleColl('cobrados')">
+        <span>Trabajos cobrados <span id="cobrados-count" style="font-size:11px;font-weight:400;color:var(--gris)"></span></span>
+        <span class="coll-arrow">▼</span>
+      </div>
+      <div class="coll-body" id="body-cobrados">
+        <div id="lista-cobrados"><div class="empty">Sin trabajos cobrados aún</div></div>
+      </div>
+    </div>
     <div class="add-form">
       <div class="coll-trig open" id="trig-trabajo" onclick="toggleColl('trabajo')">
         <span>Nuevo trabajo</span><span class="coll-arrow">▼</span>
@@ -501,17 +512,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 //     de Firebase Console > Configuración del proyecto
 // ══════════════════════════════════════════════
 const FB_CONFIG = {
-  apiKey: "AIzaSyBKI33xasYOmjPnZau88f7jFIc4ylE0RWw",
-  authDomain: "fersoluciones-56360.firebaseapp.com",
-  databaseURL: "https://fersoluciones-56360-default-rtdb.firebaseio.com",
-  projectId: "fersoluciones-56360",
-  storageBucket: "fersoluciones-56360.firebasestorage.app",
-  messagingSenderId: "1054742018951",
-  appId: "1:1054742018951:web:e4b7f2cec3b90bffddf122"
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_PROJECT.firebaseapp.com",
+  databaseURL: "https://TU_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "TU_PROJECT",
+  storageBucket: "TU_PROJECT.appspot.com",
+  messagingSenderId: "TU_SENDER_ID",
+  appId: "TU_APP_ID"
 };
 // ══════════════════════════════════════════════
 
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxUoN2RZT5U5lzc9RAN7xHahz1WdltO9On7ZNLr8U74kP1hDtRlp6xa_bg3wJiiqAyq/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxqej6vB7AGJFnDvgI14f_yIxRtTh8mlwZsdglx1bkTla-DIYYzSB9PBwlTB4Ijo1JEQw/exec';
 const STORAGE_KEY = 'fersoluciones_v4';
 
 let db = null, fbOk = false;
@@ -762,40 +773,55 @@ const EST_INFO={
   'Cobrado':{dot:'dot-gris'}
 };
 
+function tarjetaTrabajo(id, t, esCobrado=false){
+  const est=EST_INFO[t.estado]||{dot:'dot-gris'};
+  return `<div class="trabajo-item">
+    <div class="trb-top">
+      <div class="est-dot ${est.dot}"></div>
+      <div class="trb-info">
+        <div class="trb-cliente">${t.cliente}</div>
+        <div class="trb-meta">${t.tipo}${t.desc?' · '+t.desc:''}</div>
+        ${(t.tel||t.dir)?`<div class="trb-contact">
+          ${t.tel?`<span class="cc cc-tel" onclick="window.open('tel:${t.tel}')">${t.tel}</span>`:''}
+          ${t.dir?`<span class="cc cc-dir">${t.dir}</span>`:''}
+        </div>`:''}
+        ${t.estado==='Seña cobrada'?`<span class="sena-badge">Seña: ${pesos((t.monto||0)/2)}</span>`:''}
+        ${esCobrado&&t.fechaCobro?`<div style="font-size:10px;color:var(--gris);margin-top:3px">Cobrado: ${t.fechaCobro}</div>`:''}
+      </div>
+      ${t.monto?`<div class="monto-chip">${pesos(t.monto)}</div>`:''}
+      <button class="del-btn" onclick="editarTrabajo('${id}')" title="Editar" style="color:var(--madera-mid);font-size:16px">✏️</button>
+      <button class="del-btn" onclick="delTrabajo('${id}')">×</button>
+    </div>
+    ${!esCobrado?`<select class="estado-select" onchange="cambiarEstado('${id}',this.value)">
+      <option value="Visita pendiente"  ${t.estado==='Visita pendiente'?'selected':''}>Visita pendiente</option>
+      <option value="Presup. enviado"   ${t.estado==='Presup. enviado'?'selected':''}>Presup. enviado</option>
+      <option value="Seña cobrada"      ${t.estado==='Seña cobrada'?'selected':''}>Seña cobrada (50%)</option>
+      <option value="En obra"           ${t.estado==='En obra'?'selected':''}>En obra</option>
+      <option value="Terminado"         ${t.estado==='Terminado'?'selected':''}>Terminado</option>
+      <option value="Cobrado"           ${t.estado==='Cobrado'?'selected':''}>Cobrado</option>
+    </select>`:'<div style="font-size:11px;font-weight:700;color:var(--verde);padding:4px 0 2px">✓ Cobrado</div>'}
+  </div>`;
+}
+
 function renderTrabajos(){
   const el=document.getElementById('lista-trabajos');
-  const activos=Object.entries(data.trabajos||{})
-    .filter(([,t])=>t.estado!=='Cobrado')
-    .sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
-  if(!activos.length){ el.innerHTML='<div class="empty">Agregá un trabajo activo</div>'; return; }
-  el.innerHTML=activos.map(([id,t])=>{
-    const est=EST_INFO[t.estado]||{dot:'dot-gris'};
-    return `<div class="trabajo-item">
-      <div class="trb-top">
-        <div class="est-dot ${est.dot}"></div>
-        <div class="trb-info">
-          <div class="trb-cliente">${t.cliente}</div>
-          <div class="trb-meta">${t.tipo}${t.desc?' · '+t.desc:''}</div>
-          ${(t.tel||t.dir)?`<div class="trb-contact">
-            ${t.tel?`<span class="cc cc-tel" onclick="window.open('tel:${t.tel}')">${t.tel}</span>`:''}
-            ${t.dir?`<span class="cc cc-dir">${t.dir}</span>`:''}
-          </div>`:''}
-          ${t.estado==='Seña cobrada'?`<span class="sena-badge">Seña: ${pesos((t.monto||0)/2)}</span>`:''}
-        </div>
-        ${t.monto?`<div class="monto-chip">${pesos(t.monto)}</div>`:''}
-        <button class="del-btn" onclick="editarTrabajo('${id}')" title="Editar" style="color:var(--madera-mid);font-size:16px">✏️</button>
-        <button class="del-btn" onclick="delTrabajo('${id}')">×</button>
-      </div>
-      <select class="estado-select" onchange="cambiarEstado('${id}',this.value)">
-        <option value="Visita pendiente"  ${t.estado==='Visita pendiente'?'selected':''}>Visita pendiente</option>
-        <option value="Presup. enviado"   ${t.estado==='Presup. enviado'?'selected':''}>Presup. enviado</option>
-        <option value="Seña cobrada"      ${t.estado==='Seña cobrada'?'selected':''}>Seña cobrada (50%)</option>
-        <option value="En obra"           ${t.estado==='En obra'?'selected':''}>En obra</option>
-        <option value="Terminado"         ${t.estado==='Terminado'?'selected':''}>Terminado</option>
-        <option value="Cobrado"           ${t.estado==='Cobrado'?'selected':''}>Cobrado</option>
-      </select>
-    </div>`;
-  }).join('');
+  const elC=document.getElementById('lista-cobrados');
+  const count=document.getElementById('cobrados-count');
+
+  const todos=Object.entries(data.trabajos||{}).sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
+  const activos=todos.filter(([,t])=>t.estado!=='Cobrado');
+  const cobrados=todos.filter(([,t])=>t.estado==='Cobrado');
+
+  // En curso
+  el.innerHTML=activos.length
+    ? activos.map(([id,t])=>tarjetaTrabajo(id,t,false)).join('')
+    : '<div class="empty">Agregá un trabajo activo</div>';
+
+  // Cobrados
+  if(count) count.textContent=cobrados.length?`(${cobrados.length})`:'';
+  if(elC) elC.innerHTML=cobrados.length
+    ? cobrados.map(([id,t])=>tarjetaTrabajo(id,t,true)).join('')
+    : '<div class="empty">Sin trabajos cobrados aún</div>';
 }
 
 window.addTrabajo = async function(){
@@ -988,8 +1014,8 @@ function renderResumen(){
   const mr=mesRango(), sr=semanaRango();
   const ts=Object.values(data.trabajos||{});
 
-  // Cobrado este mes — fecha de cobro dentro del mes
-  const cobrMes=ts.filter(t=>t.estado==='Cobrado'&&inRango(t.fechaCobro,mr));
+  // Cobrado este mes — fecha de cobro dentro del mes, o sin fecha (se cuenta igual)
+  const cobrMes=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,mr)||!t.fechaCobro));
   const totalMes=cobrMes.reduce((a,t)=>a+(t.monto||0),0);
 
   // Por cobrar = monto completo de Terminados + 50% restante de Seña cobrada
@@ -1003,7 +1029,7 @@ function renderResumen(){
   const totalSenas=senasActivas.reduce((a,t)=>a+(t.monto||0)/2,0);
 
   // Esta semana = cobros de esta semana + señas cobradas esta semana
-  const cobrSem=ts.filter(t=>t.estado==='Cobrado'&&inRango(t.fechaCobro,sr));
+  const cobrSem=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,sr)||!t.fechaCobro));
   const senasSem=ts.filter(t=>t.estado==='Seña cobrada'&&inRango(t.fechaSena,sr));
   const totalSem=
     cobrSem.reduce((a,t)=>a+(t.monto||0),0)+
