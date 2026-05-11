@@ -1014,29 +1014,42 @@ function renderResumen(){
   const mr=mesRango(), sr=semanaRango();
   const ts=Object.values(data.trabajos||{});
 
-  // Cobrado este mes — fecha de cobro dentro del mes, o sin fecha (se cuenta igual)
-  const cobrMes=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,mr)||!t.fechaCobro));
-  const totalMes=cobrMes.reduce((a,t)=>a+(t.monto||0),0);
-
-  // Por cobrar = monto completo de Terminados + 50% restante de Seña cobrada
-  const terminados=ts.filter(t=>t.estado==='Terminado');
+  // Señas cobradas (50% ya recibido, en cualquier mes)
   const senasActivas=ts.filter(t=>t.estado==='Seña cobrada');
-  const porCobrar=
-    terminados.reduce((a,t)=>a+(t.monto||0),0)+
-    senasActivas.reduce((a,t)=>a+(t.monto||0)/2,0);
-
-  // Señas cobradas = 50% ya recibido de seña activa
   const totalSenas=senasActivas.reduce((a,t)=>a+(t.monto||0)/2,0);
 
-  // Esta semana = cobros de esta semana + señas cobradas esta semana
-  const cobrSem=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,sr)||!t.fechaCobro));
+  // Señas cobradas ESTE MES (el 50% adelantado se cobró este mes)
+  const senasMes=ts.filter(t=>t.estado==='Seña cobrada'&&inRango(t.fechaSena,mr));
+  // Señas cobradas ESTA SEMANA
   const senasSem=ts.filter(t=>t.estado==='Seña cobrada'&&inRango(t.fechaSena,sr));
+
+  // Trabajos cobrados (100%) ESTE MES
+  const cobrMes=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,mr)||!t.fechaCobro));
+  // — si tenían seña previa, el cobro final es solo el 50% restante
+  // — si no tenían seña, es el 100%
+  const totalCobrMes=cobrMes.reduce((a,t)=>a+(t.teniaSena?((t.monto||0)/2):(t.monto||0)),0);
+  // Como no guardamos "teniaSena", usamos el 100% del monto en cobrado
+  // y sumamos el 50% de señas del mes por separado
+  const totalMes=
+    cobrMes.reduce((a,t)=>a+(t.monto||0),0)+
+    senasMes.reduce((a,t)=>a+(t.monto||0)/2,0);
+
+  // Trabajos cobrados ESTA SEMANA
+  const cobrSem=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,sr)||!t.fechaCobro));
   const totalSem=
     cobrSem.reduce((a,t)=>a+(t.monto||0),0)+
     senasSem.reduce((a,t)=>a+(t.monto||0)/2,0);
 
+  // Por cobrar = terminados completos + 50% restante de señas activas
+  const terminados=ts.filter(t=>t.estado==='Terminado');
+  const porCobrar=
+    terminados.reduce((a,t)=>a+(t.monto||0),0)+
+    senasActivas.reduce((a,t)=>a+(t.monto||0)/2,0);
+
   document.getElementById('r-mes').textContent=pesos(totalMes);
-  document.getElementById('r-mes-n').textContent=cobrMes.length+' trabajo'+(cobrMes.length!==1?'s':'');
+  document.getElementById('r-mes-n').textContent=
+    cobrMes.length+' cobrado'+(cobrMes.length!==1?'s':'')+
+    (senasMes.length?' + '+senasMes.length+' seña'+(senasMes.length!==1?'s':''):'');
   document.getElementById('r-porcobr').textContent=pesos(porCobrar);
   document.getElementById('r-porcobr-n').textContent=
     terminados.length+' terminado'+(terminados.length!==1?'s':'')+
