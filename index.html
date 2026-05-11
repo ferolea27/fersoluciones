@@ -110,6 +110,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .evt-actions{margin-top:7px}
 .btn-check{font-size:11px;font-weight:700;padding:4px 11px;border-radius:7px;border:1.5px solid var(--verde);color:var(--verde);background:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
 .btn-check.done{background:var(--verde);color:#fff}
+.btn-gcal{font-size:18px;padding:2px 6px;border-radius:7px;text-decoration:none;line-height:1;display:inline-flex;align-items:center;transition:background .15s}
+.btn-gcal:active{background:var(--azul-bg)}
 .del-btn{background:none;border:none;font-size:19px;color:var(--gris);padding:2px 5px;cursor:pointer;flex-shrink:0;line-height:1;border-radius:6px}
 .del-btn:active{color:var(--rojo)}
 
@@ -694,6 +696,31 @@ const TIPO_INFO={
   pres:{lbl:'Presupuesto',cls:'tag-pres',dot:'var(--amber)'}
 };
 
+// Genera URL para abrir Google Calendar con el evento precargado
+function gcalUrl(e){
+  const TIPO_LABEL={obra:'En obra',llam:'Llamar',cobr:'Cobrar',pres:'Presupuesto'};
+  const titulo=encodeURIComponent((TIPO_LABEL[e.tipo]||e.tipo)+' — '+( e.cliente||''));
+  const detalle=encodeURIComponent([
+    e.desc||'',
+    e.dir?'📍 '+e.dir:'',
+    e.tel?'📞 '+e.tel:''
+  ].filter(Boolean).join('\n'));
+  const loc=encodeURIComponent(e.dir||'');
+  // Fecha: si tiene hora usamos bloque de 1h, si no usamos todo el día
+  let fechaParam;
+  if(e.hora){
+    // formato Google: YYYYMMDDTHHmmSS / YYYYMMDDTHHmmSS
+    const base=e.fecha.replace(/-/g,'');
+    const [hh,mm]=e.hora.split(':');
+    const h2=String((parseInt(hh)+1)%24).padStart(2,'0');
+    fechaParam=`${base}T${hh}${mm}00/${base}T${h2}${mm}00`;
+  } else {
+    const base=e.fecha.replace(/-/g,'');
+    fechaParam=`${base}/${base}`;
+  }
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${fechaParam}&details=${detalle}&location=${loc}`;
+}
+
 function renderEventos(){
   const el=document.getElementById('lista-eventos');
   const evts=Object.entries(data.eventos||{})
@@ -729,6 +756,7 @@ function renderEventos(){
         })():''}
         <div class="evt-actions">
           <button class="btn-check ${e.done?'done':''}" onclick="toggleEvento('${id}')">${e.done?'✓ Listo':'Marcar listo'}</button>
+          <a class="btn-gcal" href="${gcalUrl(e)}" target="_blank" title="Agregar a Google Calendar">📅</a>
         </div>
       </div>
       <button class="del-btn" onclick="editarEvento('${id}')" style="color:var(--madera-mid);font-size:16px;margin-right:2px">✏️</button>
