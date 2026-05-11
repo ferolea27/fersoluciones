@@ -1163,8 +1163,7 @@ diaActivo=hoy();
 setDia(diaActivo);
 initFirebase();
 
-// Service worker desactivado — subir sw.js para activar modo offline
-// if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body>
 </html>
