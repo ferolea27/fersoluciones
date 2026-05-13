@@ -110,8 +110,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .evt-actions{margin-top:7px}
 .btn-check{font-size:11px;font-weight:700;padding:4px 11px;border-radius:7px;border:1.5px solid var(--verde);color:var(--verde);background:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
 .btn-check.done{background:var(--verde);color:#fff}
-.btn-gcal{font-size:18px;padding:2px 6px;border-radius:7px;text-decoration:none;line-height:1;display:inline-flex;align-items:center;transition:background .15s}
-.btn-gcal:active{background:var(--azul-bg)}
 .del-btn{background:none;border:none;font-size:19px;color:var(--gris);padding:2px 5px;cursor:pointer;flex-shrink:0;line-height:1;border-radius:6px}
 .del-btn:active{color:var(--rojo)}
 
@@ -171,9 +169,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .modal-body{padding:14px 16px}
 .btn-guardar{width:100%;padding:12px;background:var(--madera);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px}
 .btn-guardar:active{background:var(--madera-dark)}
-
-.stat-neta{font-size:11px;font-weight:700;color:var(--verde);margin-top:4px}
-.stat-neta span{color:var(--gris);font-weight:400}
 
 /* TRABAJO VINCULADO */
 .evt-vinculo{display:flex;align-items:center;gap:5px;margin-top:5px;padding:4px 8px;background:var(--madera-light);border-radius:7px;border-left:3px solid var(--madera-mid)}
@@ -267,17 +262,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       <div class="card-title">En curso</div>
       <div id="lista-trabajos"><div class="empty">Agregá un trabajo activo</div></div>
     </div>
-
-    <!-- COBRADOS COLAPSABLE -->
-    <div class="add-form" style="margin-bottom:12px">
-      <div class="coll-trig" id="trig-cobrados" onclick="toggleColl('cobrados')">
-        <span>Trabajos cobrados <span id="cobrados-count" style="font-size:11px;font-weight:400;color:var(--gris)"></span></span>
-        <span class="coll-arrow">▼</span>
-      </div>
-      <div class="coll-body" id="body-cobrados">
-        <div id="lista-cobrados"><div class="empty">Sin trabajos cobrados aún</div></div>
-      </div>
-    </div>
     <div class="add-form">
       <div class="coll-trig open" id="trig-trabajo" onclick="toggleColl('trabajo')">
         <span>Nuevo trabajo</span><span class="coll-arrow">▼</span>
@@ -323,14 +307,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         </div>
         <div class="form-field">
           <div class="form-label">Estado inicial</div>
-          <select class="form-input" id="w-estado">
+          <select class="form-input" id="w-estado" onchange="toggleCampoSena('w')">
             <option value="Visita pendiente">Visita pendiente</option>
             <option value="Presup. enviado">Presup. enviado</option>
-            <option value="Seña cobrada">Seña cobrada (50%)</option>
+            <option value="Seña cobrada">Seña cobrada</option>
             <option value="En obra">En obra</option>
             <option value="Terminado">Terminado</option>
             <option value="Cobrado">Cobrado</option>
           </select>
+        </div>
+        <!-- Campo seña -->
+        <div id="w-sena-field" style="display:none">
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label">Monto de la seña ($)</div>
+              <input class="form-input" id="w-sena" type="number" inputmode="numeric" placeholder="0" oninput="calcPctSena('w')">
+            </div>
+            <div class="form-field" style="display:flex;align-items:flex-end;padding-bottom:2px">
+              <div id="w-sena-pct" style="font-size:13px;font-weight:700;color:var(--violeta);padding:9px 0"></div>
+            </div>
+          </div>
         </div>
         <!-- Agendar -->
         <div style="background:var(--madera-light);border-radius:10px;padding:10px 12px;margin-bottom:8px">
@@ -364,7 +360,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         <div class="stat-lbl">Cobrado este mes</div>
         <div class="stat-val" id="r-mes">$0</div>
         <div class="stat-sub" id="r-mes-n">0 trabajos</div>
-        <div class="stat-neta" id="r-mes-neta"></div>
       </div>
       <div class="stat">
         <div class="stat-lbl">Por cobrar</div>
@@ -380,7 +375,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         <div class="stat-lbl">Esta semana</div>
         <div class="stat-val" id="r-semana">$0</div>
         <div class="stat-sub" id="r-semana-n">cobros + señas</div>
-        <div class="stat-neta" id="r-semana-neta"></div>
       </div>
     </div>
     <div class="card">
@@ -442,14 +436,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       </div>
       <div class="form-field">
         <div class="form-label">Estado</div>
-        <select class="form-input" id="m-t-estado">
+        <select class="form-input" id="m-t-estado" onchange="toggleCampoSena('m')">
           <option value="Visita pendiente">Visita pendiente</option>
           <option value="Presup. enviado">Presup. enviado</option>
-          <option value="Seña cobrada">Seña cobrada (50%)</option>
+          <option value="Seña cobrada">Seña cobrada</option>
           <option value="En obra">En obra</option>
           <option value="Terminado">Terminado</option>
           <option value="Cobrado">Cobrado</option>
         </select>
+      </div>
+      <!-- Campo seña modal -->
+      <div id="m-sena-field" style="display:none">
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">Monto de la seña ($)</div>
+            <input class="form-input" id="m-t-sena" type="number" inputmode="numeric" placeholder="0" oninput="calcPctSena('m')">
+          </div>
+          <div class="form-field" style="display:flex;align-items:flex-end;padding-bottom:2px">
+            <div id="m-sena-pct" style="font-size:13px;font-weight:700;color:var(--violeta);padding:9px 0"></div>
+          </div>
+        </div>
       </div>
       <input type="hidden" id="m-t-id">
       <button class="btn-guardar" onclick="guardarTrabajo()">Guardar cambios</button>
@@ -519,13 +525,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 //     de Firebase Console > Configuración del proyecto
 // ══════════════════════════════════════════════
 const FB_CONFIG = {
-  apiKey: "AIzaSyBKI33xasYOmjPnZau88f7jFIc4ylE0RWw",
-  authDomain: "fersoluciones-56360.firebaseapp.com",
-  databaseURL: "https://fersoluciones-56360-default-rtdb.firebaseio.com",
-  projectId: "fersoluciones-56360",
-  storageBucket: "fersoluciones-56360.firebasestorage.app",
-  messagingSenderId: "1054742018951",
-  appId: "1:1054742018951:web:e4b7f2cec3b90bffddf122"
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_PROJECT.firebaseapp.com",
+  databaseURL: "https://TU_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "TU_PROJECT",
+  storageBucket: "TU_PROJECT.appspot.com",
+  messagingSenderId: "TU_SENDER_ID",
+  appId: "TU_APP_ID"
 };
 // ══════════════════════════════════════════════
 
@@ -648,6 +654,23 @@ window.toggleAgendar = function(){
   }
 };
 
+window.toggleCampoSena = function(prefijo){
+  const esW=prefijo==='w';
+  const select=document.getElementById(esW?'w-estado':'m-t-estado');
+  const field=document.getElementById(esW?'w-sena-field':'m-sena-field');
+  field.style.display=select.value==='Seña cobrada'?'block':'none';
+  if(select.value==='Seña cobrada') calcPctSena(prefijo);
+};
+
+window.calcPctSena = function(prefijo){
+  const esW=prefijo==='w';
+  const monto=parseFloat(document.getElementById(esW?'w-monto':'m-t-monto').value)||0;
+  const sena=parseFloat(document.getElementById(esW?'w-sena':'m-t-sena').value)||0;
+  const pctEl=document.getElementById(esW?'w-sena-pct':'m-sena-pct');
+  if(monto>0&&sena>0) pctEl.textContent=Math.round((sena/monto)*100)+'% del total';
+  else pctEl.textContent='';
+};
+
 // ── AGENDA ───────────────────────────────────────────────
 function getDias(){
   const base=new Date(); base.setHours(12,0,0,0);
@@ -696,31 +719,6 @@ const TIPO_INFO={
   pres:{lbl:'Presupuesto',cls:'tag-pres',dot:'var(--amber)'}
 };
 
-// Genera URL para abrir Google Calendar con el evento precargado
-function gcalUrl(e){
-  const TIPO_LABEL={obra:'En obra',llam:'Llamar',cobr:'Cobrar',pres:'Presupuesto'};
-  const titulo=encodeURIComponent((TIPO_LABEL[e.tipo]||e.tipo)+' — '+( e.cliente||''));
-  const detalle=encodeURIComponent([
-    e.desc||'',
-    e.dir?'📍 '+e.dir:'',
-    e.tel?'📞 '+e.tel:''
-  ].filter(Boolean).join('\n'));
-  const loc=encodeURIComponent(e.dir||'');
-  // Fecha: si tiene hora usamos bloque de 1h, si no usamos todo el día
-  let fechaParam;
-  if(e.hora){
-    // formato Google: YYYYMMDDTHHmmSS / YYYYMMDDTHHmmSS
-    const base=e.fecha.replace(/-/g,'');
-    const [hh,mm]=e.hora.split(':');
-    const h2=String((parseInt(hh)+1)%24).padStart(2,'0');
-    fechaParam=`${base}T${hh}${mm}00/${base}T${h2}${mm}00`;
-  } else {
-    const base=e.fecha.replace(/-/g,'');
-    fechaParam=`${base}/${base}`;
-  }
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${fechaParam}&details=${detalle}&location=${loc}`;
-}
-
 function renderEventos(){
   const el=document.getElementById('lista-eventos');
   const evts=Object.entries(data.eventos||{})
@@ -756,7 +754,6 @@ function renderEventos(){
         })():''}
         <div class="evt-actions">
           <button class="btn-check ${e.done?'done':''}" onclick="toggleEvento('${id}')">${e.done?'✓ Listo':'Marcar listo'}</button>
-          <a class="btn-gcal" href="${gcalUrl(e)}" target="_blank" title="Agregar a Google Calendar">📅</a>
         </div>
       </div>
       <button class="del-btn" onclick="editarEvento('${id}')" style="color:var(--madera-mid);font-size:16px;margin-right:2px">✏️</button>
@@ -806,55 +803,40 @@ const EST_INFO={
   'Cobrado':{dot:'dot-gris'}
 };
 
-function tarjetaTrabajo(id, t, esCobrado=false){
-  const est=EST_INFO[t.estado]||{dot:'dot-gris'};
-  return `<div class="trabajo-item">
-    <div class="trb-top">
-      <div class="est-dot ${est.dot}"></div>
-      <div class="trb-info">
-        <div class="trb-cliente">${t.cliente}</div>
-        <div class="trb-meta">${t.tipo}${t.desc?' · '+t.desc:''}</div>
-        ${(t.tel||t.dir)?`<div class="trb-contact">
-          ${t.tel?`<span class="cc cc-tel" onclick="window.open('tel:${t.tel}')">${t.tel}</span>`:''}
-          ${t.dir?`<span class="cc cc-dir">${t.dir}</span>`:''}
-        </div>`:''}
-        ${t.estado==='Seña cobrada'?`<span class="sena-badge">Seña: ${pesos((t.monto||0)/2)}</span>`:''}
-        ${esCobrado&&t.fechaCobro?`<div style="font-size:10px;color:var(--gris);margin-top:3px">Cobrado: ${t.fechaCobro}</div>`:''}
-      </div>
-      ${t.monto?`<div class="monto-chip">${pesos(t.monto)}</div>`:''}
-      <button class="del-btn" onclick="editarTrabajo('${id}')" title="Editar" style="color:var(--madera-mid);font-size:16px">✏️</button>
-      <button class="del-btn" onclick="delTrabajo('${id}')">×</button>
-    </div>
-    ${!esCobrado?`<select class="estado-select" onchange="cambiarEstado('${id}',this.value)">
-      <option value="Visita pendiente"  ${t.estado==='Visita pendiente'?'selected':''}>Visita pendiente</option>
-      <option value="Presup. enviado"   ${t.estado==='Presup. enviado'?'selected':''}>Presup. enviado</option>
-      <option value="Seña cobrada"      ${t.estado==='Seña cobrada'?'selected':''}>Seña cobrada (50%)</option>
-      <option value="En obra"           ${t.estado==='En obra'?'selected':''}>En obra</option>
-      <option value="Terminado"         ${t.estado==='Terminado'?'selected':''}>Terminado</option>
-      <option value="Cobrado"           ${t.estado==='Cobrado'?'selected':''}>Cobrado</option>
-    </select>`:'<div style="font-size:11px;font-weight:700;color:var(--verde);padding:4px 0 2px">✓ Cobrado</div>'}
-  </div>`;
-}
-
 function renderTrabajos(){
   const el=document.getElementById('lista-trabajos');
-  const elC=document.getElementById('lista-cobrados');
-  const count=document.getElementById('cobrados-count');
-
-  const todos=Object.entries(data.trabajos||{}).sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
-  const activos=todos.filter(([,t])=>t.estado!=='Cobrado');
-  const cobrados=todos.filter(([,t])=>t.estado==='Cobrado');
-
-  // En curso
-  el.innerHTML=activos.length
-    ? activos.map(([id,t])=>tarjetaTrabajo(id,t,false)).join('')
-    : '<div class="empty">Agregá un trabajo activo</div>';
-
-  // Cobrados
-  if(count) count.textContent=cobrados.length?`(${cobrados.length})`:'';
-  if(elC) elC.innerHTML=cobrados.length
-    ? cobrados.map(([id,t])=>tarjetaTrabajo(id,t,true)).join('')
-    : '<div class="empty">Sin trabajos cobrados aún</div>';
+  const activos=Object.entries(data.trabajos||{})
+    .filter(([,t])=>t.estado!=='Cobrado')
+    .sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
+  if(!activos.length){ el.innerHTML='<div class="empty">Agregá un trabajo activo</div>'; return; }
+  el.innerHTML=activos.map(([id,t])=>{
+    const est=EST_INFO[t.estado]||{dot:'dot-gris'};
+    return `<div class="trabajo-item">
+      <div class="trb-top">
+        <div class="est-dot ${est.dot}"></div>
+        <div class="trb-info">
+          <div class="trb-cliente">${t.cliente}</div>
+          <div class="trb-meta">${t.tipo}${t.desc?' · '+t.desc:''}</div>
+          ${(t.tel||t.dir)?`<div class="trb-contact">
+            ${t.tel?`<span class="cc cc-tel" onclick="window.open('tel:${t.tel}')">${t.tel}</span>`:''}
+            ${t.dir?`<span class="cc cc-dir">${t.dir}</span>`:''}
+          </div>`:''}
+          ${t.estado==='Seña cobrada'?`<span class="sena-badge">Seña: ${pesos(t.montoSena||0)}</span>`:''}
+        </div>
+        ${t.monto?`<div class="monto-chip">${pesos(t.monto)}</div>`:''}
+        <button class="del-btn" onclick="editarTrabajo('${id}')" title="Editar" style="color:var(--madera-mid);font-size:16px">✏️</button>
+        <button class="del-btn" onclick="delTrabajo('${id}')">×</button>
+      </div>
+      <select class="estado-select" onchange="cambiarEstado('${id}',this.value)">
+        <option value="Visita pendiente"  ${t.estado==='Visita pendiente'?'selected':''}>Visita pendiente</option>
+        <option value="Presup. enviado"   ${t.estado==='Presup. enviado'?'selected':''}>Presup. enviado</option>
+        <option value="Seña cobrada"      ${t.estado==='Seña cobrada'?'selected':''}>Seña cobrada (50%)</option>
+        <option value="En obra"           ${t.estado==='En obra'?'selected':''}>En obra</option>
+        <option value="Terminado"         ${t.estado==='Terminado'?'selected':''}>Terminado</option>
+        <option value="Cobrado"           ${t.estado==='Cobrado'?'selected':''}>Cobrado</option>
+      </select>
+    </div>`;
+  }).join('');
 }
 
 window.addTrabajo = async function(){
@@ -872,9 +854,13 @@ window.addTrabajo = async function(){
     monto:parseFloat(document.getElementById('w-monto').value)||0,
     materiales:parseFloat(document.getElementById('w-mat').value)||0,
     estado:document.getElementById('w-estado').value,
+    montoSena:0,
     fecha:hoy(), fechaCobro:'', fechaSena:'', ts:Date.now()
   };
-  if(t.estado==='Seña cobrada') t.fechaSena=hoy();
+  if(t.estado==='Seña cobrada'){
+    t.fechaSena=hoy();
+    t.montoSena=parseFloat(document.getElementById('w-sena').value)||0;
+  }
 
   if(fbOk){ await fbSet('trabajos/'+tId,t); }
   else { data.trabajos[tId]=t; guardarLocal(); renderTrabajos(); renderResumen(); }
@@ -897,8 +883,10 @@ window.addTrabajo = async function(){
     snack('✓ Trabajo registrado');
   }
 
-  ['w-cliente','w-tel','w-dir','w-desc','w-monto','w-mat'].forEach(i=>document.getElementById(i).value='');
+  ['w-cliente','w-tel','w-dir','w-desc','w-monto','w-mat','w-sena'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('w-estado').value='Visita pendiente';
+  document.getElementById('w-sena-field').style.display='none';
+  document.getElementById('w-sena-pct').textContent='';
   document.getElementById('w-agendar').checked=false;
   document.getElementById('w-agendar-fields').style.display='none';
   btn.textContent='+ Registrar trabajo'; btn.classList.remove('loading');
@@ -908,7 +896,15 @@ window.addTrabajo = async function(){
 window.cambiarEstado = async function(id,val){
   const upd={estado:val};
   if(val==='Cobrado') upd.fechaCobro=hoy();
-  if(val==='Seña cobrada') upd.fechaSena=hoy();
+  if(val==='Seña cobrada'){
+    upd.fechaSena=hoy();
+    const t=data.trabajos[id]||{};
+    const monto=t.monto||0;
+    const sugerido=monto>0?Math.round(monto/2):0;
+    const input=prompt(`Monto de la seña recibida${monto>0?' (total: $'+monto.toLocaleString('es-AR')+')':''}:`, sugerido||'');
+    if(input===null) return; // canceló
+    upd.montoSena=parseFloat(input)||sugerido;
+  }
   if(fbOk){ await fbUpdate('trabajos/'+id,upd); }
   else {
     Object.assign(data.trabajos[id],upd);
@@ -949,6 +945,16 @@ window.editarTrabajo = function(id){
   document.getElementById('m-t-mat').value=t.materiales||'';
   document.getElementById('m-t-desc').value=t.desc||'';
   document.getElementById('m-t-estado').value=t.estado||'Visita pendiente';
+  // Cargar seña si aplica
+  const senaField=document.getElementById('m-sena-field');
+  if(t.estado==='Seña cobrada'){
+    senaField.style.display='block';
+    document.getElementById('m-t-sena').value=t.montoSena||'';
+    calcPctSena('m');
+  } else {
+    senaField.style.display='none';
+    document.getElementById('m-t-sena').value='';
+  }
   document.getElementById('m-t-id').value=id;
   abrirModal('trabajo');
 };
@@ -965,7 +971,8 @@ window.guardarTrabajo = async function(){
     monto:parseFloat(document.getElementById('m-t-monto').value)||0,
     materiales:parseFloat(document.getElementById('m-t-mat').value)||0,
     desc:document.getElementById('m-t-desc').value.trim(),
-    estado:estadoNuevo
+    estado:estadoNuevo,
+    montoSena:estadoNuevo==='Seña cobrada'?(parseFloat(document.getElementById('m-t-sena').value)||0):0
   };
   if(estadoNuevo==='Cobrado' && estadoViejo!=='Cobrado') upd.fechaCobro=hoy();
   if(estadoNuevo==='Seña cobrada' && estadoViejo!=='Seña cobrada') upd.fechaSena=hoy();
@@ -1047,65 +1054,58 @@ function renderResumen(){
   const mr=mesRango(), sr=semanaRango();
   const ts=Object.values(data.trabajos||{});
 
-  // Señas cobradas (50% ya recibido, en cualquier mes)
   const senasActivas=ts.filter(t=>t.estado==='Seña cobrada');
-  const totalSenas=senasActivas.reduce((a,t)=>a+(t.monto||0)/2,0);
+  const terminados=ts.filter(t=>t.estado==='Terminado');
 
-  // Señas cobradas ESTE MES (el 50% adelantado se cobró este mes)
+  // Señas cobradas = monto real recibido
+  const totalSenas=senasActivas.reduce((a,t)=>a+(t.montoSena||0),0);
+
+  // Señas este mes / esta semana
   const senasMes=ts.filter(t=>t.estado==='Seña cobrada'&&inRango(t.fechaSena,mr));
-  // Señas cobradas ESTA SEMANA
   const senasSem=ts.filter(t=>t.estado==='Seña cobrada'&&inRango(t.fechaSena,sr));
 
-  // Trabajos cobrados (100%) ESTE MES
+  // Cobrados este mes
   const cobrMes=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,mr)||!t.fechaCobro));
-  // — si tenían seña previa, el cobro final es solo el 50% restante
-  // — si no tenían seña, es el 100%
-  const totalCobrMes=cobrMes.reduce((a,t)=>a+(t.teniaSena?((t.monto||0)/2):(t.monto||0)),0);
-  // Como no guardamos "teniaSena", usamos el 100% del monto en cobrado
-  // y sumamos el 50% de señas del mes por separado
   const totalMes=
     cobrMes.reduce((a,t)=>a+(t.monto||0),0)+
-    senasMes.reduce((a,t)=>a+(t.monto||0)/2,0);
+    senasMes.reduce((a,t)=>a+(t.montoSena||0),0);
 
-  // Trabajos cobrados ESTA SEMANA
+  // Cobrados esta semana
   const cobrSem=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,sr)||!t.fechaCobro));
   const totalSem=
     cobrSem.reduce((a,t)=>a+(t.monto||0),0)+
-    senasSem.reduce((a,t)=>a+(t.monto||0)/2,0);
+    senasSem.reduce((a,t)=>a+(t.montoSena||0),0);
 
-  // Por cobrar = terminados completos + 50% restante de señas activas
-  const terminados=ts.filter(t=>t.estado==='Terminado');
+  // Por cobrar = terminados + restante de señas (monto total - seña ya cobrada)
   const porCobrar=
     terminados.reduce((a,t)=>a+(t.monto||0),0)+
-    senasActivas.reduce((a,t)=>a+(t.monto||0)/2,0);
+    senasActivas.reduce((a,t)=>a+((t.monto||0)-(t.montoSena||0)),0);
+
+  // Neta mes y semana (descontando materiales de cobrados)
+  const matMes=cobrMes.reduce((a,t)=>a+(t.materiales||0),0);
+  const matSem=cobrSem.reduce((a,t)=>a+(t.materiales||0),0);
 
   document.getElementById('r-mes').textContent=pesos(totalMes);
   document.getElementById('r-mes-n').textContent=
     cobrMes.length+' cobrado'+(cobrMes.length!==1?'s':'')+
     (senasMes.length?' + '+senasMes.length+' seña'+(senasMes.length!==1?'s':''):'');
-  // Ganancia neta mes = totalMes - materiales de los trabajos cobrados este mes
-  const matMes=cobrMes.reduce((a,t)=>a+(t.materiales||0),0);
-  const netaMes=totalMes-matMes;
   const elNetaMes=document.getElementById('r-mes-neta');
-  if(matMes>0) elNetaMes.innerHTML=`Neto: ${pesos(netaMes)} <span>- ${pesos(matMes)} mat.</span>`;
-  else elNetaMes.innerHTML='';
+  if(elNetaMes) elNetaMes.innerHTML=matMes>0?`Neto: ${pesos(totalMes-matMes)} <span>- ${pesos(matMes)} mat.</span>`:'';
 
   document.getElementById('r-porcobr').textContent=pesos(porCobrar);
   document.getElementById('r-porcobr-n').textContent=
     terminados.length+' terminado'+(terminados.length!==1?'s':'')+
     (senasActivas.length?' + '+senasActivas.length+' seña'+(senasActivas.length!==1?'s':''):'');
+
   document.getElementById('r-senas').textContent=pesos(totalSenas);
+
   document.getElementById('r-semana').textContent=pesos(totalSem);
   const sDesc=(cobrSem.length?cobrSem.length+' cobro'+(cobrSem.length!==1?'s':''):'')
     +(senasSem.length?(cobrSem.length?' + ':'')+senasSem.length+' seña'+(senasSem.length!==1?'s':''):'')
     ||'sin movimientos';
   document.getElementById('r-semana-n').textContent=sDesc;
-  // Ganancia neta semana
-  const matSem=cobrSem.reduce((a,t)=>a+(t.materiales||0),0);
-  const netaSem=totalSem-matSem;
   const elNetaSem=document.getElementById('r-semana-neta');
-  if(matSem>0) elNetaSem.innerHTML=`Neto: ${pesos(netaSem)} <span>- ${pesos(matSem)} mat.</span>`;
-  else elNetaSem.innerHTML='';
+  if(elNetaSem) elNetaSem.innerHTML=matSem>0?`Neto: ${pesos(totalSem-matSem)} <span>- ${pesos(matSem)} mat.</span>`:'';
 
   const hist=document.getElementById('r-historial');
   const todos=[...ts].sort((a,b)=>(b.ts||0)-(a.ts||0));
