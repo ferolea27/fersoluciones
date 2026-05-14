@@ -752,8 +752,9 @@ function renderEventos(){
             ${tr.monto?`<span class="evt-vinculo-monto">${pesos(tr.monto)}</span>`:''}
           </div>`;
         })():''}
-        <div class="evt-actions">
+        <div class="evt-actions" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <button class="btn-check ${e.done?'done':''}" onclick="toggleEvento('${id}')">${e.done?'✓ Listo':'Marcar listo'}</button>
+          <button onclick="abrirGCal('${id}')" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:7px;border:1.5px solid var(--azul);color:var(--azul);background:none;cursor:pointer;font-family:'DM Sans',sans-serif">📅 Agendar</button>
         </div>
       </div>
       <button class="del-btn" onclick="editarEvento('${id}')" style="color:var(--madera-mid);font-size:16px;margin-right:2px">✏️</button>
@@ -1142,6 +1143,38 @@ window.syncSheets = async function(){
   }
   btn.classList.remove('spin'); setDot(fbOk?'online':'');
   snack(`✓ ${ok} trabajo${ok!==1?'s':''} enviado${ok!==1?'s':''} a Sheets`);
+};
+
+// ── GOOGLE CALENDAR ───────────────────────────────────────
+window.abrirGCal = function(id){
+  const e=data.eventos[id]; if(!e) return;
+  const t=TIPO_INFO[e.tipo]||{lbl:e.tipo};
+  const titulo=encodeURIComponent('[FerSoluciones] '+t.lbl+(e.cliente?' — '+e.cliente:''));
+  const detalle=encodeURIComponent([
+    e.desc||'',
+    e.tel?'Tel: '+e.tel:'',
+    e.dir?'Dir: '+e.dir:''
+  ].filter(Boolean).join('\n'));
+  const loc=encodeURIComponent(e.dir||'');
+  // Armar fecha: si hay hora usar datetime, si no solo fecha
+  let fechaParam='';
+  if(e.hora){
+    const [h,m]=e.hora.split(':');
+    const ini=e.fecha.replace(/-/g,'')+'T'+h.padStart(2,'0')+m.padStart(2,'0')+'00';
+    // Evento de 1 hora por defecto
+    const hFin=String(parseInt(h)+1).padStart(2,'0');
+    const fin=e.fecha.replace(/-/g,'')+'T'+hFin+m.padStart(2,'0')+'00';
+    fechaParam=ini+'/'+fin;
+  } else {
+    const d=e.fecha.replace(/-/g,'');
+    // Evento de día completo
+    const dNext=new Date(e.fecha+'T12:00:00');
+    dNext.setDate(dNext.getDate()+1);
+    const dStr=dNext.toISOString().split('T')[0].replace(/-/g,'');
+    fechaParam=d+'/'+dStr;
+  }
+  const url=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${fechaParam}&details=${detalle}&location=${loc}`;
+  window.open(url,'_blank');
 };
 
 // ── TABS ──────────────────────────────────────────────────
