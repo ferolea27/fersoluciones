@@ -12,7 +12,7 @@
 <title>FerSoluciones</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --madera:#5A3A1A; --madera-mid:#C8956C; --madera-light:#F5F0E8; --madera-dark:#3d2510;
   --verde:#2E6B1F; --verde-bg:#E8F5E2; --azul:#0C447C; --azul-bg:#E6F1FB;
   --amber:#854F0B; --amber-bg:#FAEEDA; --gris:#888780; --gris-bg:#F1EFE8;
@@ -23,8 +23,6 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
-
-/* HEADER */
 .header{background:var(--madera);padding:12px 16px 10px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .header-top{display:flex;align-items:center;justify-content:space-between}
 .header-title{font-family:'DM Serif Display',serif;font-size:21px;color:#fff;letter-spacing:-.3px}
@@ -37,23 +35,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .sync-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:#fff;flex-shrink:0}
 .sync-btn.spin{animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* TABS */
 .tab-nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;z-index:50}
 .tab-btn{flex:1;padding:10px 2px;font-size:11.5px;font-weight:700;color:var(--gris);background:none;border:none;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif;letter-spacing:.01em}
 .tab-btn.active{color:var(--madera);border-bottom-color:var(--madera)}
-
-/* MAIN */
 .main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
-.section{display:none;padding:12px 14px 32px}
+.section{display:none;padding:12px 14px 80px}
 .section.active{display:block}
-
-/* CARDS */
 .card{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
 .card-title{padding:11px 14px 8px;font-size:10.5px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.09em}
 .empty{text-align:center;padding:20px;color:var(--gris);font-size:13px}
-
-/* FORMS */
 .add-form{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
 .form-label{font-size:10.5px;color:var(--gris);margin-bottom:3px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .form-input{width:100%;font-size:14px;padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;transition:border-color .15s;-webkit-appearance:none}
@@ -66,59 +56,46 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .btn-add{width:100%;padding:11px;background:var(--madera);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;font-family:'DM Sans',sans-serif}
 .btn-add:active{background:var(--madera-dark)}
 .btn-add.loading{opacity:.55;pointer-events:none}
-
-/* COLAPSABLE */
 .coll-trig{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding-bottom:10px;font-size:13px;font-weight:700;color:var(--madera);border-bottom:1px solid var(--border);margin-bottom:12px;user-select:none}
 .coll-arrow{font-size:11px;transition:transform .2s}
 .coll-trig.open .coll-arrow{transform:rotate(180deg)}
 .coll-body{display:none}
 .coll-body.open{display:block}
-
-/* AGENDA DÍAS */
+/* DÍAS */
 .dias-scroll{display:flex;gap:5px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
 .dias-scroll::-webkit-scrollbar{display:none}
 .dia-pill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:7px 10px 6px;border-radius:14px;border:1.5px solid var(--border);background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;min-width:48px;position:relative}
 .dia-pill.hoy{border-color:var(--madera-mid);background:var(--madera-light)}
 .dia-pill.sel{background:var(--madera);border-color:var(--madera)}
 .dia-pill-d{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gris);margin-bottom:2px}
-.dia-pill.sel .dia-pill-d{color:rgba(255,255,255,.7)}
-.dia-pill.hoy .dia-pill-d{color:var(--madera)}
+.dia-pill.sel .dia-pill-d,.dia-pill.sel .dia-pill-n{color:#fff}
+.dia-pill.hoy .dia-pill-d,.dia-pill.hoy .dia-pill-n{color:var(--madera)}
 .dia-pill-n{font-size:17px;font-weight:700;color:var(--text);line-height:1}
-.dia-pill.sel .dia-pill-n{color:#fff}
-.dia-pill.hoy .dia-pill-n{color:var(--madera)}
 .dia-badge{position:absolute;top:4px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--madera-mid)}
 .dia-pill.sel .dia-badge{background:rgba(255,255,255,.65)}
 .titulo-dia{font-size:13px;font-weight:700;color:var(--text-soft);margin-bottom:8px;padding-left:1px}
-
-/* EVENTO ITEMS */
-.evento-item{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
-.evento-item:last-of-type{border-bottom:none}
-.evt-left{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;width:38px}
-.evt-hora{font-size:11px;font-weight:700;color:var(--madera);white-space:nowrap}
-.evt-dot{width:8px;height:8px;border-radius:50%}
-.evt-body{flex:1;min-width:0}
-.evt-cliente{font-size:14px;font-weight:700;color:var(--text);margin-bottom:1px}
-.evt-desc{font-size:12px;color:var(--text-soft);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.evt-tags{display:flex;gap:5px;flex-wrap:wrap}
-.evt-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;cursor:pointer}
-.tag-obra{background:var(--madera-light);color:var(--madera)}
-.tag-llam{background:var(--azul-bg);color:var(--azul)}
-.tag-cobr{background:var(--verde-bg);color:var(--verde)}
-.tag-pres{background:var(--amber-bg);color:var(--amber)}
+/* TRABAJO CARD (agenda) */
+.trabajo-card{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
+.trabajo-card:last-of-type{border-bottom:none}
+.tc-left{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;width:38px}
+.tc-hora{font-size:11px;font-weight:700;color:var(--madera);white-space:nowrap}
+.tc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tc-body{flex:1;min-width:0}
+.tc-cliente{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.tc-desc{font-size:12px;color:var(--text-soft);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px}
+.tc-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;cursor:pointer}
+.tag-estado{background:var(--madera-light);color:var(--madera)}
 .tag-tel{background:var(--azul-bg);color:var(--azul)}
 .tag-dir{background:var(--gris-bg);color:var(--gris)}
-.evt-actions{margin-top:7px}
-.btn-check{font-size:11px;font-weight:700;padding:4px 11px;border-radius:7px;border:1.5px solid var(--verde);color:var(--verde);background:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
-.btn-check.done{background:var(--verde);color:#fff}
+.tag-monto{background:var(--verde-bg);color:var(--verde);font-size:11px;padding:2px 8px}
 .del-btn{background:none;border:none;font-size:19px;color:var(--gris);padding:2px 5px;cursor:pointer;flex-shrink:0;line-height:1;border-radius:6px}
 .del-btn:active{color:var(--rojo)}
-
-/* TRABAJOS */
+/* TRABAJOS LIST */
 .trabajo-item{padding:12px 14px;border-bottom:1px solid var(--border)}
 .trabajo-item:last-of-type{border-bottom:none}
 .trb-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
 .est-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.dot-verde{background:var(--verde)}.dot-amber{background:#BA7517}.dot-azul{background:#185FA5}.dot-gris{background:var(--gris)}.dot-violeta{background:var(--violeta)}
 .trb-info{flex:1;min-width:0}
 .trb-cliente{font-size:14px;font-weight:700;color:var(--text)}
 .trb-meta{font-size:12px;color:var(--text-soft);margin-top:2px}
@@ -129,38 +106,40 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .monto-chip{font-size:12px;font-weight:700;background:var(--gris-bg);color:var(--text);padding:3px 10px;border-radius:8px;white-space:nowrap;flex-shrink:0}
 .sena-badge{font-size:11px;font-weight:700;background:var(--violeta-bg);color:var(--violeta);padding:2px 8px;border-radius:6px;margin-top:4px;display:inline-block}
 .estado-select{font-size:12px;padding:7px 9px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text-soft);width:100%;cursor:pointer;font-family:'DM Sans',sans-serif;-webkit-appearance:none}
-
 /* RESUMEN */
+.filter-chips{display:flex;gap:7px;margin-bottom:12px}
+.filter-chip{flex:1;padding:8px 4px;border:1.5px solid var(--border);border-radius:20px;background:transparent;font-size:12px;font-weight:700;color:var(--gris);cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;transition:all .15s}
+.filter-chip.sel{background:var(--madera);color:#fff;border-color:var(--madera)}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .stat{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:14px;box-shadow:var(--shadow)}
 .stat-lbl{font-size:10px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
 .stat-val{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);line-height:1.1}
 .stat-sub{font-size:11px;color:var(--gris);margin-top:3px}
-.hist-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px;border-bottom:1px solid var(--border)}
+.stat-neta{font-size:11px;color:var(--verde);margin-top:2px;font-weight:600}
+.hist-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer}
 .hist-item:last-of-type{border-bottom:none}
+.hist-item:active{background:var(--bg)}
 .hist-cliente{font-size:13px;font-weight:700}
 .hist-meta{font-size:11px;color:var(--gris);margin-top:2px}
 .hist-monto{font-size:13px;font-weight:700;text-align:right}
 .hist-est{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;margin-top:3px;display:inline-block}
 .e-cobrado{background:var(--gris-bg);color:var(--gris)}
 .e-terminado{background:var(--amber-bg);color:var(--amber)}
-.e-obra{background:var(--verde-bg);color:var(--verde)}
-.e-sena{background:var(--violeta-bg);color:var(--violeta)}
-.e-otro{background:var(--azul-bg);color:var(--azul)}
-
+.e-proceso{background:var(--verde-bg);color:var(--verde)}
+.e-senado{background:var(--violeta-bg);color:var(--violeta)}
+.e-presup{background:var(--amber-bg);color:var(--amber)}
+.e-contacto{background:var(--azul-bg);color:var(--azul)}
 /* FIREBASE BANNER */
 .fb-banner{font-size:12px;padding:8px 12px;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;gap:7px;font-weight:600}
 .fb-ok{background:var(--verde-bg);color:var(--verde)}
 .fb-local{background:var(--amber-bg);color:var(--amber)}
-
 /* SNACK */
 .snack{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:#2C2C2A;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:999;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .snack.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* MODAL SHEET */
+/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .22s}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal-sheet{background:var(--card);border-radius:20px 20px 0 0;padding:0 0 32px;width:100%;transform:translateY(100%);transition:transform .26s cubic-bezier(.32,1,.23,1);max-height:90vh;overflow-y:auto}
+.modal-sheet{background:var(--card);border-radius:20px 20px 0 0;padding:0 0 32px;width:100%;transform:translateY(100%);transition:transform .26s cubic-bezier(.32,1,.23,1);max-height:92vh;overflow-y:auto}
 .modal-overlay.open .modal-sheet{transform:translateY(0)}
 .modal-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;border-bottom:1px solid var(--border)}
@@ -169,12 +148,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .modal-body{padding:14px 16px}
 .btn-guardar{width:100%;padding:12px;background:var(--madera);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px}
 .btn-guardar:active{background:var(--madera-dark)}
+.btn-secundario{width:100%;padding:11px;background:transparent;color:var(--azul);border:1.5px solid var(--azul);border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px}
+.btn-peligro{width:100%;padding:10px;background:transparent;color:var(--rojo);border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px}
+/* SENA FIELD */
+.sena-pct-hint{font-size:13px;font-weight:700;color:var(--violeta);padding:9px 0}
 
-/* TRABAJO VINCULADO */
-.evt-vinculo{display:flex;align-items:center;gap:5px;margin-top:5px;padding:4px 8px;background:var(--madera-light);border-radius:7px;border-left:3px solid var(--madera-mid)}
-.evt-vinculo-lbl{font-size:10px;font-weight:700;color:var(--madera);white-space:nowrap}
-.evt-vinculo-est{font-size:10px;color:var(--text-soft)}
-.evt-vinculo-monto{font-size:10px;font-weight:700;color:var(--verde);margin-left:auto}
+.tc-detalle{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;color:var(--text-soft);line-height:1.7}
+.tc-detalle.open{display:block}
+.tc-detalle .det-row{display:flex;justify-content:space-between;padding:2px 0;gap:8px}
+.tc-detalle .det-lbl{color:var(--gris);font-weight:600;flex-shrink:0}
+.tc-detalle .det-val{color:var(--text);font-weight:600;text-align:right}
+.btn-expand{font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;border:1.5px solid var(--border);color:var(--gris);background:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-gcal{font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;border:1.5px solid var(--azul);color:var(--azul);background:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.tc-actions{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -187,7 +173,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     </div>
     <div class="header-right">
       <div class="sync-dot" id="sync-dot"></div>
-      <button class="sync-btn" id="sync-btn" onclick="syncSheets()">⟳</button>
+      <button class="sync-btn" id="sync-btn" onclick="syncSheets()">&#x27F3;</button>
     </div>
   </div>
 </div>
@@ -202,56 +188,72 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 
   <!-- AGENDA -->
   <div class="section active" id="tab-agenda">
+    <div id="fb-banner-agenda"></div>
     <div class="dias-scroll" id="dias-scroll"></div>
     <div class="titulo-dia" id="titulo-dia">Hoy</div>
     <div class="card">
-      <div id="lista-eventos"><div class="empty">Sin eventos para este día</div></div>
+      <div id="lista-agenda"><div class="empty">Sin trabajos para este dia</div></div>
     </div>
     <div class="add-form">
-      <div class="coll-trig open" id="trig-agenda" onclick="toggleColl('agenda')">
-        <span>Agregar evento</span><span class="coll-arrow">▼</span>
+      <div class="coll-trig open" id="trig-nuevo" onclick="toggleColl('nuevo')">
+        <span>Nuevo trabajo</span><span class="coll-arrow">&#x25BC;</span>
       </div>
-      <div class="coll-body open" id="body-agenda">
+      <div class="coll-body open" id="body-nuevo">
         <div class="form-field">
-          <div class="form-label">Vincular a trabajo (opcional)</div>
-          <select class="form-input" id="e-trabajo" onchange="vincularTrabajo(this.value)">
-            <option value="">— Evento sin trabajo vinculado —</option>
-          </select>
+          <div class="form-label">Estado</div>
+          <div class="tipo-chips" id="chips-estado-n">
+            <button class="tipo-chip sel" onclick="selChip(this,'estado-n','Contacto')">Contacto</button>
+            <button class="tipo-chip" onclick="selChip(this,'estado-n','Presupuesto')">Presupuesto</button>
+            <button class="tipo-chip" onclick="selChip(this,'estado-n','Senado')">Senado</button>
+            <button class="tipo-chip" onclick="selChip(this,'estado-n','En proceso')">En proceso</button>
+            <button class="tipo-chip" onclick="selChip(this,'estado-n','Terminado')">Terminado</button>
+            <button class="tipo-chip" onclick="selChip(this,'estado-n','Cobrado')">Cobrado</button>
+          </div>
         </div>
         <div class="form-field">
-          <div class="form-label">Tipo</div>
-          <div class="tipo-chips" id="chips-etipo">
-            <button class="tipo-chip sel" onclick="selChip(this,'etipo','obra')">En obra</button>
-            <button class="tipo-chip" onclick="selChip(this,'etipo','llam')">Llamar</button>
-            <button class="tipo-chip" onclick="selChip(this,'etipo','cobr')">Cobrar</button>
-            <button class="tipo-chip" onclick="selChip(this,'etipo','pres')">Presupuesto</button>
-          </div>
+          <div class="form-label">Tipo de trabajo</div>
+          <input class="form-input" id="n-tipo" type="text" placeholder="Ej: Carpinteria, Cerrajeria, Pintura...">
         </div>
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">Cliente / Nombre</div>
-            <input class="form-input" id="e-cliente" type="text" placeholder="Ej: García">
+            <div class="form-label">Cliente</div>
+            <input class="form-input" id="n-cliente" type="text" placeholder="Nombre">
           </div>
           <div class="form-field">
             <div class="form-label">Hora (opcional)</div>
-            <input class="form-input" id="e-hora" type="time">
+            <input class="form-input" id="n-hora" type="time">
           </div>
         </div>
         <div class="form-row">
           <div class="form-field">
-            <div class="form-label">Teléfono</div>
-            <input class="form-input" id="e-tel" type="tel" placeholder="2494...">
+            <div class="form-label">Telefono</div>
+            <input class="form-input" id="n-tel" type="tel" placeholder="2494...">
           </div>
           <div class="form-field">
-            <div class="form-label">Dirección</div>
-            <input class="form-input" id="e-dir" type="text" placeholder="Calle y número">
+            <div class="form-label">Direccion</div>
+            <input class="form-input" id="n-dir" type="text" placeholder="Calle y numero">
           </div>
         </div>
         <div class="form-field">
-          <div class="form-label">Descripción</div>
-          <input class="form-input" id="e-desc" type="text" placeholder="Ej: ajuste puerta principal...">
+          <div class="form-label">Monto ($)</div>
+          <input class="form-input" id="n-monto" type="number" inputmode="numeric" placeholder="0">
         </div>
-        <button class="btn-add" onclick="addEvento()">+ Agregar evento</button>
+        <div id="n-sena-field" style="display:none">
+          <div class="form-row">
+            <div class="form-field">
+              <div class="form-label">Seña cobrada ($)</div>
+              <input class="form-input" id="n-sena" type="number" inputmode="numeric" placeholder="0" oninput="calcSena('n')">
+            </div>
+            <div class="form-field" style="display:flex;align-items:flex-end;padding-bottom:2px">
+              <div id="n-sena-pct" class="sena-pct-hint"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-field">
+          <div class="form-label">Descripcion / Notas</div>
+          <input class="form-input" id="n-desc" type="text" placeholder="Ej: ajuste puerta, colocacion cerco...">
+        </div>
+        <button class="btn-add" id="btn-nuevo" onclick="addTrabajo()">+ Agregar trabajo</button>
       </div>
     </div>
   </div>
@@ -259,127 +261,53 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
   <!-- TRABAJOS -->
   <div class="section" id="tab-trabajos">
     <div class="card">
-      <div class="card-title">En curso</div>
-      <div id="lista-trabajos"><div class="empty">Agregá un trabajo activo</div></div>
+      <div class="card-title">Activos</div>
+      <div id="lista-trabajos"><div class="empty">Sin trabajos activos</div></div>
     </div>
     <div class="add-form">
-      <div class="coll-trig open" id="trig-trabajo" onclick="toggleColl('trabajo')">
-        <span>Nuevo trabajo</span><span class="coll-arrow">▼</span>
+      <div class="coll-trig" id="trig-cobrados" onclick="toggleColl('cobrados')">
+        <span id="tit-cobrados">Cobrados</span><span class="coll-arrow">&#x25BC;</span>
       </div>
-      <div class="coll-body open" id="body-trabajo">
-        <div class="form-field">
-          <div class="form-label">Tipo</div>
-          <div class="tipo-chips" id="chips-ttipo">
-            <button class="tipo-chip sel" onclick="selChip(this,'ttipo','Carpintería')">Carpintería</button>
-            <button class="tipo-chip" onclick="selChip(this,'ttipo','Mantenimiento')">Mantenimiento</button>
-            <button class="tipo-chip" onclick="selChip(this,'ttipo','Cerrajería')">Cerrajería</button>
-            <button class="tipo-chip" onclick="selChip(this,'ttipo','Instalación')">Instalación</button>
-            <button class="tipo-chip" onclick="selChip(this,'ttipo','Otro')">Otro</button>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Cliente</div>
-            <input class="form-input" id="w-cliente" type="text" placeholder="Nombre">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Teléfono</div>
-            <input class="form-input" id="w-tel" type="tel" placeholder="2494...">
-          </div>
-        </div>
-        <div class="form-field">
-          <div class="form-label">Dirección</div>
-          <input class="form-input" id="w-dir" type="text" placeholder="Calle y número">
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Monto total ($)</div>
-            <input class="form-input" id="w-monto" type="number" inputmode="numeric" placeholder="0">
-          </div>
-          <div class="form-field">
-            <div class="form-label">Materiales ($)</div>
-            <input class="form-input" id="w-mat" type="number" inputmode="numeric" placeholder="0">
-          </div>
-        </div>
-        <div class="form-field">
-          <div class="form-label">Descripción</div>
-          <input class="form-input" id="w-desc" type="text" placeholder="Ej: placard, ajuste ventanas...">
-        </div>
-        <div class="form-field">
-          <div class="form-label">Estado inicial</div>
-          <select class="form-input" id="w-estado" onchange="toggleCampoSena('w')">
-            <option value="Visita pendiente">Visita pendiente</option>
-            <option value="Presup. enviado">Presup. enviado</option>
-            <option value="Seña cobrada">Seña cobrada</option>
-            <option value="En obra">En obra</option>
-            <option value="Terminado">Terminado</option>
-            <option value="Cobrado">Cobrado</option>
-          </select>
-        </div>
-        <!-- Campo seña -->
-        <div id="w-sena-field" style="display:none">
-          <div class="form-row">
-            <div class="form-field">
-              <div class="form-label">Monto de la seña ($)</div>
-              <input class="form-input" id="w-sena" type="number" inputmode="numeric" placeholder="0" oninput="calcPctSena('w')">
-            </div>
-            <div class="form-field" style="display:flex;align-items:flex-end;padding-bottom:2px">
-              <div id="w-sena-pct" style="font-size:13px;font-weight:700;color:var(--violeta);padding:9px 0"></div>
-            </div>
-          </div>
-        </div>
-        <!-- Agendar -->
-        <div style="background:var(--madera-light);border-radius:10px;padding:10px 12px;margin-bottom:8px">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--madera)">
-            <input type="checkbox" id="w-agendar" onchange="toggleAgendar()" style="width:16px;height:16px;cursor:pointer;accent-color:var(--madera)">
-            Agendar este trabajo en la agenda
-          </label>
-          <div id="w-agendar-fields" style="display:none;margin-top:10px">
-            <div class="form-row">
-              <div class="form-field">
-                <div class="form-label">Fecha</div>
-                <input class="form-input" id="w-ag-fecha" type="date">
-              </div>
-              <div class="form-field">
-                <div class="form-label">Hora (opcional)</div>
-                <input class="form-input" id="w-ag-hora" type="time">
-              </div>
-            </div>
-          </div>
-        </div>
-        <button class="btn-add" id="btn-add-trabajo" onclick="addTrabajo()">+ Registrar trabajo</button>
+      <div class="coll-body" id="body-cobrados">
+        <div id="lista-cobrados"><div class="empty">Sin trabajos cobrados</div></div>
       </div>
     </div>
   </div>
 
   <!-- RESUMEN -->
   <div class="section" id="tab-resumen">
-    <div id="fb-banner"></div>
+    <div class="filter-chips">
+      <button class="filter-chip" id="fc-dia" onclick="setFiltro('dia')">Hoy</button>
+      <button class="filter-chip" id="fc-semana" onclick="setFiltro('semana')">Semana</button>
+      <button class="filter-chip sel" id="fc-mes" onclick="setFiltro('mes')">Mes</button>
+      <button class="filter-chip" id="fc-anio" onclick="setFiltro('anio')">Ano</button>
+    </div>
     <div class="stats-grid">
       <div class="stat">
-        <div class="stat-lbl">Cobrado este mes</div>
-        <div class="stat-val" id="r-mes">$0</div>
-        <div class="stat-sub" id="r-mes-n">0 trabajos</div>
+        <div class="stat-lbl" id="r-cobrado-lbl">Cobrado este mes</div>
+        <div class="stat-val" id="r-cobrado">$0</div>
+        <div class="stat-sub" id="r-cobrado-n"></div>
+        <div class="stat-neta" id="r-cobrado-neta"></div>
       </div>
       <div class="stat">
         <div class="stat-lbl">Por cobrar</div>
         <div class="stat-val" id="r-porcobr">$0</div>
-        <div class="stat-sub" id="r-porcobr-n">terminados + resto señas</div>
+        <div class="stat-sub" id="r-porcobr-n"></div>
       </div>
       <div class="stat">
-        <div class="stat-lbl">Señas cobradas</div>
+        <div class="stat-lbl" id="r-senas-lbl">Senas cobradas</div>
         <div class="stat-val" id="r-senas">$0</div>
-        <div class="stat-sub">50% adelantado</div>
+        <div class="stat-sub" id="r-senas-n"></div>
       </div>
       <div class="stat">
-        <div class="stat-lbl">Esta semana</div>
-        <div class="stat-val" id="r-semana">$0</div>
-        <div class="stat-sub" id="r-semana-n">cobros + señas</div>
+        <div class="stat-lbl">Neto del periodo</div>
+        <div class="stat-val" id="r-neto">$0</div>
+        <div class="stat-sub" id="r-neto-n"></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">Historial</div>
-      <div id="r-historial"><div class="empty">Sin trabajos registrados</div></div>
+      <div class="card-title" id="r-hist-titulo">Historial del mes</div>
+      <div id="r-historial"></div>
     </div>
   </div>
 
@@ -388,142 +316,102 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 <div class="snack" id="snack"></div>
 
 <!-- MODAL EDITAR TRABAJO -->
-<div class="modal-overlay" id="modal-trabajo" onclick="cerrarModal('trabajo')">
+<div class="modal-overlay" id="modal-edit" onclick="cerrarModal('edit')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
     <div class="modal-header">
       <div class="modal-title">Editar trabajo</div>
-      <button class="modal-close" onclick="cerrarModal('trabajo')">×</button>
+      <button class="modal-close" onclick="cerrarModal('edit')">&#xd7;</button>
     </div>
     <div class="modal-body">
-      <div class="form-field">
-        <div class="form-label">Tipo</div>
-        <div class="tipo-chips" id="chips-etipo-m">
-          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Carpintería')">Carpintería</button>
-          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Mantenimiento')">Mantenimiento</button>
-          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Cerrajería')">Cerrajería</button>
-          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Instalación')">Instalación</button>
-          <button class="tipo-chip" onclick="selChip(this,'etipo-m','Otro')">Otro</button>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          <div class="form-label">Cliente</div>
-          <input class="form-input" id="m-t-cliente" type="text">
-        </div>
-        <div class="form-field">
-          <div class="form-label">Teléfono</div>
-          <input class="form-input" id="m-t-tel" type="tel">
-        </div>
-      </div>
-      <div class="form-field">
-        <div class="form-label">Dirección</div>
-        <input class="form-input" id="m-t-dir" type="text">
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          <div class="form-label">Monto total ($)</div>
-          <input class="form-input" id="m-t-monto" type="number" inputmode="numeric">
-        </div>
-        <div class="form-field">
-          <div class="form-label">Materiales ($)</div>
-          <input class="form-input" id="m-t-mat" type="number" inputmode="numeric">
-        </div>
-      </div>
-      <div class="form-field">
-        <div class="form-label">Descripción</div>
-        <input class="form-input" id="m-t-desc" type="text">
-      </div>
       <div class="form-field">
         <div class="form-label">Estado</div>
-        <select class="form-input" id="m-t-estado" onchange="toggleCampoSena('m')">
-          <option value="Visita pendiente">Visita pendiente</option>
-          <option value="Presup. enviado">Presup. enviado</option>
-          <option value="Seña cobrada">Seña cobrada</option>
-          <option value="En obra">En obra</option>
-          <option value="Terminado">Terminado</option>
-          <option value="Cobrado">Cobrado</option>
-        </select>
-      </div>
-      <!-- Campo seña modal -->
-      <div id="m-sena-field" style="display:none">
-        <div class="form-row">
-          <div class="form-field">
-            <div class="form-label">Monto de la seña ($)</div>
-            <input class="form-input" id="m-t-sena" type="number" inputmode="numeric" placeholder="0" oninput="calcPctSena('m')">
-          </div>
-          <div class="form-field" style="display:flex;align-items:flex-end;padding-bottom:2px">
-            <div id="m-sena-pct" style="font-size:13px;font-weight:700;color:var(--violeta);padding:9px 0"></div>
-          </div>
+        <div class="tipo-chips" id="chips-estado-e">
+          <button class="tipo-chip" onclick="selChip(this,'estado-e','Contacto')">Contacto</button>
+          <button class="tipo-chip" onclick="selChip(this,'estado-e','Presupuesto')">Presupuesto</button>
+          <button class="tipo-chip" onclick="selChip(this,'estado-e','Senado')">Senado</button>
+          <button class="tipo-chip" onclick="selChip(this,'estado-e','En proceso')">En proceso</button>
+          <button class="tipo-chip" onclick="selChip(this,'estado-e','Terminado')">Terminado</button>
+          <button class="tipo-chip" onclick="selChip(this,'estado-e','Cobrado')">Cobrado</button>
         </div>
       </div>
-      <input type="hidden" id="m-t-id">
-      <button class="btn-guardar" onclick="guardarTrabajo()">Guardar cambios</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL EDITAR EVENTO -->
-<div class="modal-overlay" id="modal-evento" onclick="cerrarModal('evento')">
-  <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <div class="modal-title">Editar evento</div>
-      <button class="modal-close" onclick="cerrarModal('evento')">×</button>
-    </div>
-    <div class="modal-body">
       <div class="form-field">
-        <div class="form-label">Tipo</div>
-        <div class="tipo-chips" id="chips-eevt-m">
-          <button class="tipo-chip" onclick="selChip(this,'eevt-m','obra')">En obra</button>
-          <button class="tipo-chip" onclick="selChip(this,'eevt-m','llam')">Llamar</button>
-          <button class="tipo-chip" onclick="selChip(this,'eevt-m','cobr')">Cobrar</button>
-          <button class="tipo-chip" onclick="selChip(this,'eevt-m','pres')">Presupuesto</button>
-        </div>
+        <div class="form-label">Tipo de trabajo</div>
+        <input class="form-input" id="e-tipo" type="text" placeholder="Ej: Carpinteria, Cerrajeria, Pintura...">
       </div>
       <div class="form-row">
         <div class="form-field">
           <div class="form-label">Cliente</div>
-          <input class="form-input" id="m-e-cliente" type="text">
-        </div>
-        <div class="form-field">
-          <div class="form-label">Hora</div>
-          <input class="form-input" id="m-e-hora" type="time">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          <div class="form-label">Teléfono</div>
-          <input class="form-input" id="m-e-tel" type="tel">
+          <input class="form-input" id="e-cliente" type="text">
         </div>
         <div class="form-field">
           <div class="form-label">Fecha</div>
-          <input class="form-input" id="m-e-fecha" type="date">
+          <input class="form-input" id="e-fecha" type="date">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <div class="form-label">Hora (opcional)</div>
+          <input class="form-input" id="e-hora" type="time">
+        </div>
+        <div class="form-field">
+          <div class="form-label">Telefono</div>
+          <input class="form-input" id="e-tel" type="tel">
         </div>
       </div>
       <div class="form-field">
-        <div class="form-label">Dirección</div>
-        <input class="form-input" id="m-e-dir" type="text">
+        <div class="form-label">Direccion</div>
+        <input class="form-input" id="e-dir" type="text">
       </div>
       <div class="form-field">
-        <div class="form-label">Descripción</div>
-        <input class="form-input" id="m-e-desc" type="text">
+        <div class="form-label">Monto ($)</div>
+        <input class="form-input" id="e-monto" type="number" inputmode="numeric">
       </div>
-      <input type="hidden" id="m-e-id">
-      <button class="btn-guardar" onclick="guardarEvento()">Guardar cambios</button>
+      <div id="e-sena-field" style="display:none">
+        <div class="form-row">
+          <div class="form-field">
+            <div class="form-label">Seña cobrada ($)</div>
+            <input class="form-input" id="e-sena" type="number" inputmode="numeric" placeholder="0" oninput="calcSena('e')">
+          </div>
+          <div class="form-field" style="display:flex;align-items:flex-end;padding-bottom:2px">
+            <div id="e-sena-pct" class="sena-pct-hint"></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Descripcion / Notas</div>
+        <input class="form-input" id="e-desc" type="text">
+      </div>
+      <input type="hidden" id="e-id">
+      <input type="hidden" id="e-fecha-orig">
+      <button class="btn-guardar" onclick="guardarEdicion()">Guardar cambios</button>
+      <button class="btn-peligro" onclick="delTrabajo(document.getElementById('e-id').value)">Eliminar trabajo</button>
     </div>
   </div>
 </div>
 
-<!-- Firebase compat (no requiere type="module", funciona con onclick normales) -->
+<!-- MODAL DUPLICAR / MOVER FECHA -->
+<div class="modal-overlay" id="modal-dup" onclick="cerrarModal('dup')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Cambio de fecha</div>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text-soft);margin-bottom:16px;line-height:1.5">
+        Cambiaste la fecha del trabajo. Que preferes hacer?
+      </p>
+      <button class="btn-guardar" id="btn-mover" onclick="confirmarFecha('mover')">Mover a la nueva fecha</button>
+      <button class="btn-secundario" id="btn-duplicar" onclick="confirmarFecha('duplicar')">Duplicar (mantener el original)</button>
+      <button class="btn-peligro" onclick="cerrarModal('dup')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 
-// ══════════════════════════════════════════════
-//  ⚠️  PASO 1: REEMPLAZÁ ESTO CON TUS DATOS
-//     de Firebase Console > Configuración del proyecto
-// ══════════════════════════════════════════════
 const FB_CONFIG = {
   apiKey: "AIzaSyBKI33xasYOmjPnZau88f7jFIc4ylE0RWw",
   authDomain: "fersoluciones-56360.firebaseapp.com",
@@ -533,22 +421,33 @@ const FB_CONFIG = {
   messagingSenderId: "1054742018951",
   appId: "1:1054742018951:web:e4b7f2cec3b90bffddf122"
 };
-// ══════════════════════════════════════════════
 
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxqej6vB7AGJFnDvgI14f_yIxRtTh8mlwZsdglx1bkTla-DIYYzSB9PBwlTB4Ijo1JEQw/exec';
-const STORAGE_KEY = 'fersoluciones_v4';
+const STORAGE_KEY = 'fersoluciones_v5';
 
 let db = null, fbOk = false;
-let data = { eventos:{}, trabajos:{} };
-let tipoEvento = 'obra', tipoTrabajo = 'Carpintería';
+let data = { trabajos:{} };
+let estadoNuevo = 'Contacto', tipoNuevo = 'Carpinteria';
+let estadoEdit = 'Contacto', tipoEdit = 'Carpinteria';
 let diaActivo = '';
+let filtroResumen = 'mes';
+let pendingEdit = null; // para modal duplicar/mover
 
-const DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-const DIAS_C = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DIAS   = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+const DIAS_C = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+const MESES  = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const MESES_C= ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
-// ── HELPERS ─────────────────────────────────────────────
+const EST = {
+  'Contacto':   {dot:'var(--azul)',    bg:'var(--azul-bg)',    cls:'e-contacto', label:'Contacto'},
+  'Presupuesto':{dot:'var(--amber)',   bg:'var(--amber-bg)',   cls:'e-presup',   label:'Presupuesto'},
+  'Senado':     {dot:'var(--violeta)', bg:'var(--violeta-bg)', cls:'e-senado',   label:'Senado'},
+  'En proceso': {dot:'var(--verde)',   bg:'var(--verde-bg)',   cls:'e-proceso',  label:'En proceso'},
+  'Terminado':  {dot:'#BA7517',        bg:'var(--amber-bg)',   cls:'e-terminado',label:'Terminado'},
+  'Cobrado':    {dot:'var(--gris)',    bg:'var(--gris-bg)',    cls:'e-cobrado',  label:'Cobrado'},
+};
+
+// ── HELPERS ──────────────────────────────────────────────
 function hoy(){ return new Date().toISOString().split('T')[0]; }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function pesos(n){ return '$'+Math.round(n||0).toLocaleString('es-AR'); }
@@ -561,7 +460,7 @@ function guardarLocal(){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(da
 function cargarLocal(){
   try{
     const d=localStorage.getItem(STORAGE_KEY);
-    if(d){ const p=JSON.parse(d); data.eventos=p.eventos||{}; data.trabajos=p.trabajos||{}; }
+    if(d){ const p=JSON.parse(d); data.trabajos=p.trabajos||{}; }
   }catch(e){}
 }
 function setDot(estado){
@@ -577,108 +476,65 @@ function initFirebase(){
     if(FB_CONFIG.apiKey==='TU_API_KEY') throw new Error('Sin configurar');
     firebase.initializeApp(FB_CONFIG);
     db = firebase.database();
-
     db.ref('trabajos').on('value', snap=>{
       data.trabajos = snap.val()||{};
-      guardarLocal(); renderTrabajos(); renderResumen(); setDot('online');
-      populateTrabajoSelect();
-    });
-    db.ref('eventos').on('value', snap=>{
-      data.eventos = snap.val()||{};
-      guardarLocal(); buildDiasNav(); renderEventos();
+      guardarLocal();
+      renderAgenda(); renderTrabajos(); renderResumen();
+      setDot('online');
     });
     fbOk=true;
     setBanner('ok');
   }catch(e){
-    console.warn('Firebase no iniciado — modo local:', e.message);
+    console.warn('Firebase local:', e.message);
     setBanner('local');
     cargarLocal();
-    buildDiasNav(); renderEventos(); renderTrabajos(); renderResumen();
-    populateTrabajoSelect();
+    renderAgenda(); renderTrabajos(); renderResumen();
   }
 }
-
 function setBanner(tipo){
-  const el=document.getElementById('fb-banner');
-  if(tipo==='ok') el.innerHTML='<div class="fb-banner fb-ok">🔥 Firebase conectado — sync en tiempo real</div>';
-  else el.innerHTML='<div class="fb-banner fb-local">📱 Modo local — configurá Firebase para sync</div>';
+  const el=document.getElementById('fb-banner-agenda');
+  el.innerHTML = tipo==='ok'
+    ? '<div class="fb-banner fb-ok">&#x1F525; Firebase conectado</div>'
+    : '<div class="fb-banner fb-local">&#x1F4F1; Modo local</div>';
 }
-
-async function fbSet(path,val){
-  try{ await db.ref(path).set(val); return true; }catch(e){ return false; }
-}
-async function fbRemove(path){
-  try{ await db.ref(path).remove(); return true; }catch(e){ return false; }
-}
-async function fbUpdate(path,val){
-  try{ await db.ref(path).update(val); return true; }catch(e){ return false; }
-}
+async function fbSet(path,val){ try{ await db.ref(path).set(val); return true; }catch(e){ return false; } }
+async function fbRemove(path){ try{ await db.ref(path).remove(); return true; }catch(e){ return false; } }
+async function fbUpdate(path,val){ try{ await db.ref(path).update(val); return true; }catch(e){ return false; } }
 
 // ── UI HELPERS ───────────────────────────────────────────
 window.toggleColl = function(n){
   document.getElementById('trig-'+n).classList.toggle('open');
   document.getElementById('body-'+n).classList.toggle('open');
 };
+function abrirModal(n){ document.getElementById('modal-'+n).classList.add('open'); document.body.style.overflow='hidden'; }
+window.cerrarModal = function(n){ document.getElementById('modal-'+n).classList.remove('open'); document.body.style.overflow=''; };
 
-// ── VINCULACIÓN EVENTO ↔ TRABAJO ─────────────────────────
-function populateTrabajoSelect(){
-  const sel=document.getElementById('e-trabajo');
-  if(!sel) return;
-  const actual=sel.value;
-  const trabajos=Object.entries(data.trabajos||{})
-    .filter(([,t])=>t.estado!=='Cobrado')
-    .sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
-  sel.innerHTML='<option value="">— Evento sin trabajo vinculado —</option>'
-    +trabajos.map(([id,t])=>
-      `<option value="${id}">${t.cliente} · ${t.tipo} · ${t.estado}</option>`
-    ).join('');
-  if(actual) sel.value=actual;
+window.selChip = function(btn,grupo,val){
+  document.querySelectorAll('#chips-'+grupo+' .tipo-chip').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  if(grupo==='estado-n'){ estadoNuevo=val; toggleSenaField('n',val); }
+
+  if(grupo==='estado-e'){ estadoEdit=val; toggleSenaField('e',val); }
+
+};
+
+function toggleSenaField(pfx,val){
+  document.getElementById(pfx+'-sena-field').style.display = val==='Senado'?'block':'none';
+  if(val==='Senado') calcSena(pfx);
 }
 
-window.vincularTrabajo = function(trabajoId){
-  if(!trabajoId){ return; }
-  const t=data.trabajos[trabajoId];
-  if(!t) return;
-  document.getElementById('e-cliente').value=t.cliente||'';
-  document.getElementById('e-tel').value=t.tel||'';
-  document.getElementById('e-dir').value=t.dir||'';
-  if(t.desc) document.getElementById('e-desc').value=t.desc;
+window.calcSena = function(pfx){
+  const monto = parseFloat(document.getElementById(pfx+'-monto').value)||0;
+  const sena  = parseFloat(document.getElementById(pfx+'-sena').value)||0;
+  const el    = document.getElementById(pfx+'-sena-pct');
+  el.textContent = (monto>0&&sena>0) ? Math.round((sena/monto)*100)+'% del total' : '';
 };
 
-window.toggleAgendar = function(){
-  const chk=document.getElementById('w-agendar');
-  const fields=document.getElementById('w-agendar-fields');
-  fields.style.display=chk.checked?'block':'none';
-  if(chk.checked){
-    document.getElementById('w-ag-fecha').value=hoy();
-  }
-};
-
-window.toggleCampoSena = function(prefijo){
-  const esW=prefijo==='w';
-  const select=document.getElementById(esW?'w-estado':'m-t-estado');
-  const field=document.getElementById(esW?'w-sena-field':'m-sena-field');
-  field.style.display=select.value==='Seña cobrada'?'block':'none';
-  if(select.value==='Seña cobrada') calcPctSena(prefijo);
-};
-
-window.calcPctSena = function(prefijo){
-  const esW=prefijo==='w';
-  const monto=parseFloat(document.getElementById(esW?'w-monto':'m-t-monto').value)||0;
-  const sena=parseFloat(document.getElementById(esW?'w-sena':'m-t-sena').value)||0;
-  const pctEl=document.getElementById(esW?'w-sena-pct':'m-sena-pct');
-  if(monto>0&&sena>0) pctEl.textContent=Math.round((sena/monto)*100)+'% del total';
-  else pctEl.textContent='';
-};
-
-// ── AGENDA ───────────────────────────────────────────────
+// ── DIAS NAV ─────────────────────────────────────────────
 function getDias(){
   const base=new Date(); base.setHours(12,0,0,0);
   const dias=[];
-  for(let i=-3;i<=14;i++){ // 3 atrás + hoy + 14 adelante = 18 días
-    const d=new Date(base); d.setDate(base.getDate()+i);
-    dias.push(d.toISOString().split('T')[0]);
-  }
+  for(let i=-3;i<=14;i++){ const d=new Date(base); d.setDate(base.getDate()+i); dias.push(d.toISOString().split('T')[0]); }
   return dias;
 }
 
@@ -689,13 +545,13 @@ function buildDiasNav(){
   nav.innerHTML=dias.map(f=>{
     const d=new Date(f+'T12:00:00');
     const esHoy=f===todayStr, esSel=f===diaActivo;
-    const tieneEvt=Object.values(data.eventos||{}).some(e=>e.fecha===f);
+    const tieneTrab=Object.values(data.trabajos||{}).some(t=>t.fecha===f);
     const cls=esSel?'dia-pill sel':esHoy?'dia-pill hoy':'dia-pill';
-    return `<button class="${cls}" onclick="setDia('${f}')">
-      ${tieneEvt&&!esSel?'<span class="dia-badge"></span>':''}
-      <span class="dia-pill-d">${DIAS_C[d.getDay()]}</span>
-      <span class="dia-pill-n">${d.getDate()}</span>
-    </button>`;
+    return '<button class="'+cls+'" onclick="setDia(\''+f+'\')">'+
+      (tieneTrab&&!esSel?'<span class="dia-badge"></span>':'')+
+      '<span class="dia-pill-d">'+DIAS_C[d.getDay()]+'</span>'+
+      '<span class="dia-pill-n">'+d.getDate()+'</span>'+
+    '</button>';
   }).join('');
   setTimeout(()=>{
     const btns=nav.querySelectorAll('.dia-pill');
@@ -705,426 +561,338 @@ function buildDiasNav(){
 }
 
 window.setDia = function(f){
-  diaActivo=f; buildDiasNav(); renderEventos();
+  diaActivo=f; buildDiasNav(); renderAgenda();
   const d=new Date(f+'T12:00:00'), todayStr=hoy();
   const el=document.getElementById('titulo-dia');
-  el.textContent=(f===todayStr)?'Hoy — '+DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()]
+  el.textContent=(f===todayStr)
+    ?'Hoy - '+DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()]
     :DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()];
 };
 
-const TIPO_INFO={
-  obra:{lbl:'En obra',cls:'tag-obra',dot:'var(--madera)'},
-  llam:{lbl:'Llamar',cls:'tag-llam',dot:'var(--azul)'},
-  cobr:{lbl:'Cobrar',cls:'tag-cobr',dot:'var(--verde)'},
-  pres:{lbl:'Presupuesto',cls:'tag-pres',dot:'var(--amber)'}
-};
-
-function renderEventos(){
-  const el=document.getElementById('lista-eventos');
-  const evts=Object.entries(data.eventos||{})
-    .filter(([,e])=>e.fecha===diaActivo)
+// ── RENDER AGENDA ────────────────────────────────────────
+function renderAgenda(){
+  buildDiasNav();
+  const el=document.getElementById('lista-agenda');
+  const items=Object.entries(data.trabajos||{})
+    .filter(([,t])=>t.fecha===diaActivo)
     .sort(([,a],[,b])=>{
       if(!a.hora&&!b.hora) return 0;
       if(!a.hora) return 1; if(!b.hora) return -1;
       return a.hora.localeCompare(b.hora);
     });
-  if(!evts.length){ el.innerHTML='<div class="empty">Sin eventos — agregá uno abajo</div>'; return; }
-  el.innerHTML=evts.map(([id,e])=>{
-    const t=TIPO_INFO[e.tipo]||{lbl:e.tipo,cls:'tag-obra',dot:'var(--gris)'};
-    return `<div class="evento-item">
-      <div class="evt-left">
-        ${e.hora?`<span class="evt-hora">${e.hora}</span>`:'<span style="font-size:10px;color:var(--gris)">—</span>'}
-        <span class="evt-dot" style="background:${t.dot}"></span>
-      </div>
-      <div class="evt-body">
-        <div class="evt-cliente">${e.cliente||'Sin nombre'}</div>
-        ${e.desc?`<div class="evt-desc">${e.desc}</div>`:''}
-        <div class="evt-tags">
-          <span class="evt-tag ${t.cls}">${t.lbl}</span>
-          ${e.tel?`<span class="evt-tag tag-tel" onclick="window.open('tel:${e.tel}')">${e.tel}</span>`:''}
-          ${e.dir?`<span class="evt-tag tag-dir">${e.dir}</span>`:''}
-        </div>
-        ${e.trabajoId && data.trabajos[e.trabajoId] ? (()=>{
-          const tr=data.trabajos[e.trabajoId];
-          return `<div class="evt-vinculo">
-            <span class="evt-vinculo-lbl">📋 ${tr.tipo}</span>
-            <span class="evt-vinculo-est">${tr.estado}</span>
-            ${tr.monto?`<span class="evt-vinculo-monto">${pesos(tr.monto)}</span>`:''}
-          </div>`;
-        })():''}
-        <div class="evt-actions" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <button class="btn-check ${e.done?'done':''}" onclick="toggleEvento('${id}')">${e.done?'✓ Listo':'Marcar listo'}</button>
-          <button onclick="abrirGCal('${id}')" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:7px;border:1.5px solid var(--azul);color:var(--azul);background:none;cursor:pointer;font-family:'DM Sans',sans-serif">📅 Agendar</button>
-        </div>
-      </div>
-      <button class="del-btn" onclick="editarEvento('${id}')" style="color:var(--madera-mid);font-size:16px;margin-right:2px">✏️</button>
-      <button class="del-btn" onclick="delEvento('${id}')">×</button>
-    </div>`;
+  if(!items.length){ el.innerHTML='<div class="empty">Sin trabajos para este dia</div>'; return; }
+  el.innerHTML=items.map(([id,t])=>{
+    const est=EST[t.estado]||EST['Contacto'];
+    return '<div class="trabajo-card" id="card-'+id+'">'+
+      '<div class="tc-left">'+
+        (t.hora?'<span class="tc-hora">'+t.hora+'</span>':'<span style="font-size:10px;color:var(--gris)">-</span>')+
+        '<span class="tc-dot" style="background:'+est.dot+'"></span>'+
+      '</div>'+
+      '<div class="tc-body">'+
+        '<div class="tc-cliente">'+( t.cliente||'Sin nombre')+'</div>'+
+        '<div class="tc-tags">'+
+          '<span class="tc-tag" style="background:'+est.bg+';color:'+est.dot+'">'+est.label+'</span>'+
+          (t.tipo?'<span class="tc-tag tag-dir">'+t.tipo+'</span>':'')+
+          (t.monto?'<span class="tc-tag tag-monto">'+pesos(t.monto)+'</span>':'')+
+        '</div>'+
+        '<div class="tc-actions">'+
+          '<button class="btn-expand" onclick="toggleDetalle(\''+id+'\')">&#x25BE; Ver mas</button>'+
+          '<button class="btn-gcal" onclick="abrirGCal(\''+id+'\')">&#x1F4C5; Agendar</button>'+
+        '</div>'+
+        '<div class="tc-detalle" id="det-'+id+'">'+
+          (t.desc?'<div class="det-row"><span class="det-lbl">Descripcion</span><span class="det-val">'+t.desc+'</span></div>':'')+
+          (t.tel?'<div class="det-row"><span class="det-lbl">Telefono</span><span class="det-val" onclick="window.open(\'tel:'+t.tel+'\')">'+t.tel+'</span></div>':'')+
+          (t.dir?'<div class="det-row"><span class="det-lbl">Direccion</span><span class="det-val">'+t.dir+'</span></div>':'')+
+          (t.monto?'<div class="det-row"><span class="det-lbl">Monto</span><span class="det-val">'+pesos(t.monto)+'</span></div>':'')+
+          (t.estado==="Senado"&&t.montoSena?'<div class="det-row"><span class="det-lbl">Sena cobrada</span><span class="det-val">'+pesos(t.montoSena)+'</span></div>':'')+
+        '</div>'+
+      '</div>'+
+      '<button class="del-btn" onclick="editarTrabajo(\''+id+'\')" style="color:var(--madera-mid);font-size:16px;margin-right:2px">&#x270F;&#xFE0F;</button>'+
+      '<button class="del-btn" onclick="delTrabajo(\''+id+'\')">&#xd7;</button>'+
+    '</div>';
   }).join('');
 }
 
-window.addEvento = async function(){
-  const cliente=document.getElementById('e-cliente').value.trim();
-  if(!cliente){ snack('Escribí el nombre'); return; }
-  const trabajoId=document.getElementById('e-trabajo').value||'';
-  const ev={
-    fecha:diaActivo, tipo:tipoEvento, cliente,
-    tel:document.getElementById('e-tel').value.trim(),
-    dir:document.getElementById('e-dir').value.trim(),
-    desc:document.getElementById('e-desc').value.trim(),
-    hora:document.getElementById('e-hora').value||'',
-    trabajoId,
-    done:false, ts:Date.now()
-  };
-  const id=uid();
-  if(fbOk){ await fbSet('eventos/'+id,ev); }
-  else { data.eventos[id]=ev; guardarLocal(); buildDiasNav(); renderEventos(); }
-  ['e-cliente','e-tel','e-dir','e-desc','e-hora'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('e-trabajo').value='';
-  snack('✓ Evento agregado');
-};
-window.toggleEvento = async function(id){
-  const e=data.eventos[id]; if(!e) return;
-  if(fbOk){ await fbUpdate('eventos/'+id,{done:!e.done}); }
-  else { data.eventos[id].done=!e.done; guardarLocal(); renderEventos(); }
-};
-window.delEvento = async function(id){
-  if(fbOk){ await fbRemove('eventos/'+id); }
-  else { delete data.eventos[id]; guardarLocal(); buildDiasNav(); renderEventos(); }
-  snack('Evento eliminado');
-};
-
-// ── TRABAJOS ──────────────────────────────────────────────
-const EST_INFO={
-  'Visita pendiente':{dot:'dot-amber'},
-  'Presup. enviado':{dot:'dot-azul'},
-  'Seña cobrada':{dot:'dot-violeta'},
-  'En obra':{dot:'dot-verde'},
-  'Terminado':{dot:'dot-amber'},
-  'Cobrado':{dot:'dot-gris'}
-};
-
-function renderTrabajos(){
-  const el=document.getElementById('lista-trabajos');
-  const activos=Object.entries(data.trabajos||{})
-    .filter(([,t])=>t.estado!=='Cobrado')
-    .sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
-  if(!activos.length){ el.innerHTML='<div class="empty">Agregá un trabajo activo</div>'; return; }
-  el.innerHTML=activos.map(([id,t])=>{
-    const est=EST_INFO[t.estado]||{dot:'dot-gris'};
-    return `<div class="trabajo-item">
-      <div class="trb-top">
-        <div class="est-dot ${est.dot}"></div>
-        <div class="trb-info">
-          <div class="trb-cliente">${t.cliente}</div>
-          <div class="trb-meta">${t.tipo}${t.desc?' · '+t.desc:''}</div>
-          ${(t.tel||t.dir)?`<div class="trb-contact">
-            ${t.tel?`<span class="cc cc-tel" onclick="window.open('tel:${t.tel}')">${t.tel}</span>`:''}
-            ${t.dir?`<span class="cc cc-dir">${t.dir}</span>`:''}
-          </div>`:''}
-          ${t.estado==='Seña cobrada'?`<span class="sena-badge">Seña: ${pesos(t.montoSena||0)}</span>`:''}
-        </div>
-        ${t.monto?`<div class="monto-chip">${pesos(t.monto)}</div>`:''}
-        <button class="del-btn" onclick="editarTrabajo('${id}')" title="Editar" style="color:var(--madera-mid);font-size:16px">✏️</button>
-        <button class="del-btn" onclick="delTrabajo('${id}')">×</button>
-      </div>
-      <select class="estado-select" onchange="cambiarEstado('${id}',this.value)">
-        <option value="Visita pendiente"  ${t.estado==='Visita pendiente'?'selected':''}>Visita pendiente</option>
-        <option value="Presup. enviado"   ${t.estado==='Presup. enviado'?'selected':''}>Presup. enviado</option>
-        <option value="Seña cobrada"      ${t.estado==='Seña cobrada'?'selected':''}>Seña cobrada (50%)</option>
-        <option value="En obra"           ${t.estado==='En obra'?'selected':''}>En obra</option>
-        <option value="Terminado"         ${t.estado==='Terminado'?'selected':''}>Terminado</option>
-        <option value="Cobrado"           ${t.estado==='Cobrado'?'selected':''}>Cobrado</option>
-      </select>
-    </div>`;
-  }).join('');
-}
-
+// ── AGREGAR TRABAJO ──────────────────────────────────────
 window.addTrabajo = async function(){
-  const cliente=document.getElementById('w-cliente').value.trim();
-  if(!cliente){ snack('Escribí el nombre del cliente'); return; }
-  const btn=document.getElementById('btn-add-trabajo');
+  const cliente=document.getElementById('n-cliente').value.trim();
+  if(!cliente){ snack('Escribi el nombre del cliente'); return; }
+  const btn=document.getElementById('btn-nuevo');
   btn.textContent='Guardando...'; btn.classList.add('loading');
-  const tId=uid();
+  const estadoVal=estadoNuevo;
+  const id=uid();
   const t={
-    id:tId, cliente,
-    tel:document.getElementById('w-tel').value.trim(),
-    dir:document.getElementById('w-dir').value.trim(),
-    tipo:tipoTrabajo,
-    desc:document.getElementById('w-desc').value.trim(),
-    monto:parseFloat(document.getElementById('w-monto').value)||0,
-    materiales:parseFloat(document.getElementById('w-mat').value)||0,
-    estado:document.getElementById('w-estado').value,
-    montoSena:0,
-    fecha:hoy(), fechaCobro:'', fechaSena:'', ts:Date.now()
+    id, cliente,
+    tel:  document.getElementById('n-tel').value.trim(),
+    dir:  document.getElementById('n-dir').value.trim(),
+    tipo: document.getElementById('n-tipo').value.trim()||'General',
+    estado: estadoVal,
+    desc: document.getElementById('n-desc').value.trim(),
+    monto:     parseFloat(document.getElementById('n-monto').value)||0,
+    materiales:0,
+    montoSena: estadoVal==='Senado'?(parseFloat(document.getElementById('n-sena').value)||0):0,
+    fecha: diaActivo,
+    hora:  document.getElementById('n-hora').value||'',
+    fechaCobro:  estadoVal==='Cobrado'?hoy():'',
+    fechaSena:   estadoVal==='Senado'?hoy():'',
+    ts: Date.now()
   };
-  if(t.estado==='Seña cobrada'){
-    t.fechaSena=hoy();
-    t.montoSena=parseFloat(document.getElementById('w-sena').value)||0;
-  }
-
-  if(fbOk){ await fbSet('trabajos/'+tId,t); }
-  else { data.trabajos[tId]=t; guardarLocal(); renderTrabajos(); renderResumen(); }
-
-  // ── Crear evento en agenda si está marcado ──
-  const agendar=document.getElementById('w-agendar').checked;
-  if(agendar){
-    const fechaEv=document.getElementById('w-ag-fecha').value||hoy();
-    const horaEv=document.getElementById('w-ag-hora').value||'';
-    const ev={
-      fecha:fechaEv, tipo:'obra', cliente:t.cliente,
-      tel:t.tel, dir:t.dir, desc:t.desc,
-      hora:horaEv, trabajoId:tId, done:false, ts:Date.now()
-    };
-    const evId=uid();
-    if(fbOk){ await fbSet('eventos/'+evId,ev); }
-    else { data.eventos[evId]=ev; guardarLocal(); buildDiasNav(); }
-    snack('✓ Trabajo registrado y agendado para '+(fechaEv===hoy()?'hoy':fechaEv));
-  } else {
-    snack('✓ Trabajo registrado');
-  }
-
-  ['w-cliente','w-tel','w-dir','w-desc','w-monto','w-mat','w-sena'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('w-estado').value='Visita pendiente';
-  document.getElementById('w-sena-field').style.display='none';
-  document.getElementById('w-sena-pct').textContent='';
-  document.getElementById('w-agendar').checked=false;
-  document.getElementById('w-agendar-fields').style.display='none';
-  btn.textContent='+ Registrar trabajo'; btn.classList.remove('loading');
-  populateTrabajoSelect();
+  if(fbOk){ await fbSet('trabajos/'+id,t); }
+  else { data.trabajos[id]=t; guardarLocal(); renderAgenda(); renderTrabajos(); renderResumen(); }
+  ['n-cliente','n-tel','n-dir','n-desc','n-monto','n-sena','n-hora','n-tipo'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('n-otro-wrap').style.display='none';
+  document.getElementById('n-sena-pct').textContent='';
+  document.getElementById('n-sena-field').style.display='none';
+  btn.textContent='+ Agregar trabajo'; btn.classList.remove('loading');
+  snack('Trabajo agregado');
 };
 
+// ── RENDER TRABAJOS ──────────────────────────────────────
+function renderTrabajos(){
+  const todos=Object.entries(data.trabajos||{});
+  const activos=todos.filter(([,t])=>t.estado!=='Cobrado').sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
+  const cobrados=todos.filter(([,t])=>t.estado==='Cobrado').sort(([,a],[,b])=>(b.ts||0)-(a.ts||0));
+
+  const el=document.getElementById('lista-trabajos');
+  if(!activos.length){ el.innerHTML='<div class="empty">Sin trabajos activos</div>'; }
+  else el.innerHTML=activos.map(([id,t])=>buildTrabajoItem(id,t)).join('');
+
+  const elC=document.getElementById('lista-cobrados');
+  document.getElementById('tit-cobrados').textContent='Cobrados ('+cobrados.length+')';
+  if(!cobrados.length){ elC.innerHTML='<div class="empty">Sin cobrados</div>'; }
+  else elC.innerHTML=cobrados.map(([id,t])=>buildTrabajoItem(id,t)).join('');
+}
+
+function buildTrabajoItem(id,t){
+  const est=EST[t.estado]||EST['Contacto'];
+  return '<div class="trabajo-item">'+
+    '<div class="trb-top">'+
+      '<div class="est-dot" style="background:'+est.dot+'"></div>'+
+      '<div class="trb-info">'+
+        '<div class="trb-cliente">'+t.cliente+'</div>'+
+        '<div class="trb-meta">'+t.tipo+(t.desc?' · '+t.desc:'')+(t.fecha?' · '+t.fecha:'')+'</div>'+
+        ((t.tel||t.dir)?
+          '<div class="trb-contact">'+
+            (t.tel?'<span class="cc cc-tel" onclick="window.open(\'tel:'+t.tel+'\')">'+t.tel+'</span>':'')+
+            (t.dir?'<span class="cc cc-dir">'+t.dir+'</span>':'')+
+          '</div>':'')+
+        (t.estado==='Senado'?'<span class="sena-badge">Sena: '+pesos(t.montoSena||0)+'</span>':'')+
+      '</div>'+
+      (t.monto?'<div class="monto-chip">'+pesos(t.monto)+'</div>':'')+
+      '<button class="del-btn" onclick="editarTrabajo(\''+id+'\')" style="color:var(--madera-mid);font-size:16px">&#x270F;&#xFE0F;</button>'+
+    '</div>'+
+    '<select class="estado-select" onchange="cambiarEstado(\''+id+'\',this.value)">'+
+      ['Contacto','Presupuesto','Senado','En proceso','Terminado','Cobrado'].map(s=>
+        '<option value="'+s+'" '+(t.estado===s?'selected':'')+'>'+s+'</option>'
+      ).join('')+
+    '</select>'+
+  '</div>';
+}
+
+// ── CAMBIAR ESTADO RAPIDO ────────────────────────────────
 window.cambiarEstado = async function(id,val){
   const upd={estado:val};
   if(val==='Cobrado') upd.fechaCobro=hoy();
-  if(val==='Seña cobrada'){
+  if(val==='Senado'){
     upd.fechaSena=hoy();
     const t=data.trabajos[id]||{};
     const monto=t.monto||0;
-    const sugerido=monto>0?Math.round(monto/2):0;
-    const input=prompt(`Monto de la seña recibida${monto>0?' (total: $'+monto.toLocaleString('es-AR')+')':''}:`, sugerido||'');
-    if(input===null) return; // canceló
-    upd.montoSena=parseFloat(input)||sugerido;
+    const sug=monto>0?Math.round(monto/2):0;
+    const inp=prompt('Monto de la sena recibida'+(monto>0?' (total: $'+monto.toLocaleString('es-AR')+')':'')+':', sug||'');
+    if(inp===null) return;
+    upd.montoSena=parseFloat(inp)||sug;
   }
   if(fbOk){ await fbUpdate('trabajos/'+id,upd); }
-  else {
-    Object.assign(data.trabajos[id],upd);
-    guardarLocal(); renderTrabajos(); renderResumen();
-  }
-  snack('✓ Estado actualizado');
+  else { Object.assign(data.trabajos[id],upd); guardarLocal(); renderTrabajos(); renderResumen(); }
+  snack('Estado actualizado');
 };
 
 window.delTrabajo = async function(id){
+  cerrarModal('edit');
   if(fbOk){ await fbRemove('trabajos/'+id); }
-  else { delete data.trabajos[id]; guardarLocal(); renderTrabajos(); renderResumen(); }
+  else { delete data.trabajos[id]; guardarLocal(); renderAgenda(); renderTrabajos(); renderResumen(); }
   snack('Trabajo eliminado');
 };
 
-// ── MODALES DE EDICIÓN ────────────────────────────────────
-let tipoTrabajoModal = 'Carpintería', tipoEventoModal = 'obra';
-
-function abrirModal(nombre){
-  document.getElementById('modal-'+nombre).classList.add('open');
-  document.body.style.overflow='hidden';
-}
-window.cerrarModal = function(nombre){
-  document.getElementById('modal-'+nombre).classList.remove('open');
-  document.body.style.overflow='';
-};
-
+// ── EDITAR ───────────────────────────────────────────────
 window.editarTrabajo = function(id){
   const t=data.trabajos[id]; if(!t) return;
-  tipoTrabajoModal=t.tipo||'Carpintería';
-  // Chips
-  document.querySelectorAll('#chips-etipo-m .tipo-chip').forEach(b=>{
-    b.classList.toggle('sel', b.textContent===tipoTrabajoModal);
-  });
-  document.getElementById('m-t-cliente').value=t.cliente||'';
-  document.getElementById('m-t-tel').value=t.tel||'';
-  document.getElementById('m-t-dir').value=t.dir||'';
-  document.getElementById('m-t-monto').value=t.monto||'';
-  document.getElementById('m-t-mat').value=t.materiales||'';
-  document.getElementById('m-t-desc').value=t.desc||'';
-  document.getElementById('m-t-estado').value=t.estado||'Visita pendiente';
-  // Cargar seña si aplica
-  const senaField=document.getElementById('m-sena-field');
-  if(t.estado==='Seña cobrada'){
-    senaField.style.display='block';
-    document.getElementById('m-t-sena').value=t.montoSena||'';
-    calcPctSena('m');
+  estadoEdit=t.estado||'Contacto';
+  tipoEdit=t.tipo||'Carpinteria';
+  document.querySelectorAll('#chips-estado-e .tipo-chip').forEach(b=>b.classList.toggle('sel',b.textContent===estadoEdit));
+  document.getElementById('e-tipo').value=t.tipo||'';
+  document.getElementById('e-cliente').value=t.cliente||'';
+  document.getElementById('e-fecha').value=t.fecha||hoy();
+  document.getElementById('e-hora').value=t.hora||'';
+  document.getElementById('e-tel').value=t.tel||'';
+  document.getElementById('e-dir').value=t.dir||'';
+  document.getElementById('e-monto').value=t.monto||'';
+  
+  document.getElementById('e-desc').value=t.desc||'';
+  document.getElementById('e-id').value=id;
+  document.getElementById('e-fecha-orig').value=t.fecha||'';
+  const senaField=document.getElementById('e-sena-field');
+  if(t.estado==='Senado'){ senaField.style.display='block'; document.getElementById('e-sena').value=t.montoSena||''; calcSena('e'); }
+  else { senaField.style.display='none'; document.getElementById('e-sena').value=''; }
+  abrirModal('edit');
+};
+
+window.guardarEdicion = async function(){
+  const id=document.getElementById('e-id').value; if(!id) return;
+  const fechaOrig=document.getElementById('e-fecha-orig').value;
+  const fechaNueva=document.getElementById('e-fecha').value||hoy();
+  const estadoViejo=(data.trabajos[id]||{}).estado;
+  const upd={
+    tipo:document.getElementById('e-tipo').value.trim()||'General',
+    estado:estadoEdit,
+    cliente:document.getElementById('e-cliente').value.trim(),
+    fecha:fechaNueva,
+    hora:document.getElementById('e-hora').value||'',
+    tel:document.getElementById('e-tel').value.trim(),
+    dir:document.getElementById('e-dir').value.trim(),
+    monto:parseFloat(document.getElementById('e-monto').value)||0,
+    materiales:0,
+    montoSena:estadoEdit==='Senado'?(parseFloat(document.getElementById('e-sena').value)||0):0,
+    desc:document.getElementById('e-desc').value.trim(),
+  };
+  if(estadoEdit==='Cobrado'&&estadoViejo!=='Cobrado') upd.fechaCobro=hoy();
+  if(estadoEdit==='Senado'&&estadoViejo!=='Senado') upd.fechaSena=hoy();
+
+  // Si cambio de fecha -> mostrar modal duplicar/mover
+  if(fechaNueva && fechaOrig && fechaNueva!==fechaOrig){
+    pendingEdit={id,upd,fechaNueva,fechaOrig};
+    cerrarModal('edit');
+    abrirModal('dup');
+    return;
+  }
+  await doGuardar(id,upd);
+  cerrarModal('edit');
+  snack('Trabajo actualizado');
+};
+
+window.confirmarFecha = async function(accion){
+  if(!pendingEdit) return;
+  const {id,upd,fechaNueva} = pendingEdit;
+  cerrarModal('dup');
+  if(accion==='mover'){
+    await doGuardar(id,upd);
+    setDia(fechaNueva);
+    snack('Fecha movida a '+fechaNueva);
   } else {
-    senaField.style.display='none';
-    document.getElementById('m-t-sena').value='';
+    // Duplicar: mantener original, crear copia con nueva fecha
+    const original=data.trabajos[id]||{};
+    const newId=uid();
+    const copia=Object.assign({},original,upd,{id:newId,ts:Date.now(),fecha:fechaNueva});
+    if(fbOk){ await fbSet('trabajos/'+newId,copia); }
+    else { data.trabajos[newId]=copia; guardarLocal(); renderAgenda(); renderTrabajos(); renderResumen(); }
+    setDia(fechaNueva);
+    snack('Trabajo duplicado en '+fechaNueva);
   }
-  document.getElementById('m-t-id').value=id;
-  abrirModal('trabajo');
+  pendingEdit=null;
 };
 
-window.guardarTrabajo = async function(){
-  const id=document.getElementById('m-t-id').value; if(!id) return;
-  const estadoNuevo=document.getElementById('m-t-estado').value;
-  const estadoViejo=data.trabajos[id]?.estado;
-  const upd={
-    tipo:tipoTrabajoModal,
-    cliente:document.getElementById('m-t-cliente').value.trim(),
-    tel:document.getElementById('m-t-tel').value.trim(),
-    dir:document.getElementById('m-t-dir').value.trim(),
-    monto:parseFloat(document.getElementById('m-t-monto').value)||0,
-    materiales:parseFloat(document.getElementById('m-t-mat').value)||0,
-    desc:document.getElementById('m-t-desc').value.trim(),
-    estado:estadoNuevo,
-    montoSena:estadoNuevo==='Seña cobrada'?(parseFloat(document.getElementById('m-t-sena').value)||0):0
-  };
-  if(estadoNuevo==='Cobrado' && estadoViejo!=='Cobrado') upd.fechaCobro=hoy();
-  if(estadoNuevo==='Seña cobrada' && estadoViejo!=='Seña cobrada') upd.fechaSena=hoy();
-  if(fbOk){ await fbUpdate('trabajos/'+id, upd); }
-  else { Object.assign(data.trabajos[id],upd); guardarLocal(); renderTrabajos(); renderResumen(); populateTrabajoSelect(); }
-  cerrarModal('trabajo');
-  snack('✓ Trabajo actualizado');
-};
-
-window.editarEvento = function(id){
-  const e=data.eventos[id]; if(!e) return;
-  tipoEventoModal=e.tipo||'obra';
-  document.querySelectorAll('#chips-eevt-m .tipo-chip').forEach(b=>{
-    const map={'obra':'En obra','llam':'Llamar','cobr':'Cobrar','pres':'Presupuesto'};
-    b.classList.toggle('sel', map[tipoEventoModal]===b.textContent);
-  });
-  document.getElementById('m-e-cliente').value=e.cliente||'';
-  document.getElementById('m-e-hora').value=e.hora||'';
-  document.getElementById('m-e-tel').value=e.tel||'';
-  document.getElementById('m-e-fecha').value=e.fecha||hoy();
-  document.getElementById('m-e-dir').value=e.dir||'';
-  document.getElementById('m-e-desc').value=e.desc||'';
-  document.getElementById('m-e-id').value=id;
-  abrirModal('evento');
-};
-
-window.guardarEvento = async function(){
-  const id=document.getElementById('m-e-id').value; if(!id) return;
-  const fechaNueva=document.getElementById('m-e-fecha').value||hoy();
-  const upd={
-    tipo:tipoEventoModal,
-    cliente:document.getElementById('m-e-cliente').value.trim(),
-    hora:document.getElementById('m-e-hora').value||'',
-    tel:document.getElementById('m-e-tel').value.trim(),
-    dir:document.getElementById('m-e-dir').value.trim(),
-    desc:document.getElementById('m-e-desc').value.trim(),
-    fecha:fechaNueva
-  };
-  if(fbOk){ await fbUpdate('eventos/'+id, upd); }
-  else {
-    Object.assign(data.eventos[id],upd);
-    guardarLocal();
-    if(fechaNueva!==diaActivo){ buildDiasNav(); renderEventos(); }
-    else { buildDiasNav(); renderEventos(); }
-  }
-  cerrarModal('evento');
-  // Si cambió la fecha, ir al día nuevo
-  if(fechaNueva && fechaNueva!==diaActivo) setDia(fechaNueva);
-  snack('✓ Evento actualizado');
-};
-
-// selChip también maneja los modales
-const _selChipOrig = window.selChip;
-window.selChip = function(btn,grupo,val){
-  document.querySelectorAll('#chips-'+grupo+' .tipo-chip').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
-  if(grupo==='etipo') tipoEvento=val;
-  if(grupo==='ttipo') tipoTrabajo=val;
-  if(grupo==='etipo-m') tipoTrabajoModal=val;
-  if(grupo==='eevt-m') tipoEventoModal=val;
-};
+async function doGuardar(id,upd){
+  if(fbOk){ await fbUpdate('trabajos/'+id,upd); }
+  else { Object.assign(data.trabajos[id],upd); guardarLocal(); renderAgenda(); renderTrabajos(); renderResumen(); }
+}
 
 // ── RESUMEN ───────────────────────────────────────────────
-function semanaRango(){
-  const d=new Date(); d.setHours(12,0,0,0);
-  const lu=new Date(d); lu.setDate(d.getDate()-((d.getDay()+6)%7));
-  const do2=new Date(lu); do2.setDate(lu.getDate()+6);
-  return {desde:lu.toISOString().split('T')[0],hasta:do2.toISOString().split('T')[0]};
-}
-function mesRango(){
-  const d=new Date();
-  const desde=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
-  const ul=new Date(d.getFullYear(),d.getMonth()+1,0);
-  return {desde,hasta:ul.toISOString().split('T')[0]};
+window.setFiltro = function(f){
+  filtroResumen=f;
+  ['dia','semana','mes','anio'].forEach(x=>document.getElementById('fc-'+x).classList.remove('sel'));
+  document.getElementById('fc-'+f).classList.add('sel');
+  renderResumen();
+};
+
+function getRango(filtro){
+  const now=new Date(); now.setHours(12,0,0,0);
+  const todayStr=hoy();
+  if(filtro==='dia') return {desde:todayStr, hasta:todayStr, label:'de hoy'};
+  if(filtro==='semana'){
+    const lu=new Date(now); lu.setDate(now.getDate()-((now.getDay()+6)%7));
+    const do2=new Date(lu); do2.setDate(lu.getDate()+6);
+    return {desde:lu.toISOString().split('T')[0], hasta:do2.toISOString().split('T')[0], label:'esta semana'};
+  }
+  if(filtro==='mes'){
+    const desde=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-01';
+    const ul=new Date(now.getFullYear(),now.getMonth()+1,0);
+    return {desde, hasta:ul.toISOString().split('T')[0], label:'este mes'};
+  }
+  if(filtro==='anio'){
+    const y=now.getFullYear();
+    return {desde:y+'-01-01', hasta:y+'-12-31', label:'este ano'};
+  }
+  return null;
 }
 function inRango(f,r){ return f&&f>=r.desde&&f<=r.hasta; }
 
 function renderResumen(){
-  const mr=mesRango(), sr=semanaRango();
+  const r=getRango(filtroResumen);
   const ts=Object.values(data.trabajos||{});
 
-  const senasActivas=ts.filter(t=>t.estado==='Seña cobrada');
+  const cobrPer=ts.filter(t=>t.estado==='Cobrado'&&inRango(t.fechaCobro||t.fecha,r));
+  const senasPer=ts.filter(t=>t.estado==='Senado'&&inRango(t.fechaSena||t.fecha,r));
   const terminados=ts.filter(t=>t.estado==='Terminado');
+  const senasActivas=ts.filter(t=>t.estado==='Senado');
 
-  // Señas cobradas = monto real recibido
-  const totalSenas=senasActivas.reduce((a,t)=>a+(t.montoSena||0),0);
+  const totalCobr=cobrPer.reduce((a,t)=>a+(t.monto||0),0);
+  const totalSenas=senasPer.reduce((a,t)=>a+(t.montoSena||0),0);
+  const matCobr=cobrPer.reduce((a,t)=>a+(t.materiales||0),0);
+  const netoCobr=totalCobr+totalSenas-matCobr;
 
-  // Señas este mes / esta semana
-  const senasMes=ts.filter(t=>t.estado==='Seña cobrada'&&inRango(t.fechaSena,mr));
-  const senasSem=ts.filter(t=>t.estado==='Seña cobrada'&&inRango(t.fechaSena,sr));
-
-  // Cobrados este mes
-  const cobrMes=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,mr)||!t.fechaCobro));
-  const totalMes=
-    cobrMes.reduce((a,t)=>a+(t.monto||0),0)+
-    senasMes.reduce((a,t)=>a+(t.montoSena||0),0);
-
-  // Cobrados esta semana
-  const cobrSem=ts.filter(t=>t.estado==='Cobrado'&&(inRango(t.fechaCobro,sr)||!t.fechaCobro));
-  const totalSem=
-    cobrSem.reduce((a,t)=>a+(t.monto||0),0)+
-    senasSem.reduce((a,t)=>a+(t.montoSena||0),0);
-
-  // Por cobrar = terminados + restante de señas (monto total - seña ya cobrada)
   const porCobrar=
     terminados.reduce((a,t)=>a+(t.monto||0),0)+
     senasActivas.reduce((a,t)=>a+((t.monto||0)-(t.montoSena||0)),0);
 
-  // Neta mes y semana (descontando materiales de cobrados)
-  const matMes=cobrMes.reduce((a,t)=>a+(t.materiales||0),0);
-  const matSem=cobrSem.reduce((a,t)=>a+(t.materiales||0),0);
+  const labels={dia:'Hoy',semana:'Esta semana',mes:'Este mes',anio:'Este ano'};
+  const lbl=labels[filtroResumen]||'Periodo';
 
-  document.getElementById('r-mes').textContent=pesos(totalMes);
-  document.getElementById('r-mes-n').textContent=
-    cobrMes.length+' cobrado'+(cobrMes.length!==1?'s':'')+
-    (senasMes.length?' + '+senasMes.length+' seña'+(senasMes.length!==1?'s':''):'');
-  const elNetaMes=document.getElementById('r-mes-neta');
-  if(elNetaMes) elNetaMes.innerHTML=matMes>0?`Neto: ${pesos(totalMes-matMes)} <span>- ${pesos(matMes)} mat.</span>`:'';
+  document.getElementById('r-cobrado-lbl').textContent='Cobrado - '+lbl;
+  document.getElementById('r-cobrado').textContent=pesos(totalCobr);
+  document.getElementById('r-cobrado-n').textContent=cobrPer.length+' cobrado'+(cobrPer.length!==1?'s':'');
+  document.getElementById('r-cobrado-neta').textContent=matCobr>0?'Mat: -'+pesos(matCobr):'';
 
   document.getElementById('r-porcobr').textContent=pesos(porCobrar);
   document.getElementById('r-porcobr-n').textContent=
     terminados.length+' terminado'+(terminados.length!==1?'s':'')+
-    (senasActivas.length?' + '+senasActivas.length+' seña'+(senasActivas.length!==1?'s':''):'');
+    (senasActivas.length?' + '+senasActivas.length+' senado'+(senasActivas.length!==1?'s':''):'');
 
+  document.getElementById('r-senas-lbl').textContent='Senas - '+lbl;
   document.getElementById('r-senas').textContent=pesos(totalSenas);
+  document.getElementById('r-senas-n').textContent=senasPer.length+' sena'+(senasPer.length!==1?'s':'');
 
-  document.getElementById('r-semana').textContent=pesos(totalSem);
-  const sDesc=(cobrSem.length?cobrSem.length+' cobro'+(cobrSem.length!==1?'s':''):'')
-    +(senasSem.length?(cobrSem.length?' + ':'')+senasSem.length+' seña'+(senasSem.length!==1?'s':''):'')
-    ||'sin movimientos';
-  document.getElementById('r-semana-n').textContent=sDesc;
-  const elNetaSem=document.getElementById('r-semana-neta');
-  if(elNetaSem) elNetaSem.innerHTML=matSem>0?`Neto: ${pesos(totalSem-matSem)} <span>- ${pesos(matSem)} mat.</span>`:'';
+  document.getElementById('r-neto').textContent=pesos(netoCobr);
+  document.getElementById('r-neto-n').textContent='cobrado + senas - mat';
+
+  const titulos={dia:'Hoy',semana:'Esta semana',mes:'Este mes',anio:'Este ano'};
+  document.getElementById('r-hist-titulo').textContent='Historial - '+titulos[filtroResumen];
 
   const hist=document.getElementById('r-historial');
-  const todos=[...ts].sort((a,b)=>(b.ts||0)-(a.ts||0));
-  if(!todos.length){ hist.innerHTML='<div class="empty">Sin trabajos registrados</div>'; return; }
-  const ECls={'Cobrado':'e-cobrado','Terminado':'e-terminado','En obra':'e-obra','Seña cobrada':'e-sena'};
-  hist.innerHTML=todos.map(t=>`
-    <div class="hist-item">
-      <div>
-        <div class="hist-cliente">${t.cliente}</div>
-        <div class="hist-meta">${t.tipo}${t.desc?' · '+t.desc:''} · ${t.fecha||''}</div>
-        ${t.tel?`<div class="hist-meta" style="color:var(--azul)">${t.tel}</div>`:''}
-      </div>
-      <div style="text-align:right;flex-shrink:0;margin-left:8px">
-        ${t.monto?`<div class="hist-monto">${pesos(t.monto)}</div>`:''}
-        <span class="hist-est ${ECls[t.estado]||'e-otro'}">${t.estado}</span>
-      </div>
-    </div>`).join('');
+  const filtrados=[...ts]
+    .filter(t=>{
+      const f=t.fechaCobro||t.fechaSena||t.fecha;
+      return inRango(f,r);
+    })
+    .sort((a,b)=>(b.ts||0)-(a.ts||0));
+
+  if(!filtrados.length){ hist.innerHTML='<div class="empty">Sin movimientos en este periodo</div>'; return; }
+  hist.innerHTML=filtrados.map(t=>{
+    const est=EST[t.estado]||EST['Contacto'];
+    return '<div class="hist-item" onclick="editarTrabajo(\''+t.id+'\')||editarTrabajoPorId(\''+t.id+'\')">'+
+      '<div>'+
+        '<div class="hist-cliente">'+t.cliente+'</div>'+
+        '<div class="hist-meta">'+t.tipo+(t.desc?' · '+t.desc:'')+' · '+(t.fecha||'')+'</div>'+
+        (t.tel?'<div class="hist-meta" style="color:var(--azul)">'+t.tel+'</div>':'')+
+      '</div>'+
+      '<div style="text-align:right;flex-shrink:0;margin-left:8px">'+
+        (t.monto?'<div class="hist-monto">'+pesos(t.monto)+'</div>':'')+
+        '<span class="hist-est '+est.cls+'">'+est.label+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
 }
+
+function editarTrabajoPorId(id){ editarTrabajo(id); }
 
 // ── SYNC SHEETS ───────────────────────────────────────────
 window.syncSheets = async function(){
@@ -1142,39 +910,7 @@ window.syncSheets = async function(){
     }catch(e){}
   }
   btn.classList.remove('spin'); setDot(fbOk?'online':'');
-  snack(`✓ ${ok} trabajo${ok!==1?'s':''} enviado${ok!==1?'s':''} a Sheets`);
-};
-
-// ── GOOGLE CALENDAR ───────────────────────────────────────
-window.abrirGCal = function(id){
-  const e=data.eventos[id]; if(!e) return;
-  const t=TIPO_INFO[e.tipo]||{lbl:e.tipo};
-  const titulo=encodeURIComponent('[FerSoluciones] '+t.lbl+(e.cliente?' — '+e.cliente:''));
-  const detalle=encodeURIComponent([
-    e.desc||'',
-    e.tel?'Tel: '+e.tel:'',
-    e.dir?'Dir: '+e.dir:''
-  ].filter(Boolean).join('\n'));
-  const loc=encodeURIComponent(e.dir||'');
-  // Armar fecha: si hay hora usar datetime, si no solo fecha
-  let fechaParam='';
-  if(e.hora){
-    const [h,m]=e.hora.split(':');
-    const ini=e.fecha.replace(/-/g,'')+'T'+h.padStart(2,'0')+m.padStart(2,'0')+'00';
-    // Evento de 1 hora por defecto
-    const hFin=String(parseInt(h)+1).padStart(2,'0');
-    const fin=e.fecha.replace(/-/g,'')+'T'+hFin+m.padStart(2,'0')+'00';
-    fechaParam=ini+'/'+fin;
-  } else {
-    const d=e.fecha.replace(/-/g,'');
-    // Evento de día completo
-    const dNext=new Date(e.fecha+'T12:00:00');
-    dNext.setDate(dNext.getDate()+1);
-    const dStr=dNext.toISOString().split('T')[0].replace(/-/g,'');
-    fechaParam=d+'/'+dStr;
-  }
-  const url=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${fechaParam}&details=${detalle}&location=${loc}`;
-  window.open(url,'_blank');
+  snack(ok+' trabajo'+(ok!==1?'s':'')+' enviado'+(ok!==1?'s':'')+' a Sheets');
 };
 
 // ── TABS ──────────────────────────────────────────────────
@@ -1186,12 +922,52 @@ window.setTab = function(tab,btn){
   if(tab==='resumen') renderResumen();
 };
 
+
+// ── DESGLOSE ─────────────────────────────────────────────
+window.toggleDetalle = function(id){
+  const det = document.getElementById('det-'+id);
+  if(!det) return;
+  det.classList.toggle('open');
+  const btn = det.parentElement.querySelector('.btn-expand');
+  if(btn) btn.innerHTML = det.classList.contains('open') ? '&#x25B4; Ver menos' : '&#x25BE; Ver mas';
+};
+
+// ── GOOGLE CALENDAR ───────────────────────────────────────
+window.abrirGCal = function(id){
+  const t = data.trabajos[id]; if(!t) return;
+  const titulo = encodeURIComponent('[FerSoluciones] '+(t.estado||'')+(t.cliente?' - '+t.cliente:''));
+  const detalle = encodeURIComponent([
+    t.desc||'', t.tipo||'',
+    t.tel?'Tel: '+t.tel:'',
+    t.dir?'Dir: '+t.dir:'',
+    t.monto?'Monto: '+pesos(t.monto):'',
+  ].filter(Boolean).join('\n'));
+  const loc = encodeURIComponent(t.dir||'');
+  let fechaParam = '';
+  if(t.fecha){
+    if(t.hora){
+      const [h,m] = t.hora.split(':');
+      const ini = t.fecha.replace(/-/g,'')+'T'+h.padStart(2,'0')+m.padStart(2,'0')+'00';
+      const hFin = String(parseInt(h)+1).padStart(2,'0');
+      const fin = t.fecha.replace(/-/g,'')+'T'+hFin+m.padStart(2,'0')+'00';
+      fechaParam = ini+'/'+fin;
+    } else {
+      const d = t.fecha.replace(/-/g,'');
+      const dNext = new Date(t.fecha+'T12:00:00');
+      dNext.setDate(dNext.getDate()+1);
+      fechaParam = d+'/'+dNext.toISOString().split('T')[0].replace(/-/g,'');
+    }
+  }
+  const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+titulo+'&dates='+fechaParam+'&details='+detalle+'&location='+loc;
+  window.open(url,'_blank');
+};
+
 // ── INIT ──────────────────────────────────────────────────
-function fechaHoy(){
+function fechaHoyLabel(){
   const d=new Date();
   return DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES_C[d.getMonth()];
 }
-document.getElementById('h-fecha').textContent=fechaHoy();
+document.getElementById('h-fecha').textContent=fechaHoyLabel();
 diaActivo=hoy();
 setDia(diaActivo);
 initFirebase();
