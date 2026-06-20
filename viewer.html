@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5A3A1A">
+<title>Seguimiento de Obra — Fer Olea</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --madera:#5A3A1A;--madera-mid:#C8956C;--madera-light:#F5F0E8;--madera-dark:#3d2510;
+  --verde:#2E6B1F;--verde-bg:#E8F5E2;--azul:#0C447C;--azul-bg:#E6F1FB;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--gris:#888780;--gris-bg:#F1EFE8;
+  --violeta:#7B3FAD;--violeta-bg:#EDE0F5;
+  --bg:#F5F0E8;--card:#FFFFFF;--text:#2C2C2A;--text-soft:#5F5E5A;
+  --border:#D3D1C7;--shadow:0 2px 12px rgba(90,58,26,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:var(--madera);padding:16px 18px 14px}
+.brand{display:flex;align-items:baseline;gap:3px;margin-bottom:2px}
+.brand-fer{font-family:'DM Serif Display',serif;font-size:22px;color:#f0e6d0}
+.brand-olea{font-family:'DM Serif Display',serif;font-size:22px;color:#c9a060}
+.brand-sub{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.05em}
+.obra-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-top:8px}
+.main{max-width:540px;margin:0 auto;padding:14px}
+.card{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
+.card-title{padding:11px 14px 8px;font-size:10.5px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.09em}
+.obra-info{padding:14px}
+.obra-nombre{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:4px}
+.obra-meta{font-size:13px;color:var(--text-soft);margin-bottom:2px}
+.obra-meta strong{color:var(--text)}
+.progreso-wrap{background:var(--bg);border-radius:6px;height:8px;overflow:hidden;margin:12px 0 6px}
+.progreso-bar{height:100%;border-radius:6px;background:var(--madera-mid);transition:width .5s}
+.progreso-lbl{font-size:12px;color:var(--gris);font-weight:600}
+.eco-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px}
+.eco-cell{background:var(--bg);border-radius:10px;padding:10px 12px;border:1px solid var(--border)}
+.eco-lbl{font-size:10px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.eco-val{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text)}
+.ambiente-card{border-bottom:1px solid var(--border)}
+.ambiente-card:last-of-type{border-bottom:none}
+.ambiente-header{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.ambiente-nombre{font-size:14px;font-weight:700;color:var(--text)}
+.ambiente-meta{font-size:11px;color:var(--gris);margin-top:1px}
+.ambiente-body{padding:8px 14px 12px;border-top:1px solid var(--border)}
+.rubro-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.rubro-row:last-of-type{border-bottom:none}
+.rubro-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rubro-nombre{flex:1;font-size:13px;color:var(--text)}
+.rubro-chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;flex-shrink:0}
+.chip-pend{background:var(--amber-bg);color:var(--amber)}
+.chip-curso{background:var(--verde-bg);color:var(--verde)}
+.chip-hecho{background:var(--gris-bg);color:var(--gris)}
+.rubro-sub{font-size:11px;color:var(--azul);margin-top:2px;font-weight:600}
+.foto-grid{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding-left:16px}
+.foto-thumb{width:56px;height:56px;border-radius:8px;overflow:hidden;border:1px solid var(--border);cursor:pointer}
+.foto-thumb img{width:100%;height:100%;object-fit:cover}
+.empty{text-align:center;padding:32px 16px;color:var(--gris);font-size:13px;line-height:1.6}
+.error-box{background:#fff;border-radius:14px;border:1px solid var(--border);padding:28px;text-align:center;margin:20px}
+.error-box h2{font-family:'DM Serif Display',serif;font-size:20px;color:var(--madera);margin-bottom:8px}
+.error-box p{font-size:13px;color:var(--text-soft);line-height:1.6}
+.loading{text-align:center;padding:40px;color:var(--gris)}
+.footer{text-align:center;padding:20px;font-size:12px;color:var(--gris)}
+.footer a{color:var(--madera-mid);text-decoration:none;font-weight:600}
+.contacto-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--madera);color:#fff;padding:13px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;margin:4px 0}
+.wa-btn{background:#25D366}
+.tel-btn{background:var(--azul)}
+
+/* Lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100;align-items:center;justify-content:center}
+.lightbox.open{display:flex}
+.lightbox img{max-width:96vw;max-height:90vh;object-fit:contain;border-radius:8px}
+.lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand"><span class="brand-fer">Fer </span><span class="brand-olea">Olea</span></div>
+  <div class="brand-sub">Mantenimiento y Reformas · Tandil</div>
+</div>
+
+<div class="main">
+  <div id="content"><div class="loading">Cargando obra...</div></div>
+
+  <div class="card" style="margin-top:8px">
+    <div class="card-title">Contacto</div>
+    <div style="padding:10px 14px 14px;display:flex;flex-direction:column;gap:6px">
+      <a class="contacto-btn wa-btn" href="https://wa.me/5492494066345" target="_blank">&#x1F4AC; WhatsApp</a>
+      <a class="contacto-btn tel-btn" href="tel:+5492494066345">&#x260E; 2494 066 345</a>
+    </div>
+  </div>
+
+  <div class="footer">Seguimiento generado por <a href="https://ferolea27.github.io/fersoluciones/" target="_blank">FerSoluciones</a></div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('open')">
+  <button class="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">&#xd7;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+const FB_CONFIG = {
+  apiKey: "AIzaSyBKI33xasYOmjPnZau88f7jFIc4ylE0RWw",
+  authDomain: "fersoluciones-56360.firebaseapp.com",
+  databaseURL: "https://fersoluciones-56360-default-rtdb.firebaseio.com",
+  projectId: "fersoluciones-56360",
+};
+
+const OBRA_EST = {
+  'Presupuestado':{dot:'#854F0B',bg:'#FAEEDA'},
+  'Confirmado'  :{dot:'#0C447C',bg:'#E6F1FB'},
+  'En ejecucion':{dot:'#2E6B1F',bg:'#E8F5E2'},
+  'Terminado'   :{dot:'#7B3FAD',bg:'#EDE0F5'},
+  'Cobrado'     :{dot:'#888780',bg:'#F1EFE8'},
+};
+
+function pesos(n){ return '$'+Math.round(n||0).toLocaleString('es-AR'); }
+function fmtFecha(v){ if(!v) return ''; const p=v.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+
+// Leer ?obra=ID de la URL
+const params = new URLSearchParams(location.search);
+const obraId = params.get('obra');
+
+if(!obraId) {
+  document.getElementById('content').innerHTML = '<div class="error-box"><h2>Sin obra especificada</h2><p>El link no incluye el ID de la obra. Pedile a Fer el link correcto.</p></div>';
+} else {
+  try {
+    firebase.initializeApp(FB_CONFIG);
+    const db = firebase.database();
+    db.ref('obras/'+obraId).on('value', snap => {
+      const o = snap.val();
+      if(!o) {
+        document.getElementById('content').innerHTML = '<div class="error-box"><h2>Obra no encontrada</h2><p>El link puede estar desactualizado. Consultá a Fer.</p></div>';
+        return;
+      }
+      renderObra(o);
+    });
+  } catch(e) {
+    document.getElementById('content').innerHTML = '<div class="error-box"><h2>Error de conexión</h2><p>'+e.message+'</p></div>';
+  }
+}
+
+function renderObra(o) {
+  const ambientes = Object.values(o.ambientes||{});
+  const rubros = ambientes.flatMap(a => Object.values(a.rubros||{}));
+  const total = rubros.length;
+  const hechos = rubros.filter(r => r.estado==='Hecho').length;
+  const enCurso = rubros.filter(r => r.estado==='En curso').length;
+  const pct = total > 0 ? Math.round(hechos/total*100) : 0;
+
+  const cobrado = Object.values(o.pagos||{}).reduce((a,p)=>a+(p.monto||0),0);
+  const presup = o.presupuestoAprobado||0;
+  const saldo = presup - cobrado;
+
+  const est = OBRA_EST[o.estado] || {dot:'#888780', bg:'#F1EFE8'};
+
+  let html = '';
+
+  // Info principal
+  html += '<div class="card">'
+    + '<div class="obra-info">'
+      + '<span class="obra-badge" style="background:'+est.bg+';color:'+est.dot+'">'
+        + '<span style="width:8px;height:8px;border-radius:50%;background:'+est.dot+';flex-shrink:0;display:inline-block"></span>'
+        + (o.estado||'Sin estado')
+      + '</span>'
+      + '<div class="obra-nombre" style="margin-top:8px">'+(o.nombre||'Obra')+'</div>'
+      + (o.cliente ? '<div class="obra-meta"><strong>Cliente:</strong> '+o.cliente+'</div>' : '')
+      + (o.dir ? '<div class="obra-meta"><strong>Dirección:</strong> '+o.dir+'</div>' : '')
+      + (o.detalles ? '<div class="obra-meta" style="margin-top:6px;font-style:italic;color:var(--text-soft)">'+o.detalles+'</div>' : '')
+      + (o.fechaInicio ? '<div class="obra-meta" style="margin-top:4px"><strong>Inicio:</strong> '+fmtFecha(o.fechaInicio)+(o.fechaFin?' · <strong>Est. fin:</strong> '+fmtFecha(o.fechaFin):'')+'</div>' : '')
+    + '</div>'
+    + (total > 0
+      ? '<div style="padding:0 14px 14px">'
+          + '<div class="progreso-wrap"><div class="progreso-bar" style="width:'+pct+'%"></div></div>'
+          + '<div class="progreso-lbl">'+hechos+' de '+total+' rubros completados ('+pct+'%)'+(enCurso>0?' · '+enCurso+' en curso':'')+'</div>'
+        + '</div>'
+      : '')
+  + '</div>';
+
+  // Económico (solo si hay presupuesto)
+  if(presup > 0) {
+    html += '<div class="card"><div class="card-title">Resumen económico</div>'
+      + '<div class="eco-grid">'
+        + '<div class="eco-cell"><div class="eco-lbl">Presupuesto</div><div class="eco-val">'+pesos(presup)+'</div></div>'
+        + '<div class="eco-cell"><div class="eco-lbl">Cobrado</div><div class="eco-val" style="color:var(--verde)">'+pesos(cobrado)+'</div></div>'
+        + (saldo > 0 ? '<div class="eco-cell"><div class="eco-lbl">Saldo pendiente</div><div class="eco-val" style="color:var(--amber)">'+pesos(saldo)+'</div></div>' : '')
+      + '</div>'
+    + '</div>';
+  }
+
+  // Ambientes y rubros
+  if(ambientes.length) {
+    html += '<div class="card"><div class="card-title">Detalle por ambiente</div>';
+    ambientes.forEach(function(amb) {
+      const rubros = Object.values(amb.rubros||{});
+      if(!rubros.length) return;
+      const hechosAmb = rubros.filter(r=>r.estado==='Hecho').length;
+      html += '<div class="ambiente-card">'
+        + '<div class="ambiente-header">'
+          + '<div><div class="ambiente-nombre">'+(amb.nombre||'Ambiente')+'</div>'
+          + '<div class="ambiente-meta">'+hechosAmb+'/'+rubros.length+' rubros completados</div></div>'
+        + '</div>'
+        + '<div class="ambiente-body">';
+
+      rubros.forEach(function(rub) {
+        const stMap = {'Pendiente':'chip-pend','En curso':'chip-curso','Hecho':'chip-hecho'};
+        const dotMap = {'Pendiente':'#854F0B','En curso':'#2E6B1F','Hecho':'#888780'};
+        const est = rub.estado||'Pendiente';
+        const dotColor = dotMap[est]||'#888780';
+
+        html += '<div class="rubro-row">'
+          + '<div class="rubro-dot" style="background:'+dotColor+'"></div>'
+          + '<div style="flex:1">'
+            + '<div class="rubro-nombre">'+( rub.nombre||'Rubro')+'</div>'
+            + (rub.quien==='Subcontratista' && rub.subNombre
+              ? '<div class="rubro-sub">&#x1F527; '+rub.subNombre+'</div>'
+              : '')
+          + '</div>'
+          + '<span class="rubro-chip '+stMap[est]+'">'+est+'</span>'
+        + '</div>';
+
+        // Fotos del rubro
+        const fotos = rub.fotos||[];
+        if(fotos.length) {
+          html += '<div class="foto-grid">'
+            + fotos.map(function(f){
+                return '<div class="foto-thumb" onclick="document.getElementById(\'lightbox-img\').src=\''+f.b64+'\';document.getElementById(\'lightbox\').classList.add(\'open\')">'
+                  + '<img src="'+f.b64+'" loading="lazy">'
+                + '</div>';
+              }).join('')
+          + '</div>';
+        }
+      });
+
+      html += '</div></div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="card"><div class="empty">Todavía no hay ambientes registrados en esta obra.</div></div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
+
+  // Título de la página
+  document.title = (o.nombre||'Obra') + ' — Fer Olea';
+}
+</script>
+</body>
+</html>
