@@ -302,9 +302,15 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .nota-fecha{font-size:10px;color:var(--gris);font-weight:600;margin-bottom:3px}
 .nota-texto{font-size:13px;color:var(--text);line-height:1.5}
 @media print{
-  .header,.tab-nav,.pres-form-card,.pres-preview-actions,.snack,.modal-overlay,.obra-ficha,.btn-nueva-obra{display:none!important}
-  .section{display:block!important;padding:0}
-  .pres-doc{box-shadow:none;border-radius:0}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .header,.tab-nav,.snack,.modal-overlay,.obra-ficha,.btn-nueva-obra,
+  .foto-viewer,.pres-form-card,.pres-preview-actions,.add-form,
+  .coll-trig,.coll-body,.obra-filtros,.pub-link-bar{display:none!important}
+  .section{display:none!important}
+  #tab-presupuestos{display:block!important;padding:0!important}
+  .main{overflow:visible!important;height:auto!important}
+  body{overflow:visible!important}
+  .pres-doc{box-shadow:none!important;border-radius:0!important;margin:0!important}
 }
 
 
@@ -480,6 +486,47 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .adj-zona.tiene .adj-zona-txt{color:var(--azul);font-weight:600}
 .adj-quitar{font-size:11px;color:var(--rojo);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0}
 
+
+/* === RUBRO INLINE EDITING === */
+.rubro-sec-lbl{font-size:9px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.09em;margin:8px 0 4px;display:flex;align-items:center;justify-content:space-between}
+.rubro-task-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border)}
+.rubro-task-row:last-of-type{border-bottom:none}
+.rubro-task-row input[type=checkbox]{accent-color:var(--madera);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.rubro-task-txt{flex:1;font-size:12px;color:var(--text-soft);cursor:pointer;line-height:1.4}
+.rubro-task-txt.done{text-decoration:line-through;color:var(--gris)}
+.rubro-task-edit-row{display:flex;gap:5px;padding:4px 0;border-bottom:1px solid var(--border);align-items:center}
+.rubro-task-edit-inp{flex:1;font-size:12px;padding:5px 8px;border:1.5px solid var(--madera-mid);border-radius:7px;background:#fff;font-family:'DM Sans',sans-serif;outline:none}
+.rubro-mat-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border)}
+.rubro-mat-row:last-of-type{border-bottom:none}
+.rubro-mat-desc{flex:1;font-size:12px;color:var(--text-soft)}
+.rubro-mat-precio{font-size:12px;font-weight:700;color:var(--madera);white-space:nowrap}
+.rubro-mat-edit-row{display:flex;gap:5px;padding:4px 0;border-bottom:1px solid var(--border);align-items:center}
+.rubro-mat-edit-desc{flex:1;font-size:12px;padding:5px 8px;border:1.5px solid var(--madera-mid);border-radius:7px;background:#fff;font-family:'DM Sans',sans-serif;outline:none}
+.rubro-mat-edit-price{width:80px;font-size:12px;padding:5px 7px;border:1.5px solid var(--madera-mid);border-radius:7px;background:#fff;font-family:'DM Sans',sans-serif;outline:none;text-align:right;-webkit-appearance:none}
+.rubro-add-row{display:flex;gap:5px;margin-top:5px;align-items:center}
+.rubro-add-inp{flex:1;font-size:12px;padding:6px 9px;border:1.5px dashed var(--border);border-radius:8px;background:var(--bg);font-family:'DM Sans',sans-serif;outline:none;color:var(--text)}
+.rubro-add-inp:focus{border-color:var(--madera-mid);border-style:solid;background:#fff}
+.rubro-add-inp-price{width:75px;font-size:12px;padding:6px 7px;border:1.5px dashed var(--border);border-radius:8px;background:var(--bg);font-family:'DM Sans',sans-serif;outline:none;color:var(--text);text-align:right;-webkit-appearance:none}
+.rubro-add-inp-price:focus{border-color:var(--madera-mid);border-style:solid;background:#fff}
+.btn-rub-add{width:28px;height:28px;border-radius:7px;background:var(--madera);color:#fff;border:none;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1}
+.btn-rub-tiny{background:none;border:none;font-size:13px;color:var(--gris);cursor:pointer;padding:2px 3px;line-height:1;flex-shrink:0}
+.btn-rub-tiny:active{color:var(--madera)}
+.btn-rub-save{font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;background:var(--verde);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.btn-rub-cancel{font-size:11px;padding:4px 7px;border-radius:7px;background:var(--bg);color:var(--gris);border:1px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0}
+
+/* Archivos por rubro */
+.rubro-archivos{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.rubro-arch-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.rubro-arch-item{position:relative;width:64px;flex-shrink:0}
+.rubro-arch-thumb{width:64px;height:64px;border-radius:9px;overflow:hidden;border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.rubro-arch-thumb img{width:100%;height:100%;object-fit:cover}
+.rubro-arch-thumb .doc-icon{font-size:26px;line-height:1}
+.rubro-arch-nombre{font-size:9px;color:var(--gris);text-overflow:ellipsis;overflow:hidden;white-space:nowrap;margin-top:2px;max-width:64px;text-align:center}
+.rubro-arch-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.rubro-arch-add-row{display:flex;gap:6px;margin-top:2px}
+.btn-arch-add{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:5px 10px;border-radius:8px;border:1.5px dashed var(--border);background:transparent;color:var(--gris);cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .15s}
+.btn-arch-add:active{border-color:var(--madera-mid);color:var(--madera)}
+
 </style>
 </head>
 <body>
@@ -624,19 +671,29 @@ textarea.pres-input{resize:vertical;min-height:60px}
       </div>
       <div class="pres-row">
         <div class="pres-field">
-          <label class="pres-label">Mano de obra ($)</label>
-          <input class="pres-input" type="number" id="p-monto" placeholder="0">
-          <div class="pres-hint" id="p-mo-hint"></div>
-        </div>
-        <div class="pres-field">
           <label class="pres-label">Jornadas</label>
           <input class="pres-input" type="number" id="p-jornadas" placeholder="1" min="0.5" step="0.5">
+        </div>
+        <div class="pres-field">
+          <label class="pres-label">$ por jornada</label>
+          <input class="pres-input" type="number" id="p-precio-jornada" placeholder="0" min="0">
+          <div class="pres-hint" id="p-mo-hint"></div>
         </div>
       </div>
       <div class="pres-row">
         <div class="pres-field">
           <label class="pres-label">Ayudantes</label>
           <input class="pres-input" type="number" id="p-ayudante" placeholder="0" min="0" step="1">
+        </div>
+        <div class="pres-field">
+          <label class="pres-label">$ ayudante/jornada</label>
+          <input class="pres-input" type="number" id="p-precio-ayudante" placeholder="0" min="0">
+        </div>
+      </div>
+      <div class="pres-row">
+        <div class="pres-field">
+          <label class="pres-label">Mano de obra total ($)</label>
+          <input class="pres-input" type="number" id="p-monto" placeholder="Auto o manual">
         </div>
         <div class="pres-field">
           <label class="pres-label">Sena (%)</label>
@@ -973,6 +1030,10 @@ textarea.pres-input{resize:vertical;min-height:60px}
       </div>
       <div class="form-field"><div class="form-label">Tareas (una por linea)</div><textarea class="form-input" id="rubro-tareas" rows="3" placeholder="Reemplazar tomacorrientes&#10;Colocar luces"></textarea></div>
       <div class="form-field"><div class="form-label">Materiales (desc - $precio, uno por linea)</div><textarea class="form-input" id="rubro-materiales" rows="3" placeholder="Cable 2.5mm - 5000&#10;Tomacorrientes x4 - 8000"></textarea></div>
+      <div class="form-field">
+        <div class="form-label">Mano de obra ($)</div>
+        <input class="form-input" id="rubro-mano-obra" type="number" inputmode="decimal" placeholder="0" style="max-width:180px">
+      </div>
       <input type="hidden" id="rubro-amb-id"><input type="hidden" id="rubro-edit-id">
       <button class="btn-guardar" onclick="guardarRubro()">Agregar rubro</button>
       <button class="btn-peligro" id="btn-del-rubro" style="display:none" onclick="eliminarRubro()">Eliminar rubro</button>
@@ -1660,14 +1721,35 @@ function buildMoLabel(j, a) {
 }
 function generarPres() {
   const cliente=document.getElementById('p-cliente').value.trim(), fecha=fmtFecha(document.getElementById('p-fecha').value),
-        jornadas=document.getElementById('p-jornadas').value, ayudante=document.getElementById('p-ayudante').value,
+        jornadas=parseFloat(document.getElementById('p-jornadas').value)||0,
+        ayudante=parseInt(document.getElementById('p-ayudante').value)||0,
         pago=document.getElementById('p-pago').value.trim(), validez=document.getElementById('p-validez').value.trim(),
         nota=document.getElementById('p-nota').value.trim(), senaPct=parseFloat(document.getElementById('p-sena').value)||0;
+  const precioJorEl=document.getElementById('p-precio-jornada'), precioAyuEl=document.getElementById('p-precio-ayudante');
+  const precioJor=parseFloat(precioJorEl?precioJorEl.value:0)||0;
+  const precioAyu=parseFloat(precioAyuEl?precioAyuEl.value:0)||0;
   const trabajos=presGetItems('p-items-list'), mats=presGetItems('p-mat-list');
-  const sumTrab=trabajos.reduce((a,i)=>a+i.price,0), campo=document.getElementById('p-monto');
-  if(sumTrab>0&&!pMontoManual) campo.value=sumTrab;
-  const monto=parseFloat(campo.value)||0, moLabel=buildMoLabel(jornadas,ayudante);
-  document.getElementById('p-mo-hint').textContent=moLabel?'Mano de obra ('+moLabel+')':'';
+  const sumTrab=trabajos.reduce((a,i)=>a+i.price,0);
+  const campo=document.getElementById('p-monto');
+  // Auto-calcular MO: jornadas*precioJor + ayudante*jornadas*precioAyu (si hay precio/jornada)
+  if(precioJor>0) {
+    const moAuto = Math.round(jornadas*precioJor + ayudante*jornadas*precioAyu);
+    campo.value = moAuto;
+    pMontoManual = false;
+  } else if(sumTrab>0&&!pMontoManual) {
+    campo.value = sumTrab;
+  }
+  const monto=parseFloat(campo.value)||0;
+  const moLabel=buildMoLabel(jornadas,ayudante);
+  const moHintEl=document.getElementById('p-mo-hint');
+  if(moHintEl){
+    if(precioJor>0){
+      const detalle=[jornadas?jornadas+' jornada'+(jornadas!==1?'s':''):null, ayudante?ayudante+' ayudante'+(ayudante!==1?'s':''):null].filter(Boolean).join(' + ');
+      moHintEl.textContent=detalle?'= '+detalle:'';
+    } else {
+      moHintEl.textContent=moLabel?'('+moLabel+')':'';
+    }
+  }
   const sumMat=mats.reduce((a,i)=>a+i.price,0), total=monto+sumMat, senaAmt=senaPct>0?Math.round(total*senaPct/100):0;
   document.getElementById('p-sena-hint').textContent=senaAmt>0?'Sena: '+pesos(senaAmt):'';
   if(!cliente){document.getElementById('pres-doc-wrap').innerHTML='';document.getElementById('pres-preview-actions').style.display='none';return;}
@@ -1690,7 +1772,24 @@ function generarPres() {
     '<div class="pres-doc-body"><div class="pres-doc-sec" style="margin-top:18px">Trabajos a realizar</div><ul class="pres-doc-items">'+iH+'</ul>'+matSec+'<div class="pres-doc-totales">'+totH+'</div>'+(infoH?'<div class="pres-doc-info">'+infoH+'</div>':'')+(nota?'<div class="pres-doc-nota">'+nota+'</div>':'')+
     '</div><div class="pres-doc-footer"><div class="pres-doc-fb"><span class="fer2">FER\u00a0</span><span class="olea2">OLEA</span><div class="pres-doc-fsub">Tandil, Bs. As.</div></div><div class="pres-doc-fc"><span class="phone2">2494 066 345</span><span class="fc-sub">@feroleasoluciones</span><span class="fc-sub">feroleasoluciones@gmail.com</span></div></div></div>';
 }
-function presSnapshot(){return{cliente:document.getElementById('p-cliente').value.trim(),fecha:document.getElementById('p-fecha').value,jornadas:document.getElementById('p-jornadas').value,ayudante:document.getElementById('p-ayudante').value,pago:document.getElementById('p-pago').value.trim(),validez:document.getElementById('p-validez').value.trim(),nota:document.getElementById('p-nota').value.trim(),senaPct:parseFloat(document.getElementById('p-sena').value)||0,monto:parseFloat(document.getElementById('p-monto').value)||0,trabajos:presGetItems('p-items-list'),materiales:presGetItems('p-mat-list')};}
+function presSnapshot(){
+  var precioJorEl=document.getElementById('p-precio-jornada'), precioAyuEl=document.getElementById('p-precio-ayudante');
+  return{
+    cliente:document.getElementById('p-cliente').value.trim(),
+    fecha:document.getElementById('p-fecha').value,
+    jornadas:document.getElementById('p-jornadas').value,
+    ayudante:document.getElementById('p-ayudante').value,
+    precioJornada:parseFloat(precioJorEl?precioJorEl.value:0)||0,
+    precioAyudante:parseFloat(precioAyuEl?precioAyuEl.value:0)||0,
+    pago:document.getElementById('p-pago').value.trim(),
+    validez:document.getElementById('p-validez').value.trim(),
+    nota:document.getElementById('p-nota').value.trim(),
+    senaPct:parseFloat(document.getElementById('p-sena').value)||0,
+    monto:parseFloat(document.getElementById('p-monto').value)||0,
+    trabajos:presGetItems('p-items-list'),
+    materiales:presGetItems('p-mat-list')
+  };
+}
 window.guardarPresupuesto=async function(){
   const snap=presSnapshot();if(!snap.cliente){snack('Completa el cliente para guardar');return;}
   const editEl=document.getElementById('pres-edit-activo'), id=(editEl&&editEl.value)||uid();
@@ -1705,7 +1804,10 @@ function renderPresupuestosHist(){
   document.getElementById('lista-presupuestos').innerHTML=items.length?items.map(p=>'<div class="pres-hist-item" onclick="abrirModalPresEdit(\''+p.id+'\')"><div style="flex:1;min-width:0"><div class="pres-hist-cliente">'+(p.cliente||'Sin nombre')+'</div><div class="pres-hist-meta">'+fmtFecha(p.fecha)+(p.pago?' - '+p.pago:'')+'</div></div><div class="pres-hist-monto">'+pesos(p.total||0)+'</div></div>').join(''):'<div class="empty">Sin presupuestos guardados todavia</div>';
 }
 window.abrirModalPresEdit=function(id){document.getElementById('pres-edit-id').value=id;const p=data.presupuestos[id];document.getElementById('modal-pres-edit-title').textContent=(p&&p.cliente?p.cliente:'Presupuesto')+' - '+pesos(p&&p.total?p.total:0);abrirModal('pres-edit');};
-function cargarDatosEnForm(p,esNuevo){document.getElementById('p-cliente').value=esNuevo?(p.cliente||'')+' (copia)':p.cliente||'';document.getElementById('p-fecha').value=esNuevo?hoy():p.fecha||'';document.getElementById('p-jornadas').value=p.jornadas||'';document.getElementById('p-ayudante').value=p.ayudante||'';document.getElementById('p-pago').value=p.pago||'';document.getElementById('p-validez').value=p.validez||'';document.getElementById('p-nota').value=p.nota||'';document.getElementById('p-sena').value=p.senaPct||'';document.getElementById('p-monto').value=p.monto||'';pMontoManual=true;document.getElementById('p-items-list').innerHTML='';document.getElementById('p-mat-list').innerHTML='';(p.trabajos||[]).forEach(i=>presAddItem('p-items-list',i.desc,i.price));(p.materiales||[]).forEach(i=>presAddItem('p-mat-list',i.desc,i.price));generarPres();}
+function cargarDatosEnForm(p,esNuevo){document.getElementById('p-cliente').value=esNuevo?(p.cliente||'')+' (copia)':p.cliente||'';document.getElementById('p-fecha').value=esNuevo?hoy():p.fecha||'';document.getElementById('p-jornadas').value=p.jornadas||'';document.getElementById('p-ayudante').value=p.ayudante||'';document.getElementById('p-pago').value=p.pago||'';document.getElementById('p-validez').value=p.validez||'';document.getElementById('p-nota').value=p.nota||'';document.getElementById('p-sena').value=p.senaPct||'';document.getElementById('p-monto').value=p.monto||'';
+  var pjEl=document.getElementById('p-precio-jornada'); if(pjEl) pjEl.value=p.precioJornada||'';
+  var paEl=document.getElementById('p-precio-ayudante'); if(paEl) paEl.value=p.precioAyudante||'';
+  pMontoManual=!!(p.precioJornada===0||!p.precioJornada);document.getElementById('p-items-list').innerHTML='';document.getElementById('p-mat-list').innerHTML='';(p.trabajos||[]).forEach(i=>presAddItem('p-items-list',i.desc,i.price));(p.materiales||[]).forEach(i=>presAddItem('p-mat-list',i.desc,i.price));generarPres();}
 window.cargarPresupuestoEnForm=function(){cerrarModal('pres-edit');const id=document.getElementById('pres-edit-id').value,p=data.presupuestos[id];if(!p)return;cargarDatosEnForm(p,false);let el=document.getElementById('pres-edit-activo');if(!el){el=document.createElement('input');el.type='hidden';el.id='pres-edit-activo';document.body.appendChild(el);}el.value=id;snack('Presupuesto cargado para editar');};
 window.duplicarPresupuesto=function(){cerrarModal('pres-edit');const id=document.getElementById('pres-edit-id').value,p=data.presupuestos[id];if(!p)return;cargarDatosEnForm(p,true);const el=document.getElementById('pres-edit-activo');if(el)el.value='';snack('Presupuesto duplicado - guarda para confirmar');};
 window.eliminarPresupuesto=async function(){const id=document.getElementById('pres-edit-id').value;cerrarModal('pres-edit');if(fbOk){await fbRemove('presupuestos/'+id);}else{delete data.presupuestos[id];guardarLocal();renderPresupuestosHist();}snack('Presupuesto eliminado');};
@@ -1877,76 +1979,153 @@ window.toggleAmbiente=function(ambId){ambAbiertos[ambId]=!(ambAbiertos[ambId]!==
 function buildRubroHTML(obraId,ambId,rubId,rub){
   var stC={'Pendiente':'rubro-st-pend','En curso':'rubro-st-curso','Hecho':'rubro-st-hecho'};
   var stCls=stC[rub.estado||'Pendiente']||'rubro-st-pend';
-  var tareas=rub.tareas||[], mats=rub.materiales||[], fotos=rub.fotos||[];
+  var tareas=rub.tareas||[], mats=rub.materiales||[], fotos=rub.fotos||[], docs=rub.docs||[];
   var sumMat=mats.reduce(function(a,m){return a+(m.price||0);},0);
-  var esSub = rub.quien==='Subcontratista';
+  var esSub=rub.quien==='Subcontratista';
+  var esYo=!esSub;
+  var editT=rubroEditState[rubId]&&rubroEditState[rubId].tarea!=null?rubroEditState[rubId].tarea:-1;
+  var editM=rubroEditState[rubId]&&rubroEditState[rubId].mat!=null?rubroEditState[rubId].mat:-1;
 
-  var subHTML = '';
-  if(esSub) {
-    subHTML = '<div style="background:var(--azul-bg);border:1px solid rgba(12,68,124,.2);border-radius:8px;padding:7px 10px;margin-bottom:6px;font-size:11px;">'
-      + '<div style="font-weight:700;color:var(--azul);margin-bottom:3px">&#x1F527; Subcontratista</div>'
-      + (rub.subNombre ? '<div style="color:var(--text);margin-bottom:2px">'+rub.subNombre+'</div>' : '')
-      + (rub.subContacto ? '<div style="color:var(--azul);font-weight:600;cursor:pointer" onclick="window.open(\'tel:'+rub.subContacto+'\')">&#x260E; '+rub.subContacto+'</div>' : '')
-      + (rub.subNota ? '<div style="color:var(--text-soft);margin-top:4px;font-style:italic;font-size:10px">'+rub.subNota+'</div>' : '')
-      + '</div>';
+  // Header
+  var html='<div class="rubro-item">'
+    +'<div class="rubro-header">'
+      +'<div class="rubro-nombre">'+(rub.nombre||'Rubro')+'</div>'
+      +'<span class="rubro-estado-chip '+stCls+'" onclick="ciclarEstadoRubro(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">'+( rub.estado||'Pendiente')+'</span>'
+      +'<button class="btn-rub-tiny" onclick="editarRubro(\''+ambId+'\',\''+rubId+'\')" title="Editar nombre/quien/M.O.">&#x270F;</button>'
+    +'</div>';
+
+  // Sub info
+  if(esSub){
+    html+='<div style="background:var(--azul-bg);border:1px solid rgba(12,68,124,.2);border-radius:8px;padding:7px 10px;margin:6px 0;font-size:11px;">'
+      +'<div style="font-weight:700;color:var(--azul);margin-bottom:3px">&#x1F527; Subcontratista</div>'
+      +(rub.subNombre?'<div style="color:var(--text)">'+rub.subNombre+'</div>':'')
+      +(rub.subContacto?'<div style="color:var(--azul);font-weight:600" onclick="window.open(\'tel:'+rub.subContacto+'\')">&#x260E; '+rub.subContacto+'</div>':'')
+      +(rub.subNota?'<div style="color:var(--text-soft);margin-top:3px;font-style:italic">'+rub.subNota+'</div>':'')
+    +'</div>';
   }
 
-  var yoHTML = '';
-  if(!esSub && rub.yoNota) {
-    yoHTML = '<div style="background:var(--madera-light);border:1px solid rgba(90,58,26,.15);border-radius:8px;padding:7px 10px;margin-bottom:6px;font-size:11px;color:var(--madera-dark);font-style:italic">'
-      + '&#x1F4DD; '+rub.yoNota+'</div>';
+  // Yo nota
+  if(esYo&&rub.yoNota){
+    html+='<div style="background:#FFFAEF;border:1px solid #E8D89A;border-radius:8px;padding:7px 10px;margin:4px 0;font-size:11px;color:#5a4a10;font-style:italic">'+rub.yoNota+'</div>';
   }
 
-  var tareasHTML = '';
-  if(tareas.length) {
-    tareasHTML = '<div class="rubro-lista">'
-      + tareas.map(function(t,i){
-          var done=t.done||false;
-          return '<div class="rubro-task '+(done?'done':'')+'" onclick="toggleTarea(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">'
-            +'<input type="checkbox" '+(done?'checked':'')+' onclick="toggleTarea(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+');event.stopPropagation()">'
-            +'<span>'+(typeof t==='string'?t:t.texto)+'</span></div>';
-        }).join('')
-      + '</div>';
+  // M.O. badge si tiene valor
+  if(rub.manoObra>0){
+    html+='<div style="font-size:11px;font-weight:700;color:var(--madera);margin:4px 0">M.O.: '+pesos(rub.manoObra)+'</div>';
   }
 
-  var matsHTML = '';
-  if(mats.length) {
-    matsHTML = '<div class="rubro-lista" style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px">'
-      + mats.map(function(m){return '<div class="rubro-mat">'+m.desc+(m.price>0?'<span class="mat-price">'+pesos(m.price)+'</span>':'')+'</div>';}).join('')
-      + (sumMat>0?'<div style="font-size:11px;font-weight:700;color:var(--madera);margin-top:4px;text-align:right">Total mat: '+pesos(sumMat)+'</div>':'')
-      + '</div>';
+  // == TAREAS ==
+  html+='<div class="rubro-sec-lbl">Tareas</div>';
+  if(tareas.length){
+    html+='<div>';
+    tareas.forEach(function(t,i){
+      var done=t.done||false;
+      var texto=typeof t==='string'?t:t.texto;
+      if(i===editT){
+        html+='<div class="rubro-task-edit-row">'
+          +'<input class="rubro-task-edit-inp" id="edit-t-'+rubId+'" value="'+texto.replace(/"/g,'&quot;')+'">'
+          +'<button class="btn-rub-save" onclick="guardarTareaEdit(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">OK</button>'
+          +'<button class="btn-rub-cancel" onclick="cancelarRubroEdit(\''+rubId+'\')">✕</button>'
+        +'</div>';
+      } else {
+        html+='<div class="rubro-task-row">'
+          +'<input type="checkbox" '+(done?'checked':'')+' onclick="toggleTarea(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">'
+          +'<span class="rubro-task-txt '+(done?'done':'')+'" onclick="iniciarTareaEdit(\''+rubId+'\','+i+')">'+texto+'</span>'
+          +'<button class="btn-rub-tiny" onclick="iniciarTareaEdit(\''+rubId+'\','+i+')" title="Editar">&#x270F;</button>'
+          +'<button class="btn-rub-tiny" onclick="deleteTareaInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')" title="Borrar" style="color:var(--rojo)">&#x2715;</button>'
+        +'</div>';
+      }
+    });
+    html+='</div>';
   }
+  html+='<div class="rubro-add-row">'
+    +'<input class="rubro-add-inp" id="new-t-'+rubId+'" placeholder="Nueva tarea..." onkeydown="if(event.key===\'Enter\')addTareaInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">'
+    +'<button class="btn-rub-add" onclick="addTareaInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">+</button>'
+  +'</div>';
 
-  var fotosHTML = '';
-  if(fotos.length) {
-    fotosHTML = '<div class="rubro-fotos">'
-      + fotos.map(function(f,i){
-          return '<div class="rubro-foto-thumb" onclick="abrirLightbox(\''+f.b64+'\')">'
-            + '<img src="'+f.b64+'" loading="lazy">'
-            + '<button class="rubro-foto-del" onclick="event.stopPropagation();eliminarFotoRubro(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">&#xd7;</button>'
-          + '</div>';
-        }).join('')
-      + '</div>';
+  // == MATERIALES ==
+  html+='<div class="rubro-sec-lbl" style="margin-top:10px">Materiales</div>';
+  if(mats.length){
+    html+='<div>';
+    mats.forEach(function(m,i){
+      if(i===editM){
+        html+='<div class="rubro-mat-edit-row">'
+          +'<input class="rubro-mat-edit-desc" id="edit-md-'+rubId+'" value="'+m.desc.replace(/"/g,'&quot;')+'">'
+          +'<input class="rubro-mat-edit-price" id="edit-mp-'+rubId+'" type="number" value="'+(m.price||'')+'" placeholder="$">'
+          +'<button class="btn-rub-save" onclick="guardarMatEdit(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">OK</button>'
+          +'<button class="btn-rub-cancel" onclick="cancelarRubroEdit(\''+rubId+'\')">✕</button>'
+        +'</div>';
+      } else {
+        html+='<div class="rubro-mat-row">'
+          +'<span class="rubro-mat-desc">'+m.desc+'</span>'
+          +(m.price>0?'<span class="rubro-mat-precio">'+pesos(m.price)+'</span>':'')
+          +'<button class="btn-rub-tiny" onclick="iniciarMatEdit(\''+rubId+'\','+i+')" title="Editar">&#x270F;</button>'
+          +'<button class="btn-rub-tiny" onclick="deleteMatInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')" style="color:var(--rojo)" title="Borrar">&#x2715;</button>'
+        +'</div>';
+      }
+    });
+    if(sumMat>0||rub.manoObra>0){
+      html+='<div style="font-size:11px;font-weight:700;color:var(--madera);padding:4px 0;display:flex;justify-content:space-between">';
+      if(sumMat>0) html+='<span>Mat: '+pesos(sumMat)+'</span>';
+      if(rub.manoObra>0) html+='<span>M.O.: '+pesos(rub.manoObra)+'</span>';
+      html+='</div>';
+      if(sumMat>0&&rub.manoObra>0) html+='<div style="font-size:12px;font-weight:700;color:var(--madera-dark);text-align:right;border-top:1px solid var(--border);padding-top:3px">Total: '+pesos(sumMat+rub.manoObra)+'</div>';
+    }
+    html+='</div>';
   }
+  html+='<div class="rubro-add-row">'
+    +'<input class="rubro-add-inp" id="new-md-'+rubId+'" placeholder="Material..." onkeydown="if(event.key===\'Enter\')addMatInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">'
+    +'<input class="rubro-add-inp-price" id="new-mp-'+rubId+'" type="number" placeholder="$">'
+    +'<button class="btn-rub-add" onclick="addMatInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">+</button>'
+  +'</div>';
 
-  return '<div class="rubro-item">'
-    + '<div class="rubro-header">'
-      + '<div class="rubro-nombre">'+(rub.nombre||'Rubro')+'</div>'
-      + '<span class="rubro-estado-chip '+stCls+'" onclick="ciclarEstadoRubro(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">'+(rub.estado||'Pendiente')+'</span>'
-      + '<button class="del-btn" style="font-size:14px;color:var(--gris)" onclick="editarRubro(\''+ambId+'\',\''+rubId+'\')">&#x270F;</button>'
-    + '</div>'
-    + '<div class="rubro-quien">'+(esSub?'Subcontratista':'Yo')+'</div>'
-    + subHTML + yoHTML + tareasHTML + matsHTML + fotosHTML
-    + '<button class="btn-add-foto" onclick="abrirSelectorFoto(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">&#x1F4F7; Foto</button>'
-  + '</div>';
+  // == ARCHIVOS (fotos + docs) ==
+  var archTotal=fotos.length+docs.length;
+  html+='<div class="rubro-archivos">';
+  html+='<div class="rubro-sec-lbl">Archivos <span style="font-weight:400;font-size:9px">('+archTotal+')</span></div>';
+  if(archTotal>0){
+    html+='<div class="rubro-arch-grid">';
+    // Fotos
+    fotos.forEach(function(f,i){
+      html+='<div class="rubro-arch-item">'
+        +'<div class="rubro-arch-thumb" onclick="verArchivoRubro(\'foto\',\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">'
+          +'<img src="'+f.b64+'" alt="foto">'
+        +'</div>'
+        +'<button class="rubro-arch-del" onclick="deleteArchivoRubro(\'foto\',\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">&#x2715;</button>'
+        +'<div class="rubro-arch-nombre">foto</div>'
+      +'</div>';
+    });
+    // Docs
+    docs.forEach(function(d,i){
+      var iconDoc=d.mime==='application/pdf'?'&#x1F4C4;':d.mime&&d.mime.startsWith('image')?'&#x1F5BC;':'&#x1F4CE;';
+      html+='<div class="rubro-arch-item">'
+        +'<div class="rubro-arch-thumb" onclick="verArchivoRubro(\'doc\',\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">'
+          +'<span class="doc-icon">'+iconDoc+'</span>'
+        +'</div>'
+        +'<button class="rubro-arch-del" onclick="deleteArchivoRubro(\'doc\',\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">&#x2715;</button>'
+        +'<div class="rubro-arch-nombre">'+(d.nombre||'archivo')+'</div>'
+      +'</div>';
+    });
+    html+='</div>';
+  }
+  html+='<div class="rubro-arch-add-row">'
+    +'<button class="btn-arch-add" onclick="abrirSelectorFoto(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">&#x1F4F7; Foto</button>'
+    +'<button class="btn-arch-add" onclick="abrirSelectorDoc(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">&#x1F4CE; Archivo</button>'
+  +'</div>';
+  html+='</div>';
+
+  html+='</div>';
+  return html;
 }
+
+
 window.abrirModalNuevoAmbiente=function(){document.getElementById('amb-nombre').value='';abrirModal('ambiente');};
 window.guardarAmbiente=async function(){const nombre=document.getElementById('amb-nombre').value.trim();if(!nombre){snack('Escribe el nombre del ambiente');return;}const o=data.obras[obraActivaId];if(!o)return;const ambId=uid(),amb={id:ambId,nombre,rubros:{}};if(fbOk){await fbSet('obras/'+obraActivaId+'/ambientes/'+ambId,amb);}else{if(!o.ambientes)o.ambientes={};o.ambientes[ambId]=amb;guardarLocal();renderAmbientes(obraActivaId);}ambAbiertos[ambId]=true;cerrarModal('ambiente');snack('Ambiente agregado');};
 window.abrirModalNuevoRubro=function(ambId){
   document.getElementById('rubro-amb-id').value=ambId;
   document.getElementById('rubro-edit-id').value='';
   document.getElementById('modal-rubro-title').textContent='Nuevo rubro';
-  ['rubro-nombre','rubro-tareas','rubro-materiales','rubro-yo-nota','rubro-sub-nombre','rubro-sub-contacto','rubro-sub-nota'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
+  ['rubro-nombre','rubro-tareas','rubro-materiales','rubro-mano-obra','rubro-yo-nota','rubro-sub-nombre','rubro-sub-contacto','rubro-sub-nota'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
   rubroQuien='Yo';
   document.querySelectorAll('#chips-rubro-quien .tipo-chip').forEach(b=>b.classList.toggle('sel',b.textContent==='Yo'));
   var yf=document.getElementById('yo-fields-rubro'); if(yf) yf.classList.add('show');
@@ -1973,6 +2152,7 @@ window.editarRubro=function(ambId,rubId){
   var snEl2=document.getElementById('rubro-sub-nota'); if(snEl2) snEl2.value=rub.subNota||'';
   document.getElementById('rubro-tareas').value=(rub.tareas||[]).map(t=>typeof t==='string'?t:t.texto).join('\n');
   document.getElementById('rubro-materiales').value=(rub.materiales||[]).map(m=>m.desc+(m.price>0?' - '+m.price:'')).join('\n');
+  var moEl=document.getElementById('rubro-mano-obra'); if(moEl) moEl.value=rub.manoObra||'';
   document.getElementById('btn-del-rubro').style.display='block';
   abrirModal('rubro');
 };
@@ -1990,10 +2170,12 @@ window.guardarRubro=async function(){
   const subNombreEl=document.getElementById('rubro-sub-nombre');
   const subContactoEl=document.getElementById('rubro-sub-contacto');
   const subNotaEl=document.getElementById('rubro-sub-nota');
+  const moEl=document.getElementById('rubro-mano-obra');
   const rub={
     id:rubId, nombre, quien:rubroQuien,
     estado:existingRub.estado||'Pendiente',
     tareas:tareasFinales, materiales,
+    manoObra:parseFloat(moEl?moEl.value:0)||0,
     fotos:existingRub.fotos||[],
     yoNota:rubroQuien==='Yo'?(yoNotaEl?yoNotaEl.value.trim():''):'',
     subNombre:rubroQuien==='Subcontratista'?(subNombreEl?subNombreEl.value.trim():''):'',
@@ -2021,9 +2203,18 @@ function renderEconomico(obraId) {
   var margen   = totalIng - totalEgr;
   var margenPct = totalIng > 0 ? Math.min(100, Math.round(margen/totalIng*100)) : 0;
 
+  // Mat + MO estimados desde rubros
+  var rubros = Object.values(o.ambientes||{}).flatMap(function(a){return Object.values(a.rubros||{});});
+  var matEstimado = rubros.flatMap(function(r){return r.materiales||[];}).reduce(function(a,m){return a+(m.price||0);},0);
+  var moEstimado  = rubros.reduce(function(a,r){return a+(r.manoObra||0);},0);
+  var costoEstimado = matEstimado + moEstimado;
+
   // Balance
   var lineas = '';
   if(presup > 0) lineas += '<div class="eco-linea"><span class="eco-linea-lbl">Presupuesto aprobado</span><span class="eco-linea-val">'+pesos(presup)+'</span></div>';
+  if(matEstimado > 0) lineas += '<div class="eco-linea"><span class="eco-linea-lbl">Mat. estimados (rubros)</span><span class="eco-linea-val" style="color:var(--gris)">'+pesos(matEstimado)+'</span></div>';
+  if(moEstimado > 0) lineas += '<div class="eco-linea"><span class="eco-linea-lbl">M.O. estimada (rubros)</span><span class="eco-linea-val" style="color:var(--gris)">'+pesos(moEstimado)+'</span></div>';
+  if(costoEstimado > 0 && presup > 0) lineas += '<div class="eco-linea"><span class="eco-linea-lbl">Costo estimado total</span><span class="eco-linea-val" style="color:var(--text-soft)">'+pesos(costoEstimado)+'</span></div>';
   if(totalIng > 0) lineas += '<div class="eco-linea"><span class="eco-linea-lbl">Total ingresos</span><span class="eco-linea-val ing">+'+pesos(totalIng)+'</span></div>';
   if(totalEgr > 0) lineas += '<div class="eco-linea"><span class="eco-linea-lbl">Total egresos</span><span class="eco-linea-val egr">-'+pesos(totalEgr)+'</span></div>';
   if(presup > 0 && totalIng > 0) lineas += '<div class="eco-linea"><span class="eco-linea-lbl">Saldo pendiente</span><span class="eco-linea-val sal">'+pesos(Math.max(0,saldo))+'</span></div>';
@@ -2320,6 +2511,10 @@ function buildModalRubroHTML(ambId, rubId, rub) {
       + '<input class="inline-input inline-input-price" id="new-mat-price-' + rubId + '" type="number" placeholder="$">'
       + '<button class="btn-inline-save" onclick="modalAgregarMat(\'' + ambId + '\',\'' + rubId + '\')">+</button>'
     + '</div>'
+    + '<div class="inline-input-row" style="margin-top:4px">'
+      + '<span style="font-size:11px;color:var(--gris);font-weight:600;padding:6px 4px;white-space:nowrap">M.O. $</span>'
+      + '<input class="inline-input" id="mo-' + rubId + '" type="number" placeholder="Mano de obra..." value="' + (rub.manoObra||'') + '" oninput="modalMoUpdate(\'' + ambId + '\',\'' + rubId + '\',this.value)">'
+    + '</div>'
   + '</div>';
 }
 
@@ -2359,6 +2554,10 @@ window.modalToggleQuien = function(ambId, rubId) {
     if(!rub.subNota) rub.subNota='';
   }
   renderModalObraAmbientes();
+};
+window.modalMoUpdate = function(ambId, rubId, val) {
+  var rub = modalObraAmbientes[ambId]&&modalObraAmbientes[ambId].rubros&&modalObraAmbientes[ambId].rubros[rubId]; if(!rub)return;
+  rub.manoObra = parseFloat(val)||0;
 };
 window.modalSubUpdate = function(ambId, rubId, campo, val) {
   const rub = modalObraAmbientes[ambId]&&modalObraAmbientes[ambId].rubros&&modalObraAmbientes[ambId].rubros[rubId]; if(!rub)return;
@@ -2494,6 +2693,177 @@ window.cerrarLightbox = function() {
 };
 // ==================== FIN FOTOS ====================
 
+
+// ==================== INLINE EDITING RUBROS ====================
+var rubroEditState = {}; // { rubId: {tarea: null|idx, mat: null|idx} }
+
+function cancelarRubroEdit(rubId) {
+  rubroEditState[rubId] = {tarea:null, mat:null};
+  renderAmbientes(obraActivaId);
+}
+window.cancelarRubroEdit = cancelarRubroEdit;
+
+window.iniciarTareaEdit = function(rubId, idx) {
+  if(!rubroEditState[rubId]) rubroEditState[rubId]={tarea:null,mat:null};
+  rubroEditState[rubId].tarea = idx;
+  rubroEditState[rubId].mat = null;
+  renderAmbientes(obraActivaId);
+  setTimeout(function(){ var el=document.getElementById('edit-t-'+rubId); if(el){el.focus();el.select();} },60);
+};
+window.iniciarMatEdit = function(rubId, idx) {
+  if(!rubroEditState[rubId]) rubroEditState[rubId]={tarea:null,mat:null};
+  rubroEditState[rubId].mat = idx;
+  rubroEditState[rubId].tarea = null;
+  renderAmbientes(obraActivaId);
+  setTimeout(function(){ var el=document.getElementById('edit-md-'+rubId); if(el){el.focus();el.select();} },60);
+};
+
+window.guardarTareaEdit = async function(obraId, ambId, rubId, idx) {
+  var el = document.getElementById('edit-t-'+rubId); if(!el) return;
+  var texto = el.value.trim(); if(!texto){snack('La tarea no puede estar vacía');return;}
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var tareas = rub.tareas||[];
+  var done = tareas[idx]&&tareas[idx].done||false;
+  tareas[idx] = {texto:texto, done:done};
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/tareas',tareas);}
+  else{rub.tareas=tareas;guardarLocal();renderAmbientes(obraId);}
+  rubroEditState[rubId]={tarea:null,mat:null};
+};
+window.guardarMatEdit = async function(obraId, ambId, rubId, idx) {
+  var dEl=document.getElementById('edit-md-'+rubId), pEl=document.getElementById('edit-mp-'+rubId);
+  var desc=dEl?dEl.value.trim():''; if(!desc){snack('Descripción requerida');return;}
+  var price=parseFloat(pEl?pEl.value:0)||0;
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var mats=rub.materiales||[];
+  mats[idx]={desc:desc,price:price};
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/materiales',mats);}
+  else{rub.materiales=mats;guardarLocal();renderAmbientes(obraId);}
+  rubroEditState[rubId]={tarea:null,mat:null};
+};
+window.addTareaInline = async function(obraId, ambId, rubId) {
+  var el=document.getElementById('new-t-'+rubId); if(!el) return;
+  var texto=el.value.trim(); if(!texto){el.focus();return;}
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var tareas=[...(rub.tareas||[]),{texto:texto,done:false}];
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/tareas',tareas);}
+  else{rub.tareas=tareas;guardarLocal();renderAmbientes(obraId);}
+  el.value='';
+};
+window.deleteTareaInline = async function(obraId, ambId, rubId, idx) {
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var tareas=(rub.tareas||[]).filter(function(_,i){return i!==idx;});
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/tareas',tareas);}
+  else{rub.tareas=tareas;guardarLocal();renderAmbientes(obraId);}
+};
+window.addMatInline = async function(obraId, ambId, rubId) {
+  var dEl=document.getElementById('new-md-'+rubId), pEl=document.getElementById('new-mp-'+rubId);
+  var desc=dEl?dEl.value.trim():''; if(!desc){if(dEl)dEl.focus();return;}
+  var price=parseFloat(pEl?pEl.value:0)||0;
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var mats=[...(rub.materiales||[]),{desc:desc,price:price}];
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/materiales',mats);}
+  else{rub.materiales=mats;guardarLocal();renderAmbientes(obraId);}
+  if(dEl)dEl.value=''; if(pEl)pEl.value='';
+};
+window.deleteMatInline = async function(obraId, ambId, rubId, idx) {
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var mats=(rub.materiales||[]).filter(function(_,i){return i!==idx;});
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/materiales',mats);}
+  else{rub.materiales=mats;guardarLocal();renderAmbientes(obraId);}
+};
+
+// === ARCHIVOS (fotos ya existentes + docs nuevos) ===
+window.verArchivoRubro = function(tipo, obraId, ambId, rubId, idx) {
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var archivo = tipo==='foto' ? (rub.fotos||[])[idx] : (rub.docs||[])[idx];
+  if(!archivo) return;
+  var b64=archivo.b64||archivo, mime=archivo.mime||'image/jpeg';
+  if(mime.startsWith('image/')){
+    var lb=document.getElementById('foto-lightbox');
+    if(lb){document.getElementById('lightbox-img').src=b64;lb.classList.add('open');document.body.style.overflow='hidden';}
+  } else {
+    try {
+      var raw=b64.split(',')[1]||b64;
+      var byteStr=atob(raw); var arr=new Uint8Array(byteStr.length);
+      for(var i=0;i<byteStr.length;i++) arr[i]=byteStr.charCodeAt(i);
+      var blob=new Blob([arr],{type:mime});
+      var url=URL.createObjectURL(blob);
+      window.open(url,'_blank');
+      setTimeout(function(){URL.revokeObjectURL(url);},8000);
+    } catch(e){snack('No se pudo abrir el archivo');}
+  }
+};
+window.deleteArchivoRubro = async function(tipo, obraId, ambId, rubId, idx) {
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  if(tipo==='foto'){
+    var fotos=(rub.fotos||[]).filter(function(_,i){return i!==idx;});
+    if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/fotos',fotos);}
+    else{rub.fotos=fotos;guardarLocal();renderAmbientes(obraId);}
+  } else {
+    var docs=(rub.docs||[]).filter(function(_,i){return i!==idx;});
+    if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/docs',docs);}
+    else{rub.docs=docs;guardarLocal();renderAmbientes(obraId);}
+  }
+  snack('Archivo eliminado');
+};
+var docRubroCtx = null;
+window.abrirSelectorDoc = function(obraId, ambId, rubId) {
+  docRubroCtx = {obraId, ambId, rubId};
+  var inp = document.getElementById('doc-input-global');
+  if(!inp){
+    inp=document.createElement('input');
+    inp.type='file'; inp.id='doc-input-global';
+    inp.accept='image/*,application/pdf,.pdf,.doc,.docx,.xls,.xlsx,.txt';
+    inp.style.display='none';
+    inp.addEventListener('change', function(){
+      var file=inp.files[0]; if(!file) return;
+      if(file.size>8*1024*1024){snack('Archivo muy grande (máx 8MB)');inp.value='';return;}
+      var reader=new FileReader();
+      reader.onload=function(e){
+        var b64=e.target.result;
+        var ctx=docRubroCtx; if(!ctx) return;
+        if(file.type.startsWith('image/')){
+          // Comprimir imagen
+          var img=new Image();
+          img.onload=function(){
+            var maxW=1200,maxH=1200,w=img.width,h=img.height;
+            if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+            if(h>maxH){w=Math.round(w*maxH/h);h=maxH;}
+            var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+            canvas.getContext('2d').drawImage(img,0,0,w,h);
+            b64=canvas.toDataURL('image/jpeg',0.8);
+            guardarDocRubro(ctx.obraId,ctx.ambId,ctx.rubId,{b64:b64,mime:'image/jpeg',nombre:file.name,ts:Date.now()});
+          };
+          img.src=b64;
+        } else {
+          guardarDocRubro(ctx.obraId,ctx.ambId,ctx.rubId,{b64:b64,mime:file.type,nombre:file.name,ts:Date.now()});
+        }
+      };
+      reader.readAsDataURL(file);
+      inp.value='';
+    });
+    document.body.appendChild(inp);
+  }
+  inp.click();
+};
+async function guardarDocRubro(obraId,ambId,rubId,doc){
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var docs=[...(rub.docs||[]),doc];
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/docs',docs);}
+  else{rub.docs=docs;guardarLocal();renderAmbientes(obraId);}
+  snack('Archivo guardado');
+}
+// ==================== FIN INLINE EDITING RUBROS ====================
+
 // Init presupuestos (directo, sin DOMContentLoaded — script ya está al final del body)
 document.getElementById('p-fecha').value = hoy();
 document.getElementById('btn-add-trabajo-p').addEventListener('click', () => presAddItem('p-items-list'));
@@ -2501,7 +2871,16 @@ document.getElementById('btn-add-mat-p').addEventListener('click', () => presAdd
 document.getElementById('btn-pres-generar').addEventListener('click', generarPres);
 document.getElementById('btn-pres-guardar').addEventListener('click', window.guardarPresupuesto);
 document.getElementById('btn-pres-copy').addEventListener('click', window.copiarPresupuesto);
-document.getElementById('p-monto').addEventListener('focus', function() { pMontoManual = true; });
+document.getElementById('p-monto').addEventListener('focus', function() {
+  // Solo manual si no hay precio/jornada
+  var pj=document.getElementById('p-precio-jornada');
+  if(!pj||!parseFloat(pj.value)) pMontoManual = true;
+});
+// Precio/jornada y ayudante también disparan generarPres
+['p-precio-jornada','p-precio-ayudante'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input', function(){ pMontoManual=false; generarPres(); });
+});
 document.querySelectorAll('#tab-presupuestos .pres-input').forEach(el => el.addEventListener('input', generarPres));
 presAddItem('p-items-list');
 // ==================== FIN MÓDULO PRESUPUESTOS & OBRAS ====================
