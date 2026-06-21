@@ -2109,7 +2109,8 @@ function buildRubroHTML(obraId,ambId,rubId,rub){
     html+='</div>';
   }
   html+='<div class="rubro-arch-add-row">'
-    +'<button class="btn-arch-add" onclick="abrirSelectorFoto(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">&#x1F4F7; Foto</button>'
+    +'<button class="btn-arch-add" onclick="abrirSelectorFoto(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">&#x1F5BC; Galería</button>'
+    +'<button class="btn-arch-add" onclick="abrirCamaraFoto(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">&#x1F4F7; Cámara</button>'
     +'<button class="btn-arch-add" onclick="abrirSelectorDoc(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">&#x1F4CE; Archivo</button>'
   +'</div>';
   html+='</div>';
@@ -2624,52 +2625,89 @@ window.selChipRubroQuien = function(btn, val) {
 var fotoRubroCtx = {obraId:null, ambId:null, rubId:null};
 
 function comprimirImagen(file, maxW, maxH, quality, cb) {
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var img = new Image();
-    img.onload = function() {
-      var w = img.width, h = img.height;
-      if(w > maxW) { h = Math.round(h*maxW/w); w = maxW; }
-      if(h > maxH) { w = Math.round(w*maxH/h); h = maxH; }
-      var canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      cb(canvas.toDataURL('image/jpeg', quality));
+  try {
+    var reader = new FileReader();
+    reader.onerror = function() { cb(null); };
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onerror = function() { cb(null); };
+      img.onload = function() {
+        try {
+          var w = img.width, h = img.height;
+          if(w > maxW) { h = Math.round(h*maxW/w); w = maxW; }
+          if(h > maxH) { w = Math.round(w*maxH/h); h = maxH; }
+          var canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          cb(canvas.toDataURL('image/jpeg', quality));
+        } catch(ex) { cb(null); }
+      };
+      img.src = e.target.result;
     };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
+  } catch(e) { cb(null); }
+}
+
+// Dos inputs: uno para galería, uno para cámara
+function crearFotoInput(id, useCapture) {
+  var inp = document.createElement('input');
+  inp.type = 'file'; inp.id = id;
+  inp.accept = 'image/*';
+  if(useCapture) inp.setAttribute('capture', 'environment');
+  inp.style.display = 'none';
+  inp.addEventListener('change', function() {
+    var file = inp.files[0]; if(!file) return;
+    inp.value = ''; // reset antes de comprimir por si hay re-selección
+    comprimirImagen(file, 1200, 1200, 0.82, function(b64) {
+      if(!b64) { snack('Error al procesar la imagen'); return; }
+      var ctx = fotoRubroCtx; if(!ctx) return;
+      guardarFotoRubro(ctx.obraId, ctx.ambId, ctx.rubId, b64);
+    });
+  });
+  document.body.appendChild(inp);
+  return inp;
 }
 
 window.abrirSelectorFoto = function(obraId, ambId, rubId) {
   fotoRubroCtx = {obraId, ambId, rubId};
-  var inp = document.getElementById('foto-input-global');
-  if(!inp) {
-    inp = document.createElement('input');
-    inp.type = 'file'; inp.id = 'foto-input-global';
-    inp.accept = 'image/*'; inp.capture = 'environment';
-    inp.style.display = 'none';
-    inp.addEventListener('change', function() {
-      var file = inp.files[0]; if(!file) return;
-      comprimirImagen(file, 1200, 1200, 0.75, function(b64) {
-        guardarFotoRubro(fotoRubroCtx.obraId, fotoRubroCtx.ambId, fotoRubroCtx.rubId, b64);
-      });
-      inp.value = '';
-    });
-    document.body.appendChild(inp);
-  }
+  // Sin capture: abre el picker del sistema (cámara + galería)
+  var inp = document.getElementById('foto-input-global') || crearFotoInput('foto-input-global', false);
+  // Forzar disparo aunque el archivo sea el mismo
+  inp.value = '';
+  inp.click();
+};
+
+window.abrirCamaraFoto = function(obraId, ambId, rubId) {
+  fotoRubroCtx = {obraId, ambId, rubId};
+  // Con capture: solo cámara
+  var inp = document.getElementById('foto-cam-global') || crearFotoInput('foto-cam-global', true);
+  inp.value = '';
   inp.click();
 };
 
 async function guardarFotoRubro(obraId, ambId, rubId, b64) {
-  var o = data.obras[obraId]; if(!o) return;
-  var rub = ((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
-  if(!rub.fotos) rub.fotos = [];
-  rub.fotos.push({b64:b64, ts:Date.now()});
-  if(fbOk) { await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/fotos', rub.fotos); }
-  else { guardarLocal(); }
-  renderAmbientes(obraId);
-  snack('Foto guardada');
+  try {
+    var o = data.obras[obraId]; if(!o){ snack('Error: obra no encontrada'); return; }
+    var amb = (o.ambientes||{})[ambId]; if(!amb){ snack('Error: ambiente no encontrado'); return; }
+    var rub = (amb.rubros||{})[rubId]; if(!rub){ snack('Error: rubro no encontrado'); return; }
+    if(!rub.fotos) rub.fotos = [];
+    var nuevaFoto = {b64:b64, ts:Date.now()};
+    rub.fotos.push(nuevaFoto);
+    if(fbOk) {
+      var ok = await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/fotos', rub.fotos);
+      if(!ok) throw new Error('Firebase no respondió');
+    } else {
+      guardarLocal();
+    }
+    renderAmbientes(obraId);
+    snack('Foto guardada ✓');
+  } catch(e) {
+    console.error('guardarFotoRubro:', e);
+    snack('Error al guardar la foto — intentá de nuevo');
+  }
 }
 
 window.eliminarFotoRubro = async function(obraId, ambId, rubId, idx) {
