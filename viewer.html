@@ -11,66 +11,119 @@
   --madera:#5A3A1A;--madera-mid:#C8956C;--madera-light:#F5F0E8;--madera-dark:#3d2510;
   --verde:#2E6B1F;--verde-bg:#E8F5E2;--azul:#0C447C;--azul-bg:#E6F1FB;
   --amber:#854F0B;--amber-bg:#FAEEDA;--gris:#888780;--gris-bg:#F1EFE8;
-  --violeta:#7B3FAD;--violeta-bg:#EDE0F5;
+  --rojo:#A32D2D;--rojo-bg:#FCEBEB;
   --bg:#F5F0E8;--card:#FFFFFF;--text:#2C2C2A;--text-soft:#5F5E5A;
-  --border:#D3D1C7;--shadow:0 2px 12px rgba(90,58,26,.10);
+  --border:#D3D1C7;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.header{background:var(--madera);padding:16px 18px 14px}
-.brand{display:flex;align-items:baseline;gap:3px;margin-bottom:2px}
-.brand-fer{font-family:'DM Serif Display',serif;font-size:22px;color:#f0e6d0}
-.brand-olea{font-family:'DM Serif Display',serif;font-size:22px;color:#c9a060}
-.brand-sub{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.05em}
-.obra-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-top:8px}
-.main{max-width:540px;margin:0 auto;padding:14px}
-.card{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
-.card-title{padding:11px 14px 8px;font-size:10.5px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.09em}
-.obra-info{padding:14px}
-.obra-nombre{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:4px}
-.obra-meta{font-size:13px;color:var(--text-soft);margin-bottom:2px}
-.obra-meta strong{color:var(--text)}
-.progreso-wrap{background:var(--bg);border-radius:6px;height:8px;overflow:hidden;margin:12px 0 6px}
-.progreso-bar{height:100%;border-radius:6px;background:var(--madera-mid);transition:width .5s}
-.progreso-lbl{font-size:12px;color:var(--gris);font-weight:600}
-.eco-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px}
-.eco-cell{background:var(--bg);border-radius:10px;padding:10px 12px;border:1px solid var(--border)}
-.eco-lbl{font-size:10px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.eco-val{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text)}
-.ambiente-card{border-bottom:1px solid var(--border)}
-.ambiente-card:last-of-type{border-bottom:none}
-.ambiente-header{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.ambiente-nombre{font-size:14px;font-weight:700;color:var(--text)}
-.ambiente-meta{font-size:11px;color:var(--gris);margin-top:1px}
-.ambiente-body{padding:8px 14px 12px;border-top:1px solid var(--border)}
-.rubro-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
-.rubro-row:last-of-type{border-bottom:none}
-.rubro-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.rubro-nombre{flex:1;font-size:13px;color:var(--text)}
-.rubro-chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;flex-shrink:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px}
+
+/* Header */
+.header{background:var(--madera-dark);padding:22px 16px 20px}
+.brand{display:flex;align-items:baseline;gap:4px;margin-bottom:4px}
+.brand-fer{font-family:'DM Serif Display',serif;font-size:28px;color:#f0e6d0}
+.brand-olea{font-family:'DM Serif Display',serif;font-size:28px;color:var(--madera-mid)}
+.brand-tag{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,149,108,.55);margin-bottom:16px}
+.obra-nombre{font-size:22px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:4px}
+.obra-meta{font-size:12px;color:rgba(255,255,255,.6);margin-top:2px}
+.estado-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-top:10px}
+.estado-pill-dot{width:7px;height:7px;border-radius:50%}
+
+/* Progreso general */
+.card{background:var(--card);margin:12px 14px;border-radius:14px;border:1px solid var(--border);overflow:hidden}
+.card-title{padding:12px 14px 8px;font-size:10px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.09em}
+.prog-section{background:var(--card);margin:12px 14px 0;border-radius:14px;border:1px solid var(--border);padding:14px}
+.prog-titulo{font-size:10px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.09em;margin-bottom:10px}
+.prog-bar-wrap{background:var(--bg);border-radius:6px;height:12px;overflow:hidden;margin-bottom:8px;border:1px solid var(--border)}
+.prog-bar{height:100%;border-radius:6px;background:var(--madera-mid);transition:width .6s cubic-bezier(.4,0,.2,1)}
+.prog-nums{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.prog-pct{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text)}
+.prog-sub{font-size:12px;color:var(--gris)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-box{background:var(--bg);border-radius:10px;padding:8px 10px;text-align:center}
+.stat-box-lbl{font-size:9px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.stat-box-val{font-size:18px;font-weight:700}
+.stat-box-val.pend{color:var(--amber)}
+.stat-box-val.curso{color:var(--verde)}
+.stat-box-val.hecho{color:var(--gris)}
+
+/* Sección económica */
+.eco-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:8px 14px 14px}
+.eco-cell{background:var(--bg);border-radius:10px;padding:10px 12px}
+.eco-lbl{font-size:10px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.eco-val{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text)}
+
+/* Ambientes */
+.seccion-titulo{font-size:10px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.09em;padding:14px 14px 6px}
+.ambiente-card{background:var(--card);margin:0 14px 10px;border-radius:14px;border:1px solid var(--border);overflow:hidden}
+.ambiente-header{padding:13px 14px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.ambiente-nombre{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.ambiente-stats{display:flex;gap:5px;flex-wrap:wrap}
+.ast-hecho{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--gris-bg);color:var(--gris)}
+.ast-curso{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--verde-bg);color:var(--verde)}
+.ast-pend{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--amber-bg);color:var(--amber)}
+.amb-prog-wrap{height:4px;background:var(--bg)}
+.amb-prog-bar{height:100%;background:var(--madera-mid);transition:width .4s}
+.ambiente-body{padding:10px 12px 12px;border-top:1px solid var(--border)}
+
+/* Rubros */
+.rubro-card{background:var(--bg);border-radius:10px;border:1px solid var(--border);margin-bottom:8px;overflow:hidden}
+.rubro-card:last-of-type{margin-bottom:0}
+.rubro-card.hecho{opacity:.85}
+.rubro-header-pub{display:flex;align-items:center;gap:9px;padding:10px 12px;user-select:none}
+.rubro-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.rubro-nombre{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+.rubro-tprog{font-size:10px;color:var(--gris);margin-top:1px}
+.rubro-chip{font-size:10px;font-weight:700;padding:2px 9px;border-radius:6px;flex-shrink:0;white-space:nowrap}
 .chip-pend{background:var(--amber-bg);color:var(--amber)}
 .chip-curso{background:var(--verde-bg);color:var(--verde)}
 .chip-hecho{background:var(--gris-bg);color:var(--gris)}
-.rubro-sub{font-size:11px;color:var(--azul);margin-top:2px;font-weight:600}
-.foto-grid{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding-left:16px}
-.foto-thumb{width:56px;height:56px;border-radius:8px;overflow:hidden;border:1px solid var(--border);cursor:pointer}
-.foto-thumb img{width:100%;height:100%;object-fit:cover}
-.empty{text-align:center;padding:32px 16px;color:var(--gris);font-size:13px;line-height:1.6}
-.error-box{background:#fff;border-radius:14px;border:1px solid var(--border);padding:28px;text-align:center;margin:20px}
-.error-box h2{font-family:'DM Serif Display',serif;font-size:20px;color:var(--madera);margin-bottom:8px}
-.error-box p{font-size:13px;color:var(--text-soft);line-height:1.6}
-.loading{text-align:center;padding:40px;color:var(--gris)}
-.footer{text-align:center;padding:20px;font-size:12px;color:var(--gris)}
-.footer a{color:var(--madera-mid);text-decoration:none;font-weight:600}
-.contacto-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--madera);color:#fff;padding:13px;border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;margin:4px 0}
-.wa-btn{background:#25D366}
-.tel-btn{background:var(--azul)}
+.rubro-toggle{color:var(--gris);font-size:11px;flex-shrink:0;transition:transform .2s;display:inline-block}
+.rubro-card.rubro-collapsed .rubro-toggle{transform:rotate(-90deg)}
+.tarea-bar{height:3px;background:var(--border);margin:0 12px 4px}
+.tarea-bar-fill{height:100%;background:var(--verde);transition:width .4s}
+
+/* Detalle del rubro */
+.rubro-detail{border-top:1px solid var(--border);padding:10px 12px 12px}
+.rubro-card.rubro-collapsed .rubro-detail{display:none}
+.det-seccion{margin-bottom:10px}
+.det-seccion:last-of-type{margin-bottom:0}
+.det-lbl{font-size:9px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px}
+
+/* Tareas */
+.tarea-pub-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.tarea-pub-row:last-of-type{border-bottom:none}
+.tarea-pub-row.done{background:rgba(0,0,0,.01)}
+.tarea-pub-icon{font-size:16px;flex-shrink:0;margin-top:1px;line-height:1}
+.tarea-pub-txt{flex:1;font-size:13px;color:var(--text);line-height:1.4}
+.tarea-pub-row.done .tarea-pub-txt{color:var(--gris);text-decoration:line-through}
+.tarea-pub-ok{font-size:10px;font-weight:700;color:var(--verde);flex-shrink:0;background:var(--verde-bg);padding:2px 7px;border-radius:6px}
+.tarea-resumen{font-size:11px;font-weight:600;margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
+
+/* Fotos */
+.arch-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.arch-foto{width:80px;height:80px;border-radius:9px;overflow:hidden;border:1px solid var(--border);cursor:pointer;background:var(--bg);flex-shrink:0}
+.arch-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.arch-doc{display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid var(--border);border-radius:9px;cursor:pointer;background:#fff;font-size:11px;font-weight:600;color:var(--text)}
+.arch-doc-icon{font-size:20px;flex-shrink:0}
 
 /* Lightbox */
-.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100;align-items:center;justify-content:center}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;align-items:center;justify-content:center;flex-direction:column}
 .lightbox.open{display:flex}
-.lightbox img{max-width:96vw;max-height:90vh;object-fit:contain;border-radius:8px}
-.lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer}
+.lightbox img{max-width:95vw;max-height:88vh;border-radius:8px;object-fit:contain}
+.lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* Footer */
+.footer{padding:28px 14px 20px;text-align:center}
+.footer-brand{font-size:14px;font-weight:700;color:var(--madera)}
+.footer-info{font-size:12px;color:var(--gris);margin-top:3px}
+.footer-update{font-size:10px;color:var(--border);margin-top:6px}
+
+/* Loading / error */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;color:var(--gris);gap:12px}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--madera-mid);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:24px;text-align:center;color:var(--gris);font-size:13px}
 </style>
 </head>
 <body>
@@ -193,60 +246,159 @@ function renderObra(o) {
 
   // Ambientes y rubros
   if(ambientes.length) {
-    html += '<div class="card"><div class="card-title">Detalle por ambiente</div>';
+    html += '<div class="seccion-titulo">Detalle por ambiente</div>';
     ambientes.forEach(function(amb) {
-      const rubros = Object.values(amb.rubros||{});
+      var rubros = Object.values(amb.rubros||{});
       if(!rubros.length) return;
-      const hechosAmb = rubros.filter(r=>r.estado==='Hecho').length;
-      html += '<div class="ambiente-card">'
-        + '<div class="ambiente-header">'
-          + '<div><div class="ambiente-nombre">'+(amb.nombre||'Ambiente')+'</div>'
-          + '<div class="ambiente-meta">'+hechosAmb+'/'+rubros.length+' rubros completados</div></div>'
-        + '</div>'
-        + '<div class="ambiente-body">';
 
+      // Stats del ambiente
+      var rHechos=0, rCurso=0, rPend=0, tTotal=0, tDone=0;
+      rubros.forEach(function(r){
+        if(r.estado==='Hecho') rHechos++;
+        else if(r.estado==='En curso') rCurso++;
+        else rPend++;
+        (r.tareas||[]).forEach(function(t){tTotal++;if(t.done)tDone++;});
+      });
+      var ambPct = rubros.length>0?Math.round(rHechos/rubros.length*100):0;
+      var tarPct = tTotal>0?Math.round(tDone/tTotal*100):0;
+
+      html += '<div class="ambiente-card">';
+      html += '<div class="ambiente-header">';
+      html += '<div class="ambiente-nombre">'+(amb.nombre||'Ambiente')+'</div>';
+      html += '<div class="ambiente-stats">';
+      if(rHechos>0) html += '<span class="ast-hecho">'+rHechos+' hecho'+(rHechos!==1?'s':'')+'</span>';
+      if(rCurso>0)  html += '<span class="ast-curso">'+rCurso+' en curso</span>';
+      if(rPend>0)   html += '<span class="ast-pend">'+rPend+' pendiente'+(rPend!==1?'s':'')+'</span>';
+      html += '</div>';
+      html += '</div>';
+
+      // Barra de progreso del ambiente
+      html += '<div class="amb-prog-wrap"><div class="amb-prog-bar" style="width:'+ambPct+'%"></div></div>';
+
+      html += '<div class="ambiente-body">';
       rubros.forEach(function(rub) {
-        const stMap = {'Pendiente':'chip-pend','En curso':'chip-curso','Hecho':'chip-hecho'};
-        const dotMap = {'Pendiente':'#854F0B','En curso':'#2E6B1F','Hecho':'#888780'};
-        const est = rub.estado||'Pendiente';
-        const dotColor = dotMap[est]||'#888780';
+        var est    = rub.estado||'Pendiente';
+        var tareas = rub.tareas||[];
+        var fotos  = rub.fotos||[];
+        var docs   = rub.docs||[];
+        var tTot   = tareas.length;
+        var tHech  = tareas.filter(function(t){return t.done;}).length;
+        var tPct   = tTot>0?Math.round(tHech/tTot*100):0;
+        var archN  = fotos.length+docs.length;
 
-        html += '<div class="rubro-row">'
-          + '<div class="rubro-dot" style="background:'+dotColor+'"></div>'
-          + '<div style="flex:1">'
-            + '<div class="rubro-nombre">'+( rub.nombre||'Rubro')+'</div>'
-            + (rub.quien==='Subcontratista' && rub.subNombre
-              ? '<div class="rubro-sub">&#x1F527; '+rub.subNombre+'</div>'
-              : '')
-          + '</div>'
-          + '<span class="rubro-chip '+stMap[est]+'">'+est+'</span>'
-        + '</div>';
+        var dotC   = {'Pendiente':'#854F0B','En curso':'#2E6B1F','Hecho':'#888780'}[est]||'#888780';
+        var chipC  = {'Pendiente':'chip-pend','En curso':'chip-curso','Hecho':'chip-hecho'}[est]||'chip-pend';
+        var esHecho= est==='Hecho';
+        var rubId  = rub.id||('r'+Math.random().toString(36).slice(2,8));
 
-        // Fotos del rubro
-        const fotos = rub.fotos||[];
-        if(fotos.length) {
-          html += '<div class="foto-grid">'
-            + fotos.map(function(f){
-                return '<div class="foto-thumb" onclick="document.getElementById(\'lightbox-img\').src=\''+f.b64+'\';document.getElementById(\'lightbox\').classList.add(\'open\')">'
-                  + '<img src="'+f.b64+'" loading="lazy">'
-                + '</div>';
-              }).join('')
-          + '</div>';
+        html += '<div class="rubro-card'+(esHecho?' hecho':'')+'" id="rc-'+rubId+'">';
+
+        // Header del rubro
+        html += '<div class="rubro-header-pub" onclick="toggleRubroViewer(\''+rubId+'\')" style="cursor:pointer">';
+        html += '<div class="rubro-dot" style="background:'+dotC+'"></div>';
+        html += '<div style="flex:1;min-width:0">';
+        html += '<div class="rubro-nombre">'+(rub.nombre||'Trabajo')+'</div>';
+        // Sub-línea de progreso de tareas
+        if(tTot>0) html += '<div class="rubro-tprog">'+tHech+'/'+tTot+' tareas'+(esHecho?' · completado':'')+'</div>';
+        html += '</div>';
+        html += '<span class="rubro-chip '+chipC+'">'+est+'</span>';
+        html += '<span class="rubro-toggle" id="rt-'+rubId+'">&#x25BC;</span>';
+        html += '</div>';
+
+        // Barra progreso tareas (si hay)
+        if(tTot>0&&!esHecho) {
+          html += '<div class="tarea-bar" style="margin:0 12px 0"><div class="tarea-bar-fill" style="width:'+tPct+'%"></div></div>';
         }
+
+        // Detalle colapsable (expandido por defecto)
+        html += '<div class="rubro-detail" id="rd-'+rubId+'">';
+
+        // == TAREAS ==
+        if(tTot>0) {
+          html += '<div class="det-seccion">';
+          html += '<div class="det-lbl">Trabajos a realizar</div>';
+          tareas.forEach(function(t) {
+            var txt  = typeof t==='string'?t:t.texto;
+            var done = t.done||false;
+            html += '<div class="tarea-pub-row '+(done?'done':'')+'">';
+            html += '<span class="tarea-pub-icon">'+(done?'&#x2705;':'&#x25A1;')+'</span>';
+            html += '<span class="tarea-pub-txt">'+txt+'</span>';
+            if(done) html += '<span class="tarea-pub-ok">Listo</span>';
+            html += '</div>';
+          });
+          if(tTot>0) {
+            html += '<div class="tarea-resumen">'
+              + (tHech===tTot
+                  ? '<span style="color:var(--verde);font-weight:700">✓ Todo completado</span>'
+                  : '<span style="color:var(--amber)">'+(tTot-tHech)+' tarea'+(tTot-tHech!==1?'s':'')+' pendiente'+(tTot-tHech!==1?'s':'')+'</span>')
+            + '</div>';
+          }
+          html += '</div>';
+        }
+
+        // == FOTOS Y DOCS (sin precios, sin info interna) ==
+        if(archN>0) {
+          html += '<div class="det-seccion">';
+          html += '<div class="det-lbl">Fotos del trabajo ('+archN+')</div>';
+          html += '<div class="arch-grid">';
+          fotos.forEach(function(f){
+            var b64=f.b64||f;
+            html += '<div class="arch-foto" onclick="abrirFoto(this)"><img src="'+b64+'" loading="lazy" style="display:none" onload="this.style.display=\'block\'"></div>';
+          });
+          docs.forEach(function(d){
+            var iconDoc=d.mime==='application/pdf'?'&#x1F4C4;':d.mime&&d.mime.startsWith('image')?'&#x1F5BC;':'&#x1F4CE;';
+            html += '<div class="arch-doc" onclick="abrirDoc(this)" data-b64="'+encodeURIComponent(d.b64||'')+'" data-mime="'+encodeURIComponent(d.mime||'')+'" data-nombre="'+encodeURIComponent(d.nombre||'archivo')+'">'
+              +'<span class="arch-doc-icon">'+iconDoc+'</span>'
+              +'<span>'+(d.nombre||'Archivo')+'</span>'
+            +'</div>';
+          });
+          html += '</div></div>';
+        }
+
+        html += '</div>'; // rubro-detail
+        html += '</div>'; // rubro-card
       });
 
-      html += '</div></div>';
+      html += '</div></div>'; // ambiente-body, ambiente-card
     });
-    html += '</div>';
   } else {
-    html += '<div class="card"><div class="empty">Todavía no hay ambientes registrados en esta obra.</div></div>';
+    html += '<div class="card"><div class="empty">Todavía no hay ambientes registrados.</div></div>';
   }
 
   document.getElementById('content').innerHTML = html;
-
-  // Título de la página
   document.title = (o.nombre||'Obra') + ' — Fer Olea';
 }
+
+window.toggleRubroViewer = function(rubId) {
+  var card=document.getElementById('rc-'+rubId);
+  var det=document.getElementById('rd-'+rubId);
+  var tog=document.getElementById('rt-'+rubId);
+  if(!card||!det) return;
+  var collapsed=card.classList.toggle('rubro-collapsed');
+  if(tog) tog.innerHTML=collapsed?'&#x25B6;':'&#x25BC;';
+};
+window.abrirFoto = function(el) {
+  var img=typeof el==='string'?null:el.querySelector('img');
+  var src=img?img.src:el;
+  document.getElementById('lightbox-img').src=src;
+  document.getElementById('lightbox').classList.add('open');
+};
+
+window.abrirDoc = function(el) {
+  try {
+    var b64=decodeURIComponent(el.dataset.b64||'');
+    var mime=decodeURIComponent(el.dataset.mime||'application/octet-stream');
+    if(!b64) return;
+    if(mime.startsWith('image/')){abrirFoto(b64);return;}
+    var raw=b64.split(',')[1]||b64;
+    var byteStr=atob(raw);var arr=new Uint8Array(byteStr.length);
+    for(var i=0;i<byteStr.length;i++) arr[i]=byteStr.charCodeAt(i);
+    var blob=new Blob([arr],{type:mime});
+    var url=URL.createObjectURL(blob);
+    window.open(url,'_blank');
+    setTimeout(function(){URL.revokeObjectURL(url);},8000);
+  } catch(e){alert('No se pudo abrir el archivo');}
+};
 </script>
 </body>
 </html>
