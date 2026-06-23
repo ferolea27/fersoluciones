@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+(function(){
+  var H='5509b4c9d0213e80bc17e803e6983f7e4a547cd3fba0d15e414eef9059cee0c1';
+  if(sessionStorage.getItem('fs_auth_v1')!==H){
+    window.location.replace('./login.html');
+  }
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -528,51 +536,13 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .btn-arch-add:active{border-color:var(--madera-mid);color:var(--madera)}
 
 
-/* ==================== LOGIN SCREEN ==================== */
-.login-overlay{position:fixed;inset:0;background:var(--madera-dark);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-.login-overlay.hide{display:none}
-.login-brand{display:flex;align-items:flex-end;gap:4px;margin-bottom:6px}
-.login-brand-fer{font-family:'DM Serif Display',serif;font-size:36px;color:#f0e6d0;line-height:1}
-.login-brand-olea{font-family:'DM Serif Display',serif;font-size:36px;color:var(--madera-mid);line-height:1}
-.login-sub{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,149,108,.55);margin-bottom:40px}
-.login-card{background:rgba(255,255,255,.06);border:1px solid rgba(200,149,108,.2);border-radius:18px;padding:24px 22px;width:100%;max-width:320px}
-.login-titulo{font-size:14px;font-weight:700;color:rgba(236,223,200,.8);margin-bottom:18px;text-align:center;letter-spacing:.02em}
-.login-field{position:relative;margin-bottom:14px}
-.login-input{width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(200,149,108,.25);border-radius:10px;padding:12px 44px 12px 14px;color:#ecdfc8;font-family:'DM Sans',sans-serif;font-size:16px;outline:none;-webkit-appearance:none;letter-spacing:.05em}
-.login-input:focus{border-color:var(--madera-mid);background:rgba(255,255,255,.12)}
-.login-input::placeholder{color:rgba(236,223,200,.3);letter-spacing:0}
-.login-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(200,149,108,.5);cursor:pointer;font-size:18px;padding:4px;line-height:1}
-.login-btn{width:100%;padding:13px;background:var(--madera-mid);color:var(--madera-dark);border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px;letter-spacing:.03em;transition:opacity .15s}
-.login-btn:active{opacity:.8}
-.login-error{font-size:12px;color:#f08080;text-align:center;margin-top:10px;min-height:16px;font-weight:600}
-.login-hint{font-size:10px;color:rgba(200,149,108,.35);text-align:center;margin-top:16px;line-height:1.5}
-/* Botón logout en header */
+
 .logout-btn{width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:rgba(255,255,255,.7);flex-shrink:0}
 .logout-btn:active{background:rgba(255,255,255,.2)}
-/* ==================== FIN LOGIN ==================== */
 
 </style>
 </head>
 <body>
-
-
-<!-- LOGIN OVERLAY -->
-<div class="login-overlay" id="login-overlay">
-  <div class="login-brand">
-    <span class="login-brand-fer">Fer </span><span class="login-brand-olea">Olea</span>
-  </div>
-  <div class="login-sub">Soluciones & Mantenimiento</div>
-  <div class="login-card">
-    <div class="login-titulo">Acceso privado</div>
-    <div class="login-field">
-      <input class="login-input" id="login-pwd" type="password" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')hacerLogin()">
-      <button class="login-eye" id="login-eye" onclick="toggleLoginEye()" type="button">&#x1F441;</button>
-    </div>
-    <button class="login-btn" onclick="hacerLogin()">Ingresar</button>
-    <div class="login-error" id="login-error"></div>
-    <div class="login-hint">Esta app es de uso privado.<br>Si llegaste por error, cerrá esta página.</div>
-  </div>
-</div>
 
 <div class="header">
   <div class="header-top">
@@ -1193,74 +1163,11 @@ function setDot(estado){
 
 // ── FIREBASE ─────────────────────────────────────────────
 
-// ==================== AUTH ====================
-// Para cambiar la contraseña: generá el SHA-256 del nuevo password en
-// https://emn178.github.io/online-tools/sha256.html y reemplazá el hash abajo.
-const AUTH_HASH = '5509b4c9d0213e80bc17e803e6983f7e4a547cd3fba0d15e414eef9059cee0c1'; // contraseña actualizada
-const AUTH_SESSION_KEY = 'fs_auth_v1';
-
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-function checkAuth() {
-  if(sessionStorage.getItem(AUTH_SESSION_KEY) === AUTH_HASH) {
-    document.getElementById('login-overlay').classList.add('hide');
-    return true;
-  }
-  document.getElementById('login-overlay').classList.remove('hide');
-  setTimeout(function(){ var el=document.getElementById('login-pwd'); if(el) el.focus(); }, 200);
-  return false;
-}
-
-window.hacerLogin = async function() {
-  const el = document.getElementById('login-pwd');
-  const err = document.getElementById('login-error');
-  if(!el) return;
-  const pwd = el.value;
-  if(!pwd) { err.textContent='Ingresá la contraseña'; return; }
-  err.textContent='';
-  const btn = document.querySelector('.login-btn');
-  if(btn) { btn.textContent='...'; btn.style.opacity='.6'; }
-  try {
-    const hash = await sha256(pwd);
-    if(hash === AUTH_HASH) {
-      sessionStorage.setItem(AUTH_SESSION_KEY, AUTH_HASH);
-      document.getElementById('login-overlay').classList.add('hide');
-      el.value = '';
-      snack('Bienvenido');
-    } else {
-      el.value = '';
-      el.focus();
-      err.textContent='Contraseña incorrecta';
-      // Vibrar si disponible
-      if(navigator.vibrate) navigator.vibrate(200);
-      setTimeout(function(){ err.textContent=''; }, 3000);
-    }
-  } catch(e) {
-    err.textContent='Error al verificar — intentá de nuevo';
-  }
-  if(btn) { btn.textContent='Ingresar'; btn.style.opacity='1'; }
-};
-
 window.cerrarSesion = function() {
   if(!confirm('¿Cerrar sesión?')) return;
-  sessionStorage.removeItem(AUTH_SESSION_KEY);
-  document.getElementById('login-overlay').classList.remove('hide');
-  var el=document.getElementById('login-pwd'); if(el){el.value='';el.focus();}
+  sessionStorage.removeItem('fs_auth_v1');
+  window.location.replace('./login.html');
 };
-
-window.toggleLoginEye = function() {
-  var inp=document.getElementById('login-pwd'), eye=document.getElementById('login-eye');
-  if(!inp) return;
-  if(inp.type==='password'){ inp.type='text'; if(eye) eye.textContent='🙈'; }
-  else { inp.type='password'; if(eye) eye.innerHTML='&#x1F441;'; }
-};
-
-// Verificar auth al cargar
-checkAuth();
-// ==================== FIN AUTH ====================
 
 function initFirebase(){
   try{

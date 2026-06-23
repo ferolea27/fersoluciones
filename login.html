@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#3d2510">
+<title>FerSoluciones</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+// Si ya está autenticado, ir directo a la app
+(function(){
+  var H='5509b4c9d0213e80bc17e803e6983f7e4a547cd3fba0d15e414eef9059cee0c1';
+  if(sessionStorage.getItem('fs_auth_v1')===H){
+    window.location.replace('./index.html');
+  }
+})();
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--madera-dark);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;min-height:100vh;
+  --madera:#5A3A1A;--madera-mid:#C8956C;--madera-light:#F5F0E8;--madera-dark:#3d2510;
+}
+
+/* Fondo con textura sutil */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 30% 20%, rgba(200,149,108,.08) 0%, transparent 60%),
+             radial-gradient(ellipse at 70% 80%, rgba(90,58,26,.4) 0%, transparent 50%);
+  pointer-events:none;
+}
+
+.container{width:100%;max-width:340px;position:relative;z-index:1}
+
+/* Brand */
+.brand{display:flex;align-items:baseline;gap:4px;justify-content:center;margin-bottom:6px}
+.brand-fer{font-family:'DM Serif Display',serif;font-size:38px;color:#f0e6d0;line-height:1}
+.brand-olea{font-family:'DM Serif Display',serif;font-size:38px;color:var(--madera-mid);line-height:1}
+.brand-tag{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(200,149,108,.5);text-align:center;margin-bottom:40px}
+
+/* Card */
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.18);border-radius:20px;padding:28px 24px}
+.card-titulo{font-size:13px;font-weight:600;color:rgba(240,230,208,.6);text-align:center;letter-spacing:.03em;margin-bottom:22px}
+
+/* Campo */
+.field{position:relative;margin-bottom:16px}
+.input{
+  width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(200,149,108,.22);
+  border-radius:12px;padding:14px 48px 14px 16px;
+  color:#ecdfc8;font-family:'DM Sans',sans-serif;font-size:16px;
+  outline:none;-webkit-appearance:none;transition:border-color .2s,background .2s;
+  letter-spacing:.04em
+}
+.input:focus{border-color:var(--madera-mid);background:rgba(255,255,255,.11)}
+.input::placeholder{color:rgba(236,223,200,.28);letter-spacing:0}
+.eye{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:rgba(200,149,108,.45);
+  cursor:pointer;font-size:20px;padding:4px;line-height:1
+}
+
+/* Botón */
+.btn{
+  width:100%;padding:15px;
+  background:var(--madera-mid);color:var(--madera-dark);
+  border:none;border-radius:12px;
+  font-size:15px;font-weight:700;cursor:pointer;
+  font-family:'DM Sans',sans-serif;letter-spacing:.04em;
+  transition:opacity .15s,transform .1s;
+  -webkit-appearance:none
+}
+.btn:active{opacity:.85;transform:scale(.99)}
+.btn.loading{opacity:.5;pointer-events:none}
+
+/* Error */
+.error{
+  font-size:12px;font-weight:600;color:#f08080;
+  text-align:center;margin-top:14px;min-height:18px;
+  transition:opacity .2s
+}
+
+/* Hint */
+.hint{font-size:10px;color:rgba(200,149,108,.3);text-align:center;margin-top:18px;line-height:1.6}
+
+/* Shake animation */
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
+.shake{animation:shake .35s ease}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="brand"><span class="brand-fer">Fer </span><span class="brand-olea">Olea</span></div>
+  <div class="brand-tag">Soluciones &amp; Mantenimiento</div>
+
+  <div class="card">
+    <div class="card-titulo">Acceso privado</div>
+    <div class="field" id="field">
+      <input class="input" id="pwd" type="password" placeholder="Contraseña"
+        autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')login()">
+      <button class="eye" id="eye" onclick="toggleEye()" type="button" tabindex="-1">&#x1F441;&#xFE0F;</button>
+    </div>
+    <button class="btn" id="btn" onclick="login()">Ingresar</button>
+    <div class="error" id="err"></div>
+    <div class="hint">Área de uso exclusivo.<br>Si llegaste por error, cerrá esta página.</div>
+  </div>
+</div>
+
+<script>
+var H = '5509b4c9d0213e80bc17e803e6983f7e4a547cd3fba0d15e414eef9059cee0c1';
+
+async function sha256(str) {
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+async function login() {
+  var pwd = document.getElementById('pwd').value;
+  var err = document.getElementById('err');
+  var btn = document.getElementById('btn');
+  var field = document.getElementById('field');
+
+  if(!pwd) { err.textContent = 'Ingresá la contraseña'; return; }
+
+  btn.textContent = '...';
+  btn.classList.add('loading');
+  err.textContent = '';
+
+  try {
+    var hash = await sha256(pwd);
+    if(hash === H) {
+      sessionStorage.setItem('fs_auth_v1', H);
+      btn.textContent = '✓';
+      setTimeout(function(){
+        window.location.replace('./index.html');
+      }, 300);
+    } else {
+      document.getElementById('pwd').value = '';
+      document.getElementById('pwd').focus();
+      err.textContent = 'Contraseña incorrecta';
+      field.classList.remove('shake');
+      void field.offsetWidth; // reflow para reiniciar animación
+      field.classList.add('shake');
+      if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      setTimeout(function(){ err.textContent = ''; }, 3000);
+      btn.textContent = 'Ingresar';
+      btn.classList.remove('loading');
+    }
+  } catch(e) {
+    err.textContent = 'Error — intentá de nuevo';
+    btn.textContent = 'Ingresar';
+    btn.classList.remove('loading');
+  }
+}
+
+function toggleEye() {
+  var inp = document.getElementById('pwd');
+  var eye = document.getElementById('eye');
+  if(inp.type === 'password') {
+    inp.type = 'text';
+    eye.innerHTML = '&#x1F648;';
+  } else {
+    inp.type = 'password';
+    eye.innerHTML = '&#x1F441;&#xFE0F;';
+  }
+}
+
+// Focus automático con pequeño delay para móvil
+setTimeout(function(){ document.getElementById('pwd').focus(); }, 400);
+</script>
+</body>
+</html>
