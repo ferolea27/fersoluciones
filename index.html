@@ -309,16 +309,136 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .nota-item:last-of-type{border-bottom:none}
 .nota-fecha{font-size:10px;color:var(--gris);font-weight:600;margin-bottom:3px}
 .nota-texto{font-size:13px;color:var(--text);line-height:1.5}
+
+/* TIPO SELECTOR PRESUPUESTO */
+.pres-tipo-selector{display:flex;gap:8px;margin-bottom:14px}
+.pres-tipo-btn{flex:1;padding:10px 8px;border:2px solid var(--border);border-radius:12px;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--gris);cursor:pointer;transition:all .2s;text-align:center}
+.pres-tipo-btn.active{border-color:var(--madera-mid);background:rgba(200,149,108,.12);color:var(--madera)}
+.pres-tipo-btn .tipo-ico{font-size:20px;display:block;margin-bottom:3px}
+
+/* OBRA FORM */
+.obra-rubro-blk{background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.2);border-radius:10px;padding:12px;margin-bottom:10px}
+.obra-rubro-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.obra-rubro-num{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:var(--madera-mid);width:24px;flex-shrink:0}
+.obra-rubro-nombre{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(200,149,108,.25);border-radius:6px;padding:8px 10px;color:#ecdfc8;font-family:'DM Sans',sans-serif;font-size:13px;outline:none}
+.obra-rubro-nombre:focus{border-color:var(--madera-mid)}
+.obra-rubro-desc{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:7px 10px;color:rgba(236,223,200,.7);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;margin-bottom:8px}
+.obra-rubro-desc:focus{border-color:var(--madera-mid)}
+.obra-si-row{display:flex;gap:5px;margin-bottom:5px;align-items:center}
+.obra-si-d{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:7px 9px;color:#ecdfc8;font-family:'DM Sans',sans-serif;font-size:12px;outline:none}
+.obra-si-m{width:110px;background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:7px 8px;color:var(--madera-mid);font-family:'DM Sans',sans-serif;font-size:12px;text-align:right;outline:none;-webkit-appearance:none}
+.obra-si-d:focus,.obra-si-m:focus{border-color:var(--madera-mid)}
+.obra-si-sub{font-family:'Oswald',sans-serif;font-size:12px;color:var(--madera-mid);text-align:right;margin-top:5px;padding-top:5px;border-top:1px solid rgba(200,149,108,.2)}
+.btn-add-obra-si{width:100%;padding:5px;border:1px dashed rgba(200,149,108,.25);border-radius:6px;background:transparent;color:rgba(200,149,108,.5);font-size:10px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.05em;text-transform:uppercase;margin-top:3px}
+.btn-del-rubro-o{background:none;border:none;color:rgba(200,149,108,.4);cursor:pointer;font-size:18px;padding:2px;line-height:1}
+.btn-add-rubro-o{width:100%;padding:9px;border:2px dashed rgba(200,149,108,.25);border-radius:10px;background:transparent;color:rgba(200,149,108,.6);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.obra-sec-sep{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--madera-mid);margin:12px 0 8px;padding-bottom:5px;border-bottom:1px solid rgba(200,149,108,.2)}
+
+/* PREVIEW OBRA */
+.pres-obra-doc{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 3px 20px rgba(0,0,0,.12);margin-bottom:12px}
+.pod-hdr{background:#3a2410;padding:22px 24px 18px}
+.pod-brand-row{display:flex;align-items:baseline;gap:4px;margin-bottom:2px}
+.pod-fer{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:#f0e6d0;letter-spacing:.1em}
+.pod-olea{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:#c9a060;letter-spacing:.1em}
+.pod-tagline{font-family:'Oswald',sans-serif;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;margin-bottom:2px}
+.pod-subtag{font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,160,96,.55);margin-bottom:14px}
+.pod-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pod-ic{background:rgba(255,255,255,.06);border:1px solid rgba(201,160,96,.18);border-radius:6px;padding:7px 9px}
+.pod-ic .l{font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:#c9a060;display:block;margin-bottom:2px}
+.pod-ic .v{font-size:12px;color:#ecdfc8;font-weight:300}
+.pod-body{}
+.pod-rubro{padding:16px 24px;border-bottom:1px solid #f0ece8}
+.pod-rubro:last-of-type{border-bottom:none}
+.pod-r-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px;gap:8px}
+.pod-r-tit{font-family:'Oswald',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#3a2410}
+.pod-r-tot{font-family:'Oswald',sans-serif;font-size:12.5px;font-weight:700;color:#3a2410;flex-shrink:0}
+.pod-r-desc{font-size:11px;color:#6a5035;font-style:italic;margin-bottom:8px;line-height:1.4}
+.pod-si-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.pod-si-tbl td{padding:5px 0;border-bottom:1px solid #ede8e0;vertical-align:top}
+.pod-si-tbl td.ra{text-align:right;font-family:'Oswald',sans-serif;font-size:11.5px;color:#6a5035;padding-left:8px;white-space:nowrap}
+.pod-si-tbl tr:last-child td{border-bottom:none}
+.pod-si-tbl .sub-tr td{background:#f9f6f0;font-weight:700;font-size:12px;padding:5px 0;border-top:1.5px solid #d4c8b0}
+.pod-resumen{background:#f7f4ef;border-top:2px solid #d4c8b0}
+.pod-res-hdr{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;padding:12px 24px 5px;display:flex;gap:8px;align-items:center}
+.pod-res-hdr::after{content:'';flex:1;height:1px;background:#d4c8b0}
+.pod-res-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 24px;border-bottom:1px solid #ede8e0;font-size:12.5px}
+.pod-res-row:last-child{border-bottom:none}
+.pod-res-row .rl{color:#6a5035;font-weight:300}
+.pod-res-row .ra{font-family:'Oswald',sans-serif;font-size:12.5px;color:#3a2e20}
+.pod-res-row.sp .rl{color:#9a8a70;font-style:italic;font-size:11px}
+.pod-res-row.sp .ra{color:#9a8a70;font-size:11px;font-style:italic}
+.pod-total-box{margin:0 18px 18px;background:#3a2410;border-radius:8px;padding:14px 18px;display:flex;align-items:baseline;justify-content:space-between}
+.pod-total-lbl{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#c9a060}
+.pod-total-val{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:#c9a060}
+.pod-conds{background:#3a2410;padding:18px 24px}
+.pod-cond-hdr{font-family:'Oswald',sans-serif;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:#c9a060;margin-bottom:8px}
+.pod-cond-item{font-size:11px;color:rgba(236,223,200,.65);line-height:1.6;margin-bottom:4px;padding-left:10px;position:relative}
+.pod-cond-item::before{content:'·';position:absolute;left:0;color:#c9a060}
+.pod-ftr{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(201,160,96,.2);margin-top:8px}
+.pod-ftr-brand{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600}
+.pod-ftr-brand .f{color:#f0e6d0}.pod-ftr-brand .o{color:#c9a060}
+.pod-ftr-r{text-align:right;font-size:10px;color:rgba(236,223,200,.55);line-height:1.5}
+
+/* RECIBOS */
+.rec-hist-item{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;cursor:pointer}
+.rec-hist-item:last-of-type{border-bottom:none}
+.rec-hist-item:active{background:var(--bg)}
+.rec-hist-num{font-family:'DM Serif Display',serif;font-size:16px;color:var(--madera);flex-shrink:0;width:44px}
+.rec-hist-info{flex:1;min-width:0}
+.rec-hist-cliente{font-size:14px;font-weight:700;color:var(--text)}
+.rec-hist-meta{font-size:11px;color:var(--gris);margin-top:2px}
+.rec-hist-monto{font-size:14px;font-weight:700;color:var(--verde);flex-shrink:0}
+.rec-tipo-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;display:inline-block;margin-top:3px}
+.rtb-sena{background:var(--violeta-bg);color:var(--violeta)}
+.rtb-parcial{background:var(--azul-bg);color:var(--azul)}
+.rtb-total{background:var(--verde-bg);color:var(--verde)}
+.rtb-anticipo{background:#FAEEDA;color:#854F0B}
+
+/* RECIBO PREVIEW DOC */
+.rec-doc{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 3px 20px rgba(0,0,0,.12);margin-bottom:12px;max-width:480px;margin-left:auto;margin-right:auto}
+.rec-doc-hdr{background:#3a2410;padding:18px 22px 14px}
+.rec-doc-brand{display:flex;align-items:baseline;gap:4px;margin-bottom:2px}
+.rdfer{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#f0e6d0;letter-spacing:.1em}
+.rdolea{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#c9a060;letter-spacing:.1em}
+.rec-doc-badge{font-family:'Oswald',sans-serif;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;margin-bottom:10px}
+.rec-doc-num{font-family:'Oswald',sans-serif;font-size:30px;font-weight:700;color:#f0e6d0;letter-spacing:.04em}
+.rec-doc-body{padding:18px 22px}
+.rec-tbl{width:100%;border-collapse:collapse;margin-bottom:14px}
+.rec-tbl td{padding:8px 0;border-bottom:1px solid #e8e2d8;font-size:12.5px;vertical-align:top}
+.rec-tbl .rl{color:#888780;font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;width:38%;padding-right:10px}
+.rec-tbl .rv{color:#2c2c2a}
+.rec-tbl tr:last-child td{border-bottom:none}
+.rec-monto-box{background:#ede6d8;border:1px solid #d4c8b0;border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.rec-monto-lbl{font-family:'Oswald',sans-serif;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#6a5035}
+.rec-monto-val{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#3a2410}
+.rec-firmas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;padding-top:14px;border-top:1px dashed #d4c8b0}
+.rec-firma-box{text-align:center}
+.rec-firma-line{border-top:1.5px solid #3a2e20;margin-bottom:4px;margin-top:36px}
+.rec-firma-lbl{font-size:9.5px;color:#888780;text-transform:uppercase;letter-spacing:.08em}
+.rec-doc-ftr{background:#3a2410;padding:10px 22px;display:flex;justify-content:space-between;align-items:center}
+.rec-doc-ftr .rf{font-family:'Oswald',sans-serif;font-size:12px;font-weight:600}
+.rec-doc-ftr .rf .f{color:#f0e6d0}.rec-doc-ftr .rf .o{color:#c9a060}
+.rec-doc-ftr .rr{font-size:10px;color:#9a7e58;text-align:right;line-height:1.5}
+
+/* MODAL RECIBO */
+.rec-fp-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.rec-fp-chip{font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--text-soft);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.rec-fp-chip.sel{background:var(--madera-light);color:var(--madera);border-color:var(--madera-mid)}
+
 @media print{
+  @page{margin:0;size:A4 portrait}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  html,body{height:auto!important;overflow:visible!important}
   .header,.tab-nav,.snack,.modal-overlay,.obra-ficha,.btn-nueva-obra,
   .foto-viewer,.pres-form-card,.pres-preview-actions,.add-form,
-  .coll-trig,.coll-body,.obra-filtros,.pub-link-bar{display:none!important}
+  .coll-trig,.coll-body,.obra-filtros,.pub-link-bar,
+  #btn-rec-guardar,#btn-rec-preview,#rec-preview-actions{display:none!important}
   .section{display:none!important}
   #tab-presupuestos{display:block!important;padding:0!important}
+  #tab-recibos{display:block!important;padding:0!important}
   .main{overflow:visible!important;height:auto!important}
   body{overflow:visible!important}
-  .pres-doc{box-shadow:none!important;border-radius:0!important;margin:0!important}
+  .pres-doc,.pres-obra-doc,.rec-doc{box-shadow:none!important;border-radius:0!important;margin:0!important;max-width:100%!important;width:100%!important}
 }
 
 
@@ -564,6 +684,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
   <button class="tab-btn" onclick="setTab('presupuestos',this)">Presupuestos</button>
   <button class="tab-btn" onclick="setTab('obras',this)">Obras</button>
   <button class="tab-btn" onclick="setTab('resumen',this)">Resumen</button>
+  <button class="tab-btn" onclick="setTab('recibos',this)">Recibos</button>
 </div>
 
 <div class="main">
@@ -660,7 +781,17 @@ textarea.pres-input{resize:vertical;min-height:60px}
   <!-- PRESUPUESTOS -->
   <div class="section" id="tab-presupuestos">
     <div class="pres-form-card">
-      <div class="pres-form-title">Nuevo presupuesto</div>
+      <div class="pres-tipo-selector">
+        <button class="pres-tipo-btn active" id="btn-tipo-mant" onclick="setPruTipo('mantenimiento')">
+          <span class="tipo-ico">🔧</span>Mantenimiento
+        </button>
+        <button class="pres-tipo-btn" id="btn-tipo-obra" onclick="setPruTipo('obra')">
+          <span class="tipo-ico">🏗️</span>Obra
+        </button>
+      </div>
+      <!-- FORM MANTENIMIENTO -->
+      <div id="pres-form-mant">
+      <div class="pres-form-title">Presupuesto Mantenimiento</div>
       <div class="pres-row">
         <div class="pres-field">
           <label class="pres-label">Cliente / Obra</label>
@@ -731,6 +862,50 @@ textarea.pres-input{resize:vertical;min-height:60px}
       </div>
       <button class="pres-btn-generar" id="btn-pres-generar">Actualizar vista previa</button>
       <button class="pres-btn-guardar" id="btn-pres-guardar">Guardar presupuesto</button>
+      </div><!-- /pres-form-mant -->
+
+      <!-- FORM OBRA -->
+      <div id="pres-form-obra" style="display:none">
+      <div class="pres-form-title">Presupuesto Obra / Llave en Mano</div>
+      <div class="pres-row">
+        <div class="pres-field">
+          <label class="pres-label">Cliente</label>
+          <input class="pres-input" type="text" id="o-cliente" placeholder="Nombre cliente">
+        </div>
+        <div class="pres-field">
+          <label class="pres-label">Fecha</label>
+          <input class="pres-input" type="date" id="o-fecha">
+        </div>
+      </div>
+      <div class="pres-row">
+        <div class="pres-field">
+          <label class="pres-label">Proyecto</label>
+          <input class="pres-input" type="text" id="o-proyecto" placeholder="Ej: Complejo Cabañas">
+        </div>
+        <div class="pres-field">
+          <label class="pres-label">Tipo</label>
+          <input class="pres-input" type="text" id="o-tipo" placeholder="Ej: Llave en mano">
+        </div>
+      </div>
+      <div class="pres-row">
+        <div class="pres-field">
+          <label class="pres-label">Plazo estimado</label>
+          <input class="pres-input" type="text" id="o-plazo" placeholder="Ej: 15 días">
+        </div>
+        <div class="pres-field">
+          <label class="pres-label">Validez</label>
+          <input class="pres-input" type="text" id="o-validez" placeholder="15 días">
+        </div>
+      </div>
+      <div class="obra-sec-sep">Rubros de trabajo</div>
+      <div id="o-rubros-list"></div>
+      <button class="btn-add-rubro-o" id="btn-add-rubro-o">+ Agregar rubro</button>
+      <div class="obra-sec-sep">Condiciones</div>
+      <textarea class="pres-input" id="o-condiciones" rows="4" placeholder="Condiciones del presupuesto..."></textarea>
+      <input type="hidden" id="o-edit-id">
+      <button class="pres-btn-generar" id="btn-obra-generar" style="margin-top:10px">Actualizar vista previa</button>
+      <button class="pres-btn-guardar" id="btn-obra-guardar">Guardar presupuesto obra</button>
+      </div><!-- /pres-form-obra -->
     </div>
     <div class="pres-preview-actions" id="pres-preview-actions" style="display:none">
       <button class="pres-btn-action pres-btn-copy" id="btn-pres-copy">Copiar WhatsApp</button>
@@ -788,6 +963,75 @@ textarea.pres-input{resize:vertical;min-height:60px}
     <div class="card">
       <div class="card-title" id="r-hist-titulo">Historial del mes</div>
       <div id="r-historial"></div>
+    </div>
+  </div>
+
+  <!-- RECIBOS -->
+  <div class="section" id="tab-recibos">
+    <div class="add-form" style="margin-bottom:12px">
+      <div class="pres-form-title">Nuevo recibo</div>
+      <div class="pres-row">
+        <div class="pres-field">
+          <label class="pres-label">N° Recibo</label>
+          <input class="pres-input" type="text" id="r-numero" placeholder="001">
+        </div>
+        <div class="pres-field">
+          <label class="pres-label">Fecha</label>
+          <input class="pres-input" type="date" id="r-fecha">
+        </div>
+      </div>
+      <div class="pres-field">
+        <label class="pres-label">Cliente</label>
+        <input class="pres-input" type="text" id="r-cliente" placeholder="Nombre">
+      </div>
+      <div class="pres-field">
+        <label class="pres-label">Concepto</label>
+        <input class="pres-input" type="text" id="r-concepto" placeholder="Ej: Seña por trabajos eléctricos">
+      </div>
+      <div class="pres-field">
+        <label class="pres-label">Monto ($)</label>
+        <input class="pres-input" type="number" inputmode="numeric" id="r-monto" placeholder="0">
+      </div>
+      <div class="pres-field">
+        <label class="pres-label">Tipo de pago</label>
+        <div class="rec-fp-chips" id="chips-rtp">
+          <button class="rec-fp-chip sel" onclick="selRChip(this,'rtp','sena')">Seña</button>
+          <button class="rec-fp-chip" onclick="selRChip(this,'rtp','parcial')">Pago parcial</button>
+          <button class="rec-fp-chip" onclick="selRChip(this,'rtp','total')">Pago total</button>
+          <button class="rec-fp-chip" onclick="selRChip(this,'rtp','anticipo')">Anticipo</button>
+        </div>
+      </div>
+      <div class="pres-field">
+        <label class="pres-label">Forma de pago</label>
+        <div class="rec-fp-chips" id="chips-rfp">
+          <button class="rec-fp-chip sel" onclick="selRChip(this,'rfp','efectivo')">Efectivo</button>
+          <button class="rec-fp-chip" onclick="selRChip(this,'rfp','transferencia')">Transferencia</button>
+          <button class="rec-fp-chip" onclick="selRChip(this,'rfp','cheque')">Cheque</button>
+        </div>
+      </div>
+      <div class="pres-field">
+        <label class="pres-label">Notas (opcional)</label>
+        <textarea class="pres-input" id="r-notas" rows="2" placeholder="Referencia, obra, detalles..."></textarea>
+      </div>
+      <input type="hidden" id="r-edit-id">
+      <div id="rec-preview-wrap"></div>
+      <div id="rec-preview-actions" style="display:none;margin-bottom:10px">
+        <div class="pres-preview-actions">
+          <button class="pres-btn-action pres-btn-copy" onclick="copiarRecibo()">Copiar WA</button>
+          <span class="copy-ok" id="copy-ok-rec"></span>
+          <button class="pres-btn-action pres-btn-print" onclick="window.print()">Imprimir / PDF</button>
+        </div>
+      </div>
+      <button class="pres-btn-guardar" id="btn-rec-guardar">Guardar recibo</button>
+      <button class="pres-btn-generar" id="btn-rec-preview" style="margin-top:8px">Vista previa</button>
+    </div>
+    <div class="add-form">
+      <div class="coll-trig" id="trig-rec-hist" onclick="toggleColl('rec-hist')">
+        <span id="tit-rec-hist">Historial de recibos</span><span class="coll-arrow">&#x25BC;</span>
+      </div>
+      <div class="coll-body" id="body-rec-hist">
+        <div id="lista-recibos"><div class="empty">Sin recibos guardados todavía</div></div>
+      </div>
     </div>
   </div>
 
@@ -1117,12 +1361,16 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxqej6vB7AGJFnDvgI14
 const STORAGE_KEY = 'fersoluciones_v6';
 
 let db = null, fbOk = false;
-let data = { trabajos:{} };
+let data = { trabajos:{}, presupuestos:{}, obras:{}, recibos:{} };
 let estadoNuevo = 'Contacto', tipoNuevo = 'Carpinteria';
 let estadoEdit = 'Contacto', tipoEdit = 'Carpinteria';
 let diaActivo = '';
 let filtroResumen = 'mes';
-let pendingEdit = null; // para modal duplicar/mover
+let pendingEdit = null;
+let rubroCount = 0;
+let presActualTipo = 'mantenimiento';
+let tipoRecibo = 'sena';
+let formaPagoRecibo = 'efectivo';
 
 const DIAS   = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
 const DIAS_C = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
@@ -1179,8 +1427,9 @@ function initFirebase(){
       data.trabajos = d.trabajos||{};
       data.presupuestos = d.presupuestos||{};
       data.obras = d.obras||{};
+      data.recibos = d.recibos||{};
       guardarLocal();
-      renderAgenda(); renderTrabajos(); renderResumen(); renderPresupuestosHist(); renderObras();
+      renderAgenda(); renderTrabajos(); renderResumen(); renderPresupuestosHist(); renderObras(); renderRecibosHist();
       if(obraActivaId) renderFichaObra(obraActivaId);
       setDot('online');
     });
@@ -1666,6 +1915,260 @@ window.abrirGCal = function(id){
   window.open(url,'_blank');
 };
 
+
+// ══ TIPO SELECTOR PRESUPUESTO ═══════════════════════════════
+window.setPruTipo = function(tipo){
+  presActualTipo = tipo;
+  document.getElementById('btn-tipo-mant').classList.toggle('active', tipo==='mantenimiento');
+  document.getElementById('btn-tipo-obra').classList.toggle('active', tipo==='obra');
+  document.getElementById('pres-form-mant').style.display = tipo==='mantenimiento'?'block':'none';
+  document.getElementById('pres-form-obra').style.display = tipo==='obra'?'block':'none';
+  document.getElementById('pres-doc-wrap').innerHTML='';
+  document.getElementById('pres-preview-actions').style.display='none';
+};
+
+// ══ OBRA RUBROS ══════════════════════════════════════════════
+window.addRubroO = function(nombre,desc,subitems){
+  rubroCount++;
+  var n=rubroCount;
+  var list=document.getElementById('o-rubros-list');
+  var blk=document.createElement('div'); blk.className='obra-rubro-blk'; blk.id='orb-'+n;
+  blk.innerHTML=
+    '<div class="obra-rubro-hdr">'+
+      '<span class="obra-rubro-num">'+n+'·</span>'+
+      '<input class="obra-rubro-nombre" type="text" placeholder="Nombre del rubro (ej: Electricidad)" value="'+(nombre||'')+'">'+
+      '<button class="btn-del-rubro-o" onclick="this.closest(\'.obra-rubro-blk\').remove();renumRubrosO()">×</button>'+
+    '</div>'+
+    '<input class="obra-rubro-desc" type="text" placeholder="Descripción del rubro (opcional)" value="'+(desc||'')+'">'+
+    '<div class="obra-si-list" id="osi-'+n+'"></div>'+
+    '<button class="btn-add-obra-si" onclick="addSiO(\'osi-'+n+'\','+n+')">+ Subitem</button>'+
+    '<div class="obra-si-sub" id="osub-'+n+'">Subtotal: $0</div>';
+  list.appendChild(blk);
+  (subitems&&subitems.length?subitems:[{desc:'',monto:''}]).forEach(function(si){addSiO('osi-'+n,n,si.desc,si.monto);});
+};
+
+window.addSiO = function(listId,rubroN,desc,monto){
+  var list=document.getElementById(listId);
+  var row=document.createElement('div'); row.className='obra-si-row';
+  var d=document.createElement('input'); d.type='text'; d.className='obra-si-d'; d.placeholder='Descripción...'; d.value=desc||'';
+  var m=document.createElement('input'); m.type='number'; m.className='obra-si-m'; m.placeholder='$ monto'; m.value=monto||''; m.min='0'; m.step='1000';
+  m.addEventListener('input',function(){updObraSub(rubroN);});
+  var b=document.createElement('button'); b.className='pres-btn-remove'; b.textContent='×'; b.type='button';
+  b.addEventListener('click',function(){row.remove();updObraSub(rubroN);});
+  row.appendChild(d); row.appendChild(m); row.appendChild(b);
+  list.appendChild(row);
+};
+
+function updObraSub(n){
+  var list=document.getElementById('osi-'+n); if(!list)return;
+  var sum=0; list.querySelectorAll('.obra-si-m').forEach(function(i){sum+=parseFloat(i.value)||0;});
+  var el=document.getElementById('osub-'+n); if(el) el.textContent='Subtotal: '+pesos(sum);
+}
+
+function renumRubrosO(){
+  document.querySelectorAll('#o-rubros-list .obra-rubro-blk').forEach(function(blk,i){
+    blk.querySelector('.obra-rubro-num').textContent=(i+1)+'·';
+  });
+}
+
+function getRubrosO(){
+  var rubros=[];
+  document.querySelectorAll('#o-rubros-list .obra-rubro-blk').forEach(function(blk){
+    var nombre=blk.querySelector('.obra-rubro-nombre').value.trim();
+    var desc=blk.querySelector('.obra-rubro-desc').value.trim();
+    var subitems=[];
+    blk.querySelectorAll('.obra-si-row').forEach(function(row){
+      var d=row.querySelector('.obra-si-d').value.trim();
+      var m=parseFloat(row.querySelector('.obra-si-m').value)||0;
+      if(d||m) subitems.push({desc:d,monto:m});
+    });
+    rubros.push({nombre:nombre,desc:desc,subitems:subitems});
+  });
+  return rubros;
+}
+
+function buildObraDoc(p){
+  if(!p||!p.rubros) return '';
+  var rubrosHTML=p.rubros.map(function(r,i){
+    var sub=r.subitems.reduce(function(a,si){return a+(si.monto||0);},0);
+    var sisHTML=r.subitems.map(function(si){
+      return '<tr><td>'+si.desc+'</td><td class="ra">'+pesos(si.monto)+'</td></tr>';
+    }).join('');
+    if(r.subitems.length>1){
+      sisHTML+='<tr class="sub-tr"><td><strong>Subtotal '+r.nombre+'</strong></td><td class="ra"><strong>'+pesos(sub)+'</strong></td></tr>';
+    }
+    return '<div class="pod-rubro">'+
+      '<div class="pod-r-hdr"><span class="pod-r-tit">'+(i+1)+' · '+r.nombre.toUpperCase()+'</span><span class="pod-r-tot">'+pesos(sub)+'</span></div>'+
+      (r.desc?'<div class="pod-r-desc">'+r.desc+'</div>':'')+
+      '<table class="pod-si-tbl"><tbody>'+sisHTML+'</tbody></table>'+
+    '</div>';
+  }).join('');
+  var total=p.rubros.reduce(function(a,r){return a+r.subitems.reduce(function(b,si){return b+(si.monto||0);},0);},0);
+  var resHTML=p.rubros.map(function(r,i){
+    var sub=r.subitems.reduce(function(a,si){return a+(si.monto||0);},0);
+    return '<div class="pod-res-row"><span class="rl">'+(i+1)+' · '+r.nombre+'</span><span class="ra">'+pesos(sub)+'</span></div>';
+  }).join('');
+  var condsHTML=(p.condiciones||'').split('\n').filter(Boolean).map(function(l){return '<div class="pod-cond-item">'+l+'</div>';}).join('');
+  return '<div class="pres-obra-doc">'+
+    '<div class="pod-hdr">'+
+      '<div class="pod-brand-row"><span class="pod-fer">FER</span><span class="pod-olea">OLEA</span></div>'+
+      '<div class="pod-tagline">Mantenimiento · Reformas · Servicios</div>'+
+      '<div class="pod-subtag">Presupuesto Llave en Mano — Mano de Obra</div>'+
+      '<div class="pod-info-grid">'+
+        '<div class="pod-ic"><span class="l">Proyecto</span><span class="v">'+(p.proyecto||p.cliente)+'</span></div>'+
+        '<div class="pod-ic"><span class="l">Tipo</span><span class="v">'+(p.tipoObra||'—')+'</span></div>'+
+        '<div class="pod-ic"><span class="l">Fecha</span><span class="v">'+fmtFecha(p.fecha)+'</span></div>'+
+        '<div class="pod-ic"><span class="l">Validez</span><span class="v">'+(p.validez||'—')+'</span></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="pod-body">'+rubrosHTML+'</div>'+
+    '<div class="pod-resumen">'+
+      '<div class="pod-res-hdr">Rubro &nbsp; Mano de obra</div>'+
+      resHTML+
+      '<div class="pod-total-box"><span class="pod-total-lbl">Total Llave en Mano</span><span class="pod-total-val">'+pesos(total)+'</span></div>'+
+    '</div>'+
+    '<div class="pod-conds">'+
+      '<div class="pod-cond-hdr">Condiciones del presupuesto</div>'+
+      condsHTML+
+      '<div class="pod-ftr">'+
+        '<div class="pod-ftr-brand"><span class="f">FER </span><span class="o">OLEA</span></div>'+
+        '<div class="pod-ftr-r">2494 066 345 · ferolea27@gmail.com<br>Tandil, Buenos Aires</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function cargarFormObra(p){
+  document.getElementById('o-cliente').value=p?p.cliente:'';
+  document.getElementById('o-fecha').value=p?p.fecha:hoy();
+  document.getElementById('o-proyecto').value=p?p.proyecto:'';
+  document.getElementById('o-tipo').value=p?p.tipoObra:'';
+  document.getElementById('o-plazo').value=p?p.plazo:'';
+  document.getElementById('o-validez').value=p?p.validez:'15 días';
+  document.getElementById('o-condiciones').value=p?p.condiciones:
+    'Materiales no incluidos. Se elabora listado detallado por fase.\nMano de obra exclusiva. Incluye uso de herramientas propias.\nValidez sujeta a variaciones económicas.';
+  document.getElementById('o-rubros-list').innerHTML='';
+  rubroCount=0;
+  if(p&&p.rubros&&p.rubros.length){
+    p.rubros.forEach(function(r){addRubroO(r.nombre,r.desc,r.subitems);});
+  } else {
+    addRubroO('','',null);
+  }
+  document.getElementById('o-edit-id').value=p?p.id:'';
+}
+
+// ══ RECIBOS ══════════════════════════════════════════════════
+window.selRChip = function(btn,grupo,val){
+  document.querySelectorAll('#chips-'+grupo+' .rec-fp-chip').forEach(function(b){b.classList.remove('sel');});
+  btn.classList.add('sel');
+  if(grupo==='rtp') tipoRecibo=val;
+  if(grupo==='rfp') formaPagoRecibo=val;
+};
+
+function autoNumRecibo(){
+  var nums=Object.values(data.recibos||{}).map(function(r){return parseInt(r.numero)||0;});
+  return String((nums.length?Math.max.apply(null,nums):0)+1).padStart(3,'0');
+}
+
+function limpiarFormRecibo(){
+  document.getElementById('r-edit-id').value='';
+  document.getElementById('r-numero').value=autoNumRecibo();
+  document.getElementById('r-fecha').value=hoy();
+  document.getElementById('r-cliente').value='';
+  document.getElementById('r-concepto').value='';
+  document.getElementById('r-monto').value='';
+  document.getElementById('r-notas').value='';
+  tipoRecibo='sena'; formaPagoRecibo='efectivo';
+  document.querySelectorAll('#chips-rtp .rec-fp-chip').forEach(function(b){b.classList.toggle('sel',b.textContent.trim()==='Seña');});
+  document.querySelectorAll('#chips-rfp .rec-fp-chip').forEach(function(b){b.classList.toggle('sel',b.textContent.trim()==='Efectivo');});
+  document.getElementById('rec-preview-wrap').innerHTML='';
+  document.getElementById('rec-preview-actions').style.display='none';
+}
+
+function buildReciboDoc(r){
+  var tipoLabel={'sena':'Seña','parcial':'Pago parcial','total':'Pago total','anticipo':'Anticipo'};
+  var tipoCls={'sena':'rtb-sena','parcial':'rtb-parcial','total':'rtb-total','anticipo':'rtb-anticipo'};
+  var fpLabel={'efectivo':'Efectivo','transferencia':'Transferencia bancaria','cheque':'Cheque'};
+  return '<div class="rec-doc">'+
+    '<div class="rec-doc-hdr">'+
+      '<div class="rec-doc-brand"><span class="rdfer">FER </span><span class="rdolea">OLEA</span></div>'+
+      '<div class="rec-doc-badge">Recibo de pago</div>'+
+      '<div class="rec-doc-num">N° '+r.numero+'</div>'+
+    '</div>'+
+    '<div class="rec-doc-body">'+
+      '<table class="rec-tbl">'+
+        '<tr><td class="rl">Fecha</td><td class="rv">'+fmtFecha(r.fecha)+'</td></tr>'+
+        '<tr><td class="rl">Cliente</td><td class="rv">'+r.cliente+'</td></tr>'+
+        '<tr><td class="rl">Concepto</td><td class="rv">'+r.concepto+'</td></tr>'+
+        '<tr><td class="rl">Forma de pago</td><td class="rv">'+(fpLabel[r.formaPago]||r.formaPago)+'</td></tr>'+
+        (r.notas?'<tr><td class="rl">Notas</td><td class="rv">'+r.notas+'</td></tr>':'')+
+      '</table>'+
+      '<div class="rec-monto-box"><span class="rec-monto-lbl">Monto recibido</span><span class="rec-monto-val">'+pesos(r.monto)+'</span></div>'+
+      '<span class="rec-tipo-badge '+(tipoCls[r.tipo]||'')+'">'+(tipoLabel[r.tipo]||r.tipo)+'</span>'+
+      '<div class="rec-firmas">'+
+        '<div class="rec-firma-box"><div class="rec-firma-line"></div><div class="rec-firma-lbl">Recibí conforme</div></div>'+
+        '<div class="rec-firma-box"><div class="rec-firma-line"></div><div class="rec-firma-lbl">Fer Olea</div></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="rec-doc-ftr"><div class="rf"><span class="f">FER </span><span class="o">OLEA</span></div><div class="rr">2494 066 345<br>ferolea27@gmail.com</div></div>'+
+  '</div>';
+}
+
+window.copiarRecibo = function(){
+  var id=document.getElementById('r-edit-id').value;
+  var r=id?data.recibos[id]:null;
+  if(!r)return;
+  var tipoLabel={'sena':'Seña','parcial':'Pago parcial','total':'Pago total','anticipo':'Anticipo'};
+  var fpLabel={'efectivo':'Efectivo','transferencia':'Transferencia','cheque':'Cheque'};
+  var txt='*Recibo N° '+r.numero+' — Fer Olea*\nFecha: '+fmtFecha(r.fecha)+'\nCliente: '+r.cliente+'\nConcepto: '+r.concepto+'\n*Monto: '+pesos(r.monto)+'*\nTipo: '+(tipoLabel[r.tipo]||r.tipo)+'\nForma de pago: '+(fpLabel[r.formaPago]||r.formaPago);
+  if(r.notas) txt+='\nNotas: '+r.notas;
+  txt+='\n\nFer Olea — 2494 066 345';
+  navigator.clipboard.writeText(txt).then(function(){
+    var el=document.getElementById('copy-ok-rec'); el.textContent='✓ Copiado'; el.classList.add('show');
+    clearTimeout(el._t); el._t=setTimeout(function(){el.classList.remove('show');},2500);
+  });
+};
+
+function renderRecibosHist(){
+  var items=Object.values(data.recibos||{}).sort(function(a,b){return(b.ts||0)-(a.ts||0);});
+  var el=document.getElementById('lista-recibos');
+  document.getElementById('tit-rec-hist').textContent='Historial ('+items.length+')';
+  if(!items.length){el.innerHTML='<div class="empty">Sin recibos guardados todavía</div>';return;}
+  var tipoLabel={'sena':'Seña','parcial':'Parcial','total':'Total','anticipo':'Anticipo'};
+  var tipoCls={'sena':'rtb-sena','parcial':'rtb-parcial','total':'rtb-total','anticipo':'rtb-anticipo'};
+  el.innerHTML=items.map(function(r){
+    return '<div class="rec-hist-item" onclick="cargarReciboEnForm(\''+r.id+'\')">'+
+      '<div class="rec-hist-num">'+r.numero+'</div>'+
+      '<div class="rec-hist-info">'+
+        '<div class="rec-hist-cliente">'+r.cliente+'</div>'+
+        '<div class="rec-hist-meta">'+fmtFecha(r.fecha)+(r.concepto?' · '+r.concepto:'')+'</div>'+
+        '<span class="rec-tipo-badge '+(tipoCls[r.tipo]||'')+'">'+(tipoLabel[r.tipo]||r.tipo)+'</span>'+
+      '</div>'+
+      '<div class="rec-hist-monto">'+pesos(r.monto)+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+window.cargarReciboEnForm = function(id){
+  var r=data.recibos[id]; if(!r)return;
+  document.getElementById('r-edit-id').value=id;
+  document.getElementById('r-numero').value=r.numero||'';
+  document.getElementById('r-fecha').value=r.fecha||hoy();
+  document.getElementById('r-cliente').value=r.cliente||'';
+  document.getElementById('r-concepto').value=r.concepto||'';
+  document.getElementById('r-monto').value=r.monto||'';
+  document.getElementById('r-notas').value=r.notas||'';
+  tipoRecibo=r.tipo||'sena'; formaPagoRecibo=r.formaPago||'efectivo';
+  var tipoLbls={'sena':'Seña','parcial':'Pago parcial','total':'Pago total','anticipo':'Anticipo'};
+  var fpLbls={'efectivo':'Efectivo','transferencia':'Transferencia','cheque':'Cheque'};
+  document.querySelectorAll('#chips-rtp .rec-fp-chip').forEach(function(b){b.classList.toggle('sel',b.textContent.trim()===tipoLbls[tipoRecibo]);});
+  document.querySelectorAll('#chips-rfp .rec-fp-chip').forEach(function(b){b.classList.toggle('sel',b.textContent.trim()===fpLbls[formaPagoRecibo]);});
+  document.getElementById('rec-preview-wrap').innerHTML=buildReciboDoc(r);
+  document.getElementById('rec-preview-actions').style.display='block';
+  setTab('recibos', document.querySelector('[onclick*="recibos"]'));
+  snack('Recibo cargado');
+};
+
 // ── INIT ──────────────────────────────────────────────────
 function fechaHoyLabel(){
   const d=new Date();
@@ -1711,7 +2214,7 @@ window.selChipRubroQuien = function(btn, val) {
 
 // Patch guardarLocal y cargarLocal para incluir nuevas colecciones
 // guardarLocal/cargarLocal ya definidas arriba con soporte completo
-function renderAll() { renderAgenda(); renderTrabajos(); renderResumen(); renderPresupuestosHist(); renderObras(); }
+function renderAll() { renderAgenda(); renderTrabajos(); renderResumen(); renderPresupuestosHist(); renderObras(); renderRecibosHist(); }
 function fmtFecha(v) { if(!v) return ''; const p=v.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
 
 // ---------- PRESUPUESTOS ----------
