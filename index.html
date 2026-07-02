@@ -431,9 +431,9 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .rec-fp-chip.sel{background:var(--madera-light);color:var(--madera);border-color:var(--madera-mid)}
 
 @media print{
-  @page{margin:8mm;size:A4 portrait}
+  @page{margin:0;size:A4 portrait}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  html,body{height:auto!important;overflow:visible!important}
+  html,body{height:auto!important;overflow:visible!important;margin:0!important;padding:0!important}
   .header,.tab-nav,.snack,.modal-overlay,.obra-ficha,.btn-nueva-obra,
   .foto-viewer,.pres-form-card,.pres-preview-actions,.add-form,
   .coll-trig,.coll-body,.obra-filtros,.pub-link-bar,
@@ -442,11 +442,20 @@ textarea.pres-input{resize:vertical;min-height:60px}
   .section{display:none!important}
   #tab-presupuestos{display:block!important;padding:0!important}
   #tab-recibos{display:block!important;padding:0!important}
-  .main{overflow:visible!important;height:auto!important}
-  body{overflow:visible!important}
+  .main{overflow:visible!important;height:auto!important;padding:0!important}
+  .pres-print-wrap{
+    width:210mm;
+    height:297mm;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:flex-start;
+  }
   .pres-doc,.pres-obra-doc,.rec-doc{
     box-shadow:none!important;border-radius:0!important;
-    margin:0!important;max-width:100%!important;width:100%!important;
+    margin:0!important;max-width:none!important;
+    flex-shrink:0;
   }
 }
 
@@ -921,7 +930,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
       <span class="copy-ok" id="copy-ok">Copiado</span>
       <button class="pres-btn-action pres-btn-print" onclick="window.print()">Imprimir / PDF</button>
     </div>
-    <div id="pres-doc-wrap"></div>
+    <div class="pres-print-wrap"><div id="pres-doc-wrap"></div></div>
     <div class="add-form" style="margin-top:4px">
       <div class="coll-trig" id="trig-pres-hist" onclick="toggleColl('pres-hist')">
         <span id="tit-pres-hist">Historial de presupuestos</span><span class="coll-arrow">&#x25BC;</span>
@@ -1023,7 +1032,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
         <textarea class="pres-input" id="r-notas" rows="2" placeholder="Referencia, obra, detalles..."></textarea>
       </div>
       <input type="hidden" id="r-edit-id">
-      <div id="rec-preview-wrap"></div>
+      <div class="pres-print-wrap"><div id="rec-preview-wrap"></div></div>
       <div id="rec-preview-actions" style="display:none;margin-bottom:10px">
         <div class="pres-preview-actions">
           <button class="pres-btn-action pres-btn-copy" onclick="copiarRecibo()">Copiar WA</button>
@@ -3588,20 +3597,49 @@ presAddItem('p-items-list');
 })();
 
 // ── AUTO-ESCALA AL IMPRIMIR ───────────────────────────────────
+// A4 a 96dpi: 794 × 1123px. Sin margenes = area completa disponible.
+var _printDoc = null;
 window.addEventListener('beforeprint', function(){
-  var doc = document.querySelector('.pres-doc, .pres-obra-doc, .rec-doc');
-  if(!doc) return;
-  var pageH = 1123; // A4 px a 96dpi aprox
+  var doc = document.querySelector('.pres-print-wrap .pres-doc, .pres-print-wrap .pres-obra-doc, .pres-print-wrap .rec-doc');
+  if(!doc){ return; }
+  _printDoc = doc;
+
+  // Resetear escala previa
+  doc.style.transform = '';
+  doc.style.transformOrigin = '';
+  doc.style.width = '';
+
+  // Dimensiones reales del contenido en pantalla
   var docH = doc.scrollHeight;
-  if(docH > pageH){
-    var scale = pageH / docH;
-    doc.style.transform = 'scale('+scale+') translateY('+((docH*(1-scale))/2)+'px)';
+  var docW = doc.offsetWidth || doc.scrollWidth;
+
+  // A4 sin márgenes en px (96dpi)
+  var A4H = 1123;
+  var A4W = 794;
+
+  // Escala para que quepa en 1 hoja
+  var scaleH = A4H / docH;
+  var scaleW = A4W / docW;
+  var scale  = Math.min(scaleH, scaleW);
+
+  // Si el contenido es muy grande (necesita 2+ hojas): no forzar
+  if(scale < 0.45){ scale = 1; }
+
+  // Aplicar escala
+  if(Math.abs(scale - 1) > 0.02){
     doc.style.transformOrigin = 'top left';
+    doc.style.transform = 'scale('+scale.toFixed(4)+')';
+    // Ajustar ancho para evitar desborde horizontal
+    doc.style.width = Math.round(100 / scale) + '%';
   }
 });
 window.addEventListener('afterprint', function(){
-  var doc = document.querySelector('.pres-doc, .pres-obra-doc, .rec-doc');
-  if(doc){ doc.style.transform=''; doc.style.transformOrigin=''; }
+  if(_printDoc){
+    _printDoc.style.transform = '';
+    _printDoc.style.transformOrigin = '';
+    _printDoc.style.width = '';
+    _printDoc = null;
+  }
 });
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
