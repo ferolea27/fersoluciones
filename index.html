@@ -764,6 +764,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
       <input type="hidden" id="o-edit-id">
       <button type="button" class="pres-btn-generar" id="btn-obra-generar" style="margin-top:10px">Actualizar vista previa</button>
       <button type="button" class="pres-btn-guardar" id="btn-obra-guardar" style="margin-top:8px">Guardar presupuesto obra</button>
+      <button type="button" id="btn-del-pres-obra" style="display:none;width:100%;padding:9px;background:transparent;color:var(--rojo,#a32d2d);border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px" onclick="eliminarPresById(document.getElementById('o-edit-id').value)">Eliminar presupuesto</button>
       </div>
     </div>
     <div class="pres-preview-actions" id="pres-preview-actions" style="display:none">
@@ -884,6 +885,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
       </div>
       <button type="button" id="btn-rec-preview" style="width:100%;padding:11px;background:transparent;color:#5A3A1A;border:1.5px solid #5A3A1A;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">Vista previa</button>
       <button type="button" id="btn-rec-guardar" style="width:100%;padding:12px;background:#5A3A1A;color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px">Guardar recibo</button>
+      <button type="button" id="btn-del-recibo" style="display:none;width:100%;padding:9px;background:transparent;color:#a32d2d;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px" onclick="eliminarReciboById(document.getElementById('r-edit-id').value)">Eliminar recibo</button>
     </div>
     <div class="add-form">
       <div class="coll-trig" id="trig-rec-hist" onclick="toggleColl('rec-hist')">
@@ -1934,10 +1936,21 @@ function renderPresupuestosHist(){
   if(!items.length){document.getElementById('lista-presupuestos').innerHTML='<div class="empty">Sin presupuestos guardados</div>';return;}
   document.getElementById('lista-presupuestos').innerHTML=items.map(function(p){
     var esObra=p.tipo==='obra';
-    var fn=esObra?'cargarObraEnForm':'abrirModalPresEdit';
     var badge=esObra?'<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;background:#FAEEDA;color:#854F0B;margin-left:4px">OBRA</span>':'<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;background:#E6F1FB;color:#0C447C;margin-left:4px">MANT</span>';
-    var meta=fmtFecha(p.fecha)+(p.proyecto?' - '+p.proyecto:p.pago?' - '+p.pago:'');
-    return '<div class="pres-hist-item" onclick="'+fn+'(\''+p.id+'\')"><div style="flex:1;min-width:0"><div class="pres-hist-cliente">'+(p.cliente||'Sin nombre')+badge+'</div><div class="pres-hist-meta">'+meta+'</div></div><div class="pres-hist-monto">'+pesos(p.total||0)+'</div></div>';
+    var meta=fmtFecha(p.fecha)+(p.proyecto?' — '+p.proyecto:p.pago?' — '+p.pago:'');
+    return '<div class="pres-hist-item" onclick="abrirModalPresOpciones(\''+p.id+'\',\''+( esObra?'obra':'mantenimiento')+'\')" style="cursor:pointer">'+
+      '<div style="flex:1;min-width:0">'+
+        '<div class="pres-hist-cliente">'+(p.cliente||'Sin nombre')+badge+'</div>'+
+        '<div class="pres-hist-meta">'+meta+'</div>'+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
+        '<div class="pres-hist-monto">'+pesos(p.total||0)+'</div>'+
+        '<div style="display:flex;gap:5px">'+
+          '<button type="button" onclick="event.stopPropagation();editarPres(\''+p.id+'\',\''+( esObra?'obra':'mantenimiento')+'\');" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px solid var(--madera-mid);color:var(--madera);background:none;cursor:pointer">Editar</button>'+
+          '<button type="button" onclick="event.stopPropagation();eliminarPresById(\''+p.id+'\')" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px solid var(--rojo);color:var(--rojo);background:none;cursor:pointer">Eliminar</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
   }).join('');
 }
 window.abrirModalPresEdit=function(id){document.getElementById('pres-edit-id').value=id;const p=data.presupuestos[id];document.getElementById('modal-pres-edit-title').textContent=(p&&p.cliente?p.cliente:'Presupuesto')+' - '+pesos(p&&p.total?p.total:0);abrirModal('pres-edit');};
@@ -3152,6 +3165,8 @@ function cargarFormObra(p){
 window.cargarObraEnForm=function(id){
   var p=data.presupuestos[id];if(!p)return;
   setPruTipo('obra');cargarFormObra(p);
+  var delBtn=document.getElementById('btn-del-pres-obra');
+  if(delBtn) delBtn.style.display=id?'block':'none';
   setTab('presupuestos',document.querySelector('[onclick*="presupuestos"]'));
   snack('Presupuesto obra cargado');
 };
@@ -3270,13 +3285,20 @@ function renderRecibosHist(){
   var tipoCls={sena:'background:#EDE0F5;color:#7B3FAD',parcial:'background:#E6F1FB;color:#0C447C',total:'background:#E8F5E2;color:#2E6B1F',anticipo:'background:#FAEEDA;color:#854F0B'};
   var tipoLabel={sena:'Se\u00f1a',parcial:'Parcial',total:'Total',anticipo:'Anticipo'};
   if(el) el.innerHTML=items.map(function(r){
-    return '<div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;cursor:pointer" onclick="cargarReciboEnForm(\''+r.id+'\')">'+
-      '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--madera);flex-shrink:0;width:44px">'+r.numero+'</div>'+
-      '<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:var(--text)">'+r.cliente+'</div>'+
+    return '<div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px">'+
+      '<div style="font-family:DM Serif Display,serif;font-size:16px;color:var(--madera);flex-shrink:0;width:44px;margin-top:2px">'+r.numero+'</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:14px;font-weight:700;color:var(--text)">'+r.cliente+'</div>'+
         '<div style="font-size:11px;color:var(--gris);margin-top:2px">'+fmtFecha(r.fecha)+(r.concepto?' \u00b7 '+r.concepto:'')+'</div>'+
         '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;display:inline-block;margin-top:3px;'+(tipoCls[r.tipo]||'')+'">'+(tipoLabel[r.tipo]||r.tipo)+'</span>'+
       '</div>'+
-      '<div style="font-size:14px;font-weight:700;color:var(--verde);flex-shrink:0">'+pesos(r.monto)+'</div>'+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">'+
+        '<div style="font-size:14px;font-weight:700;color:var(--verde)">'+pesos(r.monto)+'</div>'+
+        '<div style="display:flex;gap:5px">'+
+          '<button type="button" onclick="cargarReciboEnForm(\''+r.id+'\')" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1.5px solid var(--madera-mid);color:var(--madera);background:none;cursor:pointer;font-family:DM Sans,sans-serif">Editar</button>'+
+          '<button type="button" onclick="eliminarReciboById(\''+r.id+'\')" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1.5px solid #a32d2d;color:#a32d2d;background:none;cursor:pointer;font-family:DM Sans,sans-serif">Eliminar</button>'+
+        '</div>'+
+      '</div>'+
     '</div>';
   }).join('');
 }
@@ -3303,6 +3325,7 @@ window.cargarReciboEnForm = function(id){
   });
   document.getElementById('rec-preview-wrap').innerHTML=buildReciboDoc(r);
   document.getElementById('rec-preview-actions').style.display='block';
+  var delBtn=document.getElementById('btn-del-recibo'); if(delBtn) delBtn.style.display='block';
   setTab('recibos',document.querySelector('[onclick*="recibos"]'));
   snack('Recibo cargado');
 };
@@ -3430,6 +3453,8 @@ function rRow(l,v){return '<tr><td style="color:#888780;font-weight:700;font-siz
 window.cargarObraEnForm=function(id){
   var p=data.presupuestos[id];if(!p)return;
   setPruTipo('obra');cargarFormObra(p);
+  var delBtn=document.getElementById('btn-del-pres-obra');
+  if(delBtn) delBtn.style.display=id?'block':'none';
   setTab('presupuestos',document.querySelector('[onclick*="presupuestos"]'));
   snack('Presupuesto obra cargado');
 };
@@ -3498,6 +3523,55 @@ window.cargarObraEnForm=function(id){
   renderRecibosHist();
 })();
 
+
+
+window.editarPres = function(id, tipo){
+  if(tipo==='obra') cargarObraEnForm(id);
+  else cargarPresupuestoEnForm_id(id);
+};
+
+window.cargarPresupuestoEnForm_id = function(id){
+  var p=data.presupuestos[id]; if(!p) return;
+  cargarDatosEnForm(p, false);
+  var el=document.getElementById('pres-edit-activo');
+  if(!el){ el=document.createElement('input'); el.type='hidden'; el.id='pres-edit-activo'; document.body.appendChild(el); }
+  el.value=id;
+  setPruTipo('mantenimiento');
+  setTab('presupuestos', document.querySelector('[onclick*="presupuestos"]'));
+  snack('Presupuesto cargado para editar');
+};
+
+window.abrirModalPresOpciones = function(id, tipo){
+  // Abrir el modal existente de opciones para mantenimiento, ir directo al form para obra
+  if(tipo==='obra') cargarObraEnForm(id);
+  else abrirModalPresEdit(id);
+};
+
+window.eliminarPresById = async function(id){
+  if(!confirm('¿Eliminar este presupuesto?')) return;
+  if(fbOk){ await fbRemove('presupuestos/'+id); }
+  else { delete data.presupuestos[id]; guardarLocal(); renderPresupuestosHist(); }
+  snack('Presupuesto eliminado');
+};
+
+window.eliminarReciboById = async function(id){
+  if(!confirm('¿Eliminar este recibo?')) return;
+  if(fbOk){ await fbRemove('recibos/'+id); }
+  else { delete data.recibos[id]; guardarLocal(); renderRecibosHist(); }
+  // Limpiar form si era el que estaba abierto
+  var editId = document.getElementById('r-edit-id');
+  if(editId && editId.value === id){
+    editId.value='';
+    document.getElementById('rec-preview-wrap').innerHTML='';
+    document.getElementById('rec-preview-actions').style.display='none';
+    document.getElementById('r-numero').value=autoNumRecibo();
+    document.getElementById('r-cliente').value='';
+    document.getElementById('r-concepto').value='';
+    document.getElementById('r-monto').value='';
+    document.getElementById('r-notas').value='';
+  }
+  snack('Recibo eliminado');
+};
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
