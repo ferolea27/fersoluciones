@@ -213,7 +213,12 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .pres-doc-meta{font-size:12px;margin-bottom:3px;display:flex;gap:8px}
 .pres-doc-meta-lbl{font-family:'Oswald',sans-serif;font-size:10px;color:#c9a060;text-transform:uppercase;letter-spacing:.06em;min-width:58px;padding-top:1px}
 .pres-doc-meta-val{color:#ecdfc8;font-weight:300}
-.pres-doc-body{padding:18px 24px 0}
+.pres-doc-body{padding:0 24px 0}
+
+.pres-doc-svc{display:flex;flex-wrap:wrap;justify-content:center;gap:7px 16px;padding:14px 24px 14px;border-bottom:1px solid #d4c8b0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6a5035}
+.pres-doc-svc span{display:flex;align-items:center;gap:5px}
+.pres-doc-svc span .si{font-size:17px;line-height:1}
+
 .pres-doc-sec{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#c9a060;margin-bottom:10px;display:flex;align-items:center;gap:10px}
 .pres-doc-sec::after{content:'';flex:1;height:1px;background:#d4c8b0}
 .pres-doc-items{list-style:none;margin-bottom:18px}
@@ -426,19 +431,23 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .rec-fp-chip.sel{background:var(--madera-light);color:var(--madera);border-color:var(--madera-mid)}
 
 @media print{
-  @page{margin:0;size:A4 portrait}
+  @page{margin:8mm;size:A4 portrait}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   html,body{height:auto!important;overflow:visible!important}
   .header,.tab-nav,.snack,.modal-overlay,.obra-ficha,.btn-nueva-obra,
   .foto-viewer,.pres-form-card,.pres-preview-actions,.add-form,
   .coll-trig,.coll-body,.obra-filtros,.pub-link-bar,
-  #btn-rec-guardar,#btn-rec-preview,#rec-preview-actions{display:none!important}
+  #btn-rec-guardar,#btn-rec-preview,#rec-preview-actions,
+  .pres-tipo-selector{display:none!important}
   .section{display:none!important}
   #tab-presupuestos{display:block!important;padding:0!important}
   #tab-recibos{display:block!important;padding:0!important}
   .main{overflow:visible!important;height:auto!important}
   body{overflow:visible!important}
-  .pres-doc,.pres-obra-doc,.rec-doc{box-shadow:none!important;border-radius:0!important;margin:0!important;max-width:100%!important;width:100%!important}
+  .pres-doc,.pres-obra-doc,.rec-doc{
+    box-shadow:none!important;border-radius:0!important;
+    margin:0!important;max-width:100%!important;width:100%!important;
+  }
 }
 
 
@@ -2293,7 +2302,7 @@ function generarPres() {
   if(validez) infoH+='<div class="pres-doc-info-cell"><span class="il">Validez</span><span class="iv">'+validez+'</span></div>';
   document.getElementById('pres-doc-wrap').innerHTML=
     '<div class="pres-doc"><div class="pres-doc-header"><div class="pres-doc-brand"><span class="pres-doc-fer">FER\u00a0</span><span class="pres-doc-olea">OLEA</span></div><div class="pres-doc-tag">Soluciones y Mantenimiento Integral</div><div class="pres-doc-meta"><span class="pres-doc-meta-lbl">Cliente</span><span class="pres-doc-meta-val">'+cliente+'</span></div><div class="pres-doc-meta"><span class="pres-doc-meta-lbl">Fecha</span><span class="pres-doc-meta-val">'+fecha+'</span></div></div>'+
-    '<div class="pres-doc-body"><div class="pres-doc-sec" style="margin-top:18px">Trabajos a realizar</div><ul class="pres-doc-items">'+iH+'</ul>'+matSec+'<div class="pres-doc-totales">'+totH+'</div>'+(infoH?'<div class="pres-doc-info">'+infoH+'</div>':'')+(nota?'<div class="pres-doc-nota">'+nota+'</div>':'')+
+    '<div class="pres-doc-body"><div class="pres-doc-svc"><span><span class="si">🪚</span> Carpintería</span><span><span class="si">🔒</span> Cerraduras</span><span><span class="si">🔧</span> Ajustes</span><span><span class="si">⚡</span> Electricidad</span><span><span class="si">🚿</span> Plomería</span><span><span class="si">🖌️</span> Pintura</span><span><span class="si">🏠</span> Mantenimiento</span></div><div class="pres-doc-sec" style="margin-top:16px">Trabajos a realizar</div><ul class="pres-doc-items">'+iH+'</ul>'+matSec+'<div class="pres-doc-totales">'+totH+'</div>'+(infoH?'<div class="pres-doc-info">'+infoH+'</div>':'')+(nota?'<div class="pres-doc-nota">'+nota+'</div>':'')+
     '</div><div class="pres-doc-footer"><div class="pres-doc-fb"><span class="fer2">FER\u00a0</span><span class="olea2">OLEA</span><div class="pres-doc-fsub">Tandil, Bs. As.</div></div><div class="pres-doc-fc"><span class="phone2">2494 066 345</span><span class="fc-sub">@feroleasoluciones</span><span class="fc-sub">feroleasoluciones@gmail.com</span></div></div></div>';
 }
 function presSnapshot(){
@@ -2323,9 +2332,16 @@ window.guardarPresupuesto=async function(){
   if(editEl)editEl.value=''; snack('Presupuesto guardado');
 };
 function renderPresupuestosHist(){
-  const items=Object.values(data.presupuestos||{}).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  var items=Object.values(data.presupuestos||{}).sort(function(a,b){return(b.ts||0)-(a.ts||0);});
   document.getElementById('tit-pres-hist').textContent='Historial ('+items.length+')';
-  document.getElementById('lista-presupuestos').innerHTML=items.length?items.map(p=>'<div class="pres-hist-item" onclick="abrirModalPresEdit(\''+p.id+'\')"><div style="flex:1;min-width:0"><div class="pres-hist-cliente">'+(p.cliente||'Sin nombre')+'</div><div class="pres-hist-meta">'+fmtFecha(p.fecha)+(p.pago?' - '+p.pago:'')+'</div></div><div class="pres-hist-monto">'+pesos(p.total||0)+'</div></div>').join(''):'<div class="empty">Sin presupuestos guardados todavia</div>';
+  if(!items.length){document.getElementById('lista-presupuestos').innerHTML='<div class="empty">Sin presupuestos guardados</div>';return;}
+  document.getElementById('lista-presupuestos').innerHTML=items.map(function(p){
+    var esObra=p.tipo==='obra';
+    var badge=esObra?'<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;background:#FAEEDA;color:#854F0B;margin-left:4px">OBRA</span>':'<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;background:#E6F1FB;color:#0C447C;margin-left:4px">MANT</span>';
+    var fn=esObra?'cargarObraEnForm':'abrirModalPresEdit';
+    var meta=fmtFecha(p.fecha)+(p.proyecto?' - '+p.proyecto:p.pago?' - '+p.pago:'');
+    return '<div class="pres-hist-item" onclick="'+fn+'(\''+p.id+'\')"><div style="flex:1;min-width:0"><div class="pres-hist-cliente">'+(p.cliente||'Sin nombre')+badge+'</div><div class="pres-hist-meta">'+meta+'</div></div><div class="pres-hist-monto">'+pesos(p.total||0)+'</div></div>';
+  }).join('');
 }
 window.abrirModalPresEdit=function(id){document.getElementById('pres-edit-id').value=id;const p=data.presupuestos[id];document.getElementById('modal-pres-edit-title').textContent=(p&&p.cliente?p.cliente:'Presupuesto')+' - '+pesos(p&&p.total?p.total:0);abrirModal('pres-edit');};
 function cargarDatosEnForm(p,esNuevo){document.getElementById('p-cliente').value=esNuevo?(p.cliente||'')+' (copia)':p.cliente||'';document.getElementById('p-fecha').value=esNuevo?hoy():p.fecha||'';document.getElementById('p-jornadas').value=p.jornadas||'';document.getElementById('p-ayudante').value=p.ayudante||'';document.getElementById('p-pago').value=p.pago||'';document.getElementById('p-validez').value=p.validez||'';document.getElementById('p-nota').value=p.nota||'';document.getElementById('p-sena').value=p.senaPct||'';document.getElementById('p-monto').value=p.monto||'';
@@ -2346,6 +2362,14 @@ window.copiarLinkObra = function() {
     // Fallback: mostrar el link en un prompt
     prompt('Copiá este link para el cliente:', url);
   });
+};
+
+window.cargarObraEnForm = function(id){
+  var p = data.presupuestos[id]; if(!p) return;
+  setPruTipo('obra');
+  cargarFormObra(p);
+  setTab('presupuestos', document.querySelector('[onclick*="presupuestos"]'));
+  snack('Presupuesto obra cargado para editar');
 };
 
 window.copiarPresupuesto=function(){
@@ -3446,6 +3470,139 @@ document.getElementById('p-monto').addEventListener('focus', function() {
 document.querySelectorAll('#tab-presupuestos .pres-input').forEach(el => el.addEventListener('input', generarPres));
 presAddItem('p-items-list');
 // ==================== FIN MÓDULO PRESUPUESTOS & OBRAS ====================
+
+
+// ── LISTENERS OBRA PRESUPUESTO ────────────────────────────────
+(function(){
+  var btnAddRubro = document.getElementById('btn-add-rubro-o');
+  if(btnAddRubro) btnAddRubro.addEventListener('click', function(){ addRubroO('','',null); });
+
+  var oFecha = document.getElementById('o-fecha');
+  if(oFecha) oFecha.value = hoy();
+
+  var btnObraGen = document.getElementById('btn-obra-generar');
+  if(btnObraGen) btnObraGen.addEventListener('click', function(){
+    var rubros = getRubrosO();
+    var cliente = document.getElementById('o-cliente').value.trim();
+    if(!cliente){ snack('Escribí el cliente'); return; }
+    var p = {
+      cliente:cliente,
+      fecha:document.getElementById('o-fecha').value,
+      proyecto:document.getElementById('o-proyecto').value.trim(),
+      tipoObra:document.getElementById('o-tipo').value.trim(),
+      plazo:document.getElementById('o-plazo').value.trim(),
+      validez:document.getElementById('o-validez').value.trim(),
+      rubros:rubros,
+      condiciones:document.getElementById('o-condiciones').value.trim()
+    };
+    document.getElementById('pres-doc-wrap').innerHTML = buildObraDoc(p);
+    document.getElementById('pres-preview-actions').style.display = 'flex';
+  });
+
+  var btnObraGuardar = document.getElementById('btn-obra-guardar');
+  if(btnObraGuardar) btnObraGuardar.addEventListener('click', async function(){
+    var rubros = getRubrosO();
+    var cliente = document.getElementById('o-cliente').value.trim();
+    if(!cliente){ snack('Escribí el cliente'); return; }
+    var total = rubros.reduce(function(a,r){
+      return a + r.subitems.reduce(function(b,si){ return b+(si.monto||0); }, 0);
+    }, 0);
+    var id = document.getElementById('o-edit-id').value || uid();
+    var p = {
+      id:id, tipo:'obra', ts:Date.now(),
+      cliente:cliente,
+      fecha:document.getElementById('o-fecha').value,
+      proyecto:document.getElementById('o-proyecto').value.trim(),
+      tipoObra:document.getElementById('o-tipo').value.trim(),
+      plazo:document.getElementById('o-plazo').value.trim(),
+      validez:document.getElementById('o-validez').value.trim(),
+      rubros:rubros,
+      condiciones:document.getElementById('o-condiciones').value.trim(),
+      total:total
+    };
+    if(fbOk){ await fbSet('presupuestos/'+id, p); }
+    else { data.presupuestos[id]=p; guardarLocal(); renderPresupuestosHist(); }
+    document.getElementById('o-edit-id').value = id;
+    document.getElementById('pres-doc-wrap').innerHTML = buildObraDoc(p);
+    document.getElementById('pres-preview-actions').style.display = 'flex';
+    snack('Presupuesto obra guardado ✓');
+  });
+
+  // Inicializar con un rubro vacío
+  if(document.getElementById('o-rubros-list') && !document.getElementById('o-rubros-list').children.length){
+    addRubroO('','',null);
+  }
+})();
+
+// ── LISTENERS RECIBOS ─────────────────────────────────────────
+(function(){
+  var rFecha = document.getElementById('r-fecha');
+  if(rFecha) rFecha.value = hoy();
+
+  var rNumero = document.getElementById('r-numero');
+  if(rNumero) rNumero.value = autoNumRecibo();
+
+  var btnRecPreview = document.getElementById('btn-rec-preview');
+  if(btnRecPreview) btnRecPreview.addEventListener('click', function(){
+    var cliente = document.getElementById('r-cliente').value.trim();
+    if(!cliente){ snack('Escribí el cliente'); return; }
+    var r = {
+      numero: document.getElementById('r-numero').value.trim() || autoNumRecibo(),
+      fecha: document.getElementById('r-fecha').value,
+      cliente: cliente,
+      concepto: document.getElementById('r-concepto').value.trim(),
+      monto: parseFloat(document.getElementById('r-monto').value)||0,
+      tipo: tipoRecibo,
+      formaPago: formaPagoRecibo,
+      notas: document.getElementById('r-notas').value.trim()
+    };
+    document.getElementById('rec-preview-wrap').innerHTML = buildReciboDoc(r);
+    document.getElementById('rec-preview-actions').style.display = 'block';
+  });
+
+  var btnRecGuardar = document.getElementById('btn-rec-guardar');
+  if(btnRecGuardar) btnRecGuardar.addEventListener('click', async function(){
+    var cliente = document.getElementById('r-cliente').value.trim();
+    if(!cliente){ snack('Escribí el cliente'); return; }
+    var id = document.getElementById('r-edit-id').value || uid();
+    var r = {
+      id:id, ts:Date.now(),
+      numero: document.getElementById('r-numero').value.trim() || autoNumRecibo(),
+      fecha: document.getElementById('r-fecha').value,
+      cliente: cliente,
+      concepto: document.getElementById('r-concepto').value.trim(),
+      monto: parseFloat(document.getElementById('r-monto').value)||0,
+      tipo: tipoRecibo,
+      formaPago: formaPagoRecibo,
+      notas: document.getElementById('r-notas').value.trim()
+    };
+    if(fbOk){ await fbSet('recibos/'+id, r); }
+    else { data.recibos[id]=r; guardarLocal(); renderRecibosHist(); }
+    document.getElementById('r-edit-id').value = id;
+    document.getElementById('rec-preview-wrap').innerHTML = buildReciboDoc(r);
+    document.getElementById('rec-preview-actions').style.display = 'block';
+    snack('Recibo guardado ✓');
+  });
+
+  renderRecibosHist();
+})();
+
+// ── AUTO-ESCALA AL IMPRIMIR ───────────────────────────────────
+window.addEventListener('beforeprint', function(){
+  var doc = document.querySelector('.pres-doc, .pres-obra-doc, .rec-doc');
+  if(!doc) return;
+  var pageH = 1123; // A4 px a 96dpi aprox
+  var docH = doc.scrollHeight;
+  if(docH > pageH){
+    var scale = pageH / docH;
+    doc.style.transform = 'scale('+scale+') translateY('+((docH*(1-scale))/2)+'px)';
+    doc.style.transformOrigin = 'top left';
+  }
+});
+window.addEventListener('afterprint', function(){
+  var doc = document.querySelector('.pres-doc, .pres-obra-doc, .rec-doc');
+  if(doc){ doc.style.transform=''; doc.style.transformOrigin=''; }
+});
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
