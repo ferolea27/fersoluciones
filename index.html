@@ -928,7 +928,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
     <div class="pres-preview-actions" id="pres-preview-actions" style="display:none">
       <button class="pres-btn-action pres-btn-copy" id="btn-pres-copy">Copiar WhatsApp</button>
       <span class="copy-ok" id="copy-ok">Copiado</span>
-      <button class="pres-btn-action pres-btn-print" onclick="window.print()">Imprimir / PDF</button>
+      <button class="pres-btn-action pres-btn-print" onclick="exportarPDF()">Exportar PDF</button>
     </div>
     <div class="pres-print-wrap"><div id="pres-doc-wrap"></div></div>
     <div class="add-form" style="margin-top:4px">
@@ -1037,7 +1037,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
         <div class="pres-preview-actions">
           <button class="pres-btn-action pres-btn-copy" onclick="copiarRecibo()">Copiar WA</button>
           <span class="copy-ok" id="copy-ok-rec"></span>
-          <button class="pres-btn-action pres-btn-print" onclick="window.print()">Imprimir / PDF</button>
+          <button class="pres-btn-action pres-btn-print" onclick="exportarPDF()">Exportar PDF</button>
         </div>
       </div>
       <button class="pres-btn-guardar" id="btn-rec-guardar">Guardar recibo</button>
@@ -2296,6 +2296,7 @@ function generarPres() {
   document.getElementById('p-sena-hint').textContent=senaAmt>0?'Sena: '+pesos(senaAmt):'';
   if(!cliente){document.getElementById('pres-doc-wrap').innerHTML='';document.getElementById('pres-preview-actions').style.display='none';return;}
   document.getElementById('pres-preview-actions').style.display='flex';
+  window._lastPresSnap=presSnapshot();
   let iH='';
   if(trabajos.length) trabajos.forEach(i=>{iH+='<li><span class="it-txt">'+i.desc+'</span>'+(i.price>0?'<span class="it-amt">'+pesos(i.price)+'</span>':'')+'</li>';});
   else iH='<li><span class="it-txt">-</span></li>';
@@ -3506,6 +3507,7 @@ presAddItem('p-items-list');
     };
     document.getElementById('pres-doc-wrap').innerHTML = buildObraDoc(p);
     document.getElementById('pres-preview-actions').style.display = 'flex';
+    window._lastObraSnap = p;
   });
 
   var btnObraGuardar = document.getElementById('btn-obra-guardar');
@@ -3534,6 +3536,7 @@ presAddItem('p-items-list');
     document.getElementById('o-edit-id').value = id;
     document.getElementById('pres-doc-wrap').innerHTML = buildObraDoc(p);
     document.getElementById('pres-preview-actions').style.display = 'flex';
+    window._lastObraSnap = p;
     snack('Presupuesto obra guardado ✓');
   });
 
@@ -3641,6 +3644,349 @@ window.addEventListener('afterprint', function(){
     _printDoc = null;
   }
 });
+
+
+// ══ EXPORTAR PDF — VENTANA DEDICADA A4 ══════════════════════
+window.exportarPDF = function(){
+  var recTab   = document.getElementById('tab-recibos');
+  var isRec    = recTab && recTab.classList.contains('active');
+  var isObra   = !isRec && presActualTipo === 'obra';
+
+  var html = null;
+  if(isRec)       html = buildPrintRecibo();
+  else if(isObra) html = buildPrintObra();
+  else            html = buildPrintMant();
+
+  if(!html){ snack('Completá los datos antes de exportar'); return; }
+
+  var win = window.open('','_blank','width=850,height=750');
+  if(!win){ snack('Permitir ventanas emergentes para exportar PDF'); return; }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+};
+
+// ── CSS base compartido para ventana de impresión ────────────
+function printBaseCSS(){
+  return '<style>'+
+    '@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");'+
+    '@page{margin:0;size:A4 portrait}'+
+    '*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'+
+    'body{font-family:"Source Sans 3",sans-serif;background:#fff;width:210mm;height:297mm;overflow:hidden}'+
+    '.page{width:210mm;height:297mm;display:flex;flex-direction:column;overflow:hidden;background:#fff}'+
+    '.pg-hdr{flex-shrink:0;background:#3a2410}'+
+    '.pg-ftr{flex-shrink:0;background:#3a2410;padding:14px 24px;display:flex;justify-content:space-between;align-items:center}'+
+    '.pg-ftr-brand{font-family:"Oswald",sans-serif;font-size:13px;font-weight:700}'+
+    '.pg-ftr-brand .f{color:#f0e6d0}.pg-ftr-brand .o{color:#c9a060}'+
+    '.pg-ftr-sub{font-family:"Oswald",sans-serif;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a40;margin-top:2px}'+
+    '.pg-ftr-r{text-align:right;display:flex;flex-direction:column;gap:2px}'+
+    '.pg-ftr-r .ph{font-family:"Oswald",sans-serif;font-size:13px;color:#ecdfc8}'+
+    '.pg-ftr-r span{font-size:10px;color:#9a7e58}'+
+    '.pg-body{flex:1;overflow:hidden;position:relative}'+
+    '.pg-body-inner{position:absolute;top:0;left:0;width:100%;transform-origin:top left}'+
+    // Estilos mantenimiento
+    '.svc{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;padding:11px 24px 11px;border-bottom:1px solid #d4c8b0;font-family:"Oswald",sans-serif;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#6a5035}'+
+    '.svc span{display:flex;align-items:center;gap:4px}.svc span .si{font-size:16px;line-height:1}'+
+    '.m-body{padding:16px 24px 0}'+
+    '.m-sec{font-family:"Oswald",sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;margin-bottom:8px;display:flex;align-items:center;gap:8px}'+
+    '.m-sec::after{content:"";flex:1;height:1px;background:#d4c8b0}'+
+    '.m-items{list-style:none;margin-bottom:14px}'+
+    '.m-items li{font-size:12.5px;font-weight:300;color:#3a2e20;padding:6px 0;border-bottom:1px solid #e8e2d8;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}'+
+    '.m-items li:last-child{border-bottom:none}'+
+    '.m-items li .it{display:flex;align-items:flex-start;gap:8px;flex:1}'+
+    '.m-items li .it::before{content:"▸";color:#b08040;font-size:8px;flex-shrink:0;margin-top:3px}'+
+    '.m-items li .pr{font-family:"Oswald",sans-serif;font-size:11.5px;color:#6a5035;flex-shrink:0}'+
+    '.m-tots{background:#ede6d8;border:1px solid #d4c8b0;border-radius:5px;padding:11px 14px;margin-bottom:14px}'+
+    '.m-tr{display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;font-size:12px}'+
+    '.m-tr .l{color:#6a5035;font-weight:300}.m-tr .a{font-family:"Oswald",sans-serif;font-size:12px;color:#3a2e20}'+
+    '.m-tr.grand{border-top:1px solid #d4c8b0;margin-top:6px;padding-top:8px}'+
+    '.m-tr.grand .l{font-family:"Oswald",sans-serif;font-size:11.5px;font-weight:600;color:#3a2e20;text-transform:uppercase;letter-spacing:.06em}'+
+    '.m-tr.grand .a{font-size:18px;color:#3a2410;font-weight:600}'+
+    '.m-tr.saldo .l{font-family:"Oswald",sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#3a2e20}'+
+    '.m-tr.saldo .a{font-size:14px;color:#3a2410;font-weight:600}'+
+    '.m-infogrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}'+
+    '.m-ic{background:#f0ece4;border:1px solid #d4c8b0;border-radius:4px;padding:7px 10px}'+
+    '.m-ic .l{font-family:"Oswald",sans-serif;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#c9a060;display:block;margin-bottom:2px}'+
+    '.m-ic .v{font-size:11.5px;color:#3a2e20;font-weight:300}'+
+    '.m-nota{font-size:10.5px;color:#9a8a70;font-style:italic;line-height:1.5;border-left:2px solid #d4c8b0;padding-left:10px;margin-bottom:10px}'+
+    // Estilos obra
+    '.o-rubro{padding:12px 24px;border-bottom:1px solid #f0ece8}'+
+    '.o-r-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;gap:8px}'+
+    '.o-r-tit{font-family:"Oswald",sans-serif;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#3a2410}'+
+    '.o-r-tot{font-family:"Oswald",sans-serif;font-size:12px;font-weight:700;color:#3a2410;flex-shrink:0}'+
+    '.o-r-desc{font-size:11px;color:#6a5035;font-style:italic;margin-bottom:7px;line-height:1.4}'+
+    '.o-si-tbl{width:100%;border-collapse:collapse;font-size:12px}'+
+    '.o-si-tbl td{padding:4px 0;border-bottom:1px solid #ede8e0;vertical-align:top}'+
+    '.o-si-tbl td.ra{text-align:right;font-family:"Oswald",sans-serif;font-size:11px;color:#6a5035;padding-left:8px;white-space:nowrap}'+
+    '.o-si-tbl tr:last-child td{border-bottom:none}'+
+    '.o-si-tbl .sub-tr td{background:#f9f6f0;font-weight:700;font-size:11.5px;padding:4px 0;border-top:1.5px solid #d4c8b0}'+
+    '.o-resumen{background:#f7f4ef;border-top:2px solid #d4c8b0}'+
+    '.o-res-hdr{font-family:"Oswald",sans-serif;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:#c9a060;padding:10px 24px 4px;display:flex;gap:8px;align-items:center}'+
+    '.o-res-hdr::after{content:"";flex:1;height:1px;background:#d4c8b0}'+
+    '.o-res-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 24px;border-bottom:1px solid #ede8e0;font-size:12px}'+
+    '.o-res-row:last-child{border-bottom:none}'+
+    '.o-res-row .rl{color:#6a5035;font-weight:300}.o-res-row .ra{font-family:"Oswald",sans-serif;font-size:12px;color:#3a2e20}'+
+    '.o-total-box{margin:0 16px 16px;background:#3a2410;border-radius:7px;padding:12px 18px;display:flex;align-items:baseline;justify-content:space-between}'+
+    '.o-total-lbl{font-family:"Oswald",sans-serif;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:#c9a060}'+
+    '.o-total-val{font-family:"Oswald",sans-serif;font-size:22px;font-weight:700;color:#c9a060}'+
+    '.o-conds{padding:0 24px 10px}'+
+    '.o-cond-hdr{font-family:"Oswald",sans-serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#c9a060;margin:8px 0 6px}'+
+    '.o-cond-item{font-size:10.5px;color:#6a5035;line-height:1.5;margin-bottom:3px;padding-left:9px;position:relative}'+
+    '.o-cond-item::before{content:"·";position:absolute;left:0;color:#c9a060}'+
+    // Estilos recibo
+    '.r-body{padding:18px 22px}'+
+    '.r-tbl{width:100%;border-collapse:collapse;margin-bottom:12px}'+
+    '.r-tbl td{padding:7px 0;border-bottom:1px solid #e8e2d8;font-size:12.5px;vertical-align:top}'+
+    '.r-tbl .rl{color:#888780;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;width:36%;padding-right:8px}'+
+    '.r-tbl .rv{color:#2c2c2a}'+
+    '.r-tbl tr:last-child td{border-bottom:none}'+
+    '.r-monto{background:#ede6d8;border:1px solid #d4c8b0;border-radius:7px;padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}'+
+    '.r-monto-lbl{font-family:"Oswald",sans-serif;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:#6a5035}'+
+    '.r-monto-val{font-family:"Oswald",sans-serif;font-size:22px;font-weight:700;color:#3a2410}'+
+    '.r-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:16px;display:inline-block;margin-bottom:14px}'+
+    '.rb-sena{background:#EDE0F5;color:#7B3FAD}.rb-parcial{background:#E6F1FB;color:#0C447C}'+
+    '.rb-total{background:#E8F5E2;color:#2E6B1F}.rb-anticipo{background:#FAEEDA;color:#854F0B}'+
+    '.r-firmas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;padding-top:14px;border-top:1px dashed #d4c8b0}'+
+    '.r-firma-box{text-align:center}'+
+    '.r-firma-line{border-top:1.5px solid #3a2e20;margin-bottom:4px;margin-top:34px}'+
+    '.r-firma-lbl{font-size:9px;color:#888780;text-transform:uppercase;letter-spacing:.08em}'+
+  '</style>';
+}
+
+function printHeader(tipo, datos){
+  if(tipo==='recibo'){
+    return '<div class="pg-hdr" style="padding:18px 22px 14px">'+
+      '<div style="display:flex;align-items:baseline;gap:4px;margin-bottom:2px">'+
+        '<span style="font-family:Oswald,sans-serif;font-size:22px;font-weight:700;color:#f0e6d0;letter-spacing:.1em">FER </span>'+
+        '<span style="font-family:Oswald,sans-serif;font-size:22px;font-weight:700;color:#c9a060;letter-spacing:.1em">OLEA</span>'+
+      '</div>'+
+      '<div style="font-family:Oswald,sans-serif;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;margin-bottom:10px">Recibo de pago</div>'+
+      '<div style="font-family:Oswald,sans-serif;font-size:30px;font-weight:700;color:#f0e6d0;letter-spacing:.04em">N\u00b0 '+datos.numero+'</div>'+
+    '</div>';
+  }
+  if(tipo==='obra'){
+    var info=
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px">'+
+        ic('Proyecto', datos.proyecto||datos.cliente)+
+        ic('Tipo', datos.tipoObra||'—')+
+        ic('Fecha', fmtFecha(datos.fecha))+
+        ic('Validez', datos.validez||'—')+
+      '</div>';
+    return '<div class="pg-hdr" style="padding:20px 24px 16px">'+
+      '<div style="display:flex;align-items:baseline;gap:5px;margin-bottom:2px">'+
+        '<span style="font-family:Oswald,sans-serif;font-size:26px;font-weight:700;color:#f0e6d0;letter-spacing:.1em">FER</span>'+
+        '<span style="font-family:Oswald,sans-serif;font-size:26px;font-weight:700;color:#c9a060;letter-spacing:.1em">OLEA</span>'+
+      '</div>'+
+      '<div style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;margin-bottom:1px">Mantenimiento \u00b7 Reformas \u00b7 Servicios</div>'+
+      '<div style="font-family:Oswald,sans-serif;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,160,96,.55);margin-bottom:12px">Presupuesto Llave en Mano — Mano de Obra</div>'+
+      info+
+    '</div>';
+  }
+  // mantenimiento
+  return '<div class="pg-hdr" style="padding:20px 24px 0">'+
+    '<div style="display:flex;align-items:baseline;gap:5px;margin-bottom:2px">'+
+      '<span style="font-family:Oswald,sans-serif;font-size:28px;font-weight:700;color:#f0e6d0;letter-spacing:.1em">FER </span>'+
+      '<span style="font-family:Oswald,sans-serif;font-size:28px;font-weight:700;color:#c9a060;letter-spacing:.1em">OLEA</span>'+
+    '</div>'+
+    '<div style="font-family:Oswald,sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;margin-bottom:14px">Soluciones y Mantenimiento Integral</div>'+
+    '<div style="display:flex;gap:8px;font-size:12px;margin-bottom:3px"><span style="font-family:Oswald,sans-serif;font-size:10px;color:#c9a060;text-transform:uppercase;letter-spacing:.05em;min-width:58px;padding-top:1px">Cliente</span><span style="color:#ecdfc8;font-weight:300">'+(datos.cliente||'')+'</span></div>'+
+    '<div style="display:flex;gap:8px;font-size:12px;margin-bottom:0"><span style="font-family:Oswald,sans-serif;font-size:10px;color:#c9a060;text-transform:uppercase;letter-spacing:.05em;min-width:58px;padding-top:1px">Fecha</span><span style="color:#ecdfc8;font-weight:300">'+fmtFecha(datos.fecha)+'</span></div>'+
+    '<div class="svc" style="margin-top:12px">'+
+      '<span><span class="si">\ud83e\ude9a</span> Carpinter\u00eda</span>'+
+      '<span><span class="si">\ud83d\udd12</span> Cerraduras</span>'+
+      '<span><span class="si">\ud83d\udd27</span> Ajustes</span>'+
+      '<span><span class="si">\u26a1</span> Electricidad</span>'+
+      '<span><span class="si">\ud83d\udebf</span> Pomer\u00eda</span>'+
+      '<span><span class="si">\ud83d\udd8c\ufe0f</span> Pintura</span>'+
+      '<span><span class="si">\ud83c\udfe0</span> Mantenimiento</span>'+
+    '</div>'+
+  '</div>';
+}
+
+function ic(l,v){ return '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(201,160,96,.18);border-radius:5px;padding:6px 9px"><span style="font-family:Oswald,sans-serif;font-size:7.5px;letter-spacing:.13em;text-transform:uppercase;color:#c9a060;display:block;margin-bottom:2px">'+l+'</span><span style="font-size:11.5px;color:#ecdfc8;font-weight:300">'+v+'</span></div>'; }
+
+function printFooter(){
+  return '<div class="pg-ftr">'+
+    '<div><div class="pg-ftr-brand"><span class="f">FER </span><span class="o">OLEA</span></div><div class="pg-ftr-sub">Tandil, Bs. As.</div></div>'+
+    '<div class="pg-ftr-r"><span class="ph">2494 066 345</span><span>@feroleasoluciones</span><span>feroleasoluciones@gmail.com</span></div>'+
+  '</div>';
+}
+
+function printScaleScript(){
+  return '<script>'+
+    'window.onload=function(){'+
+      'var inner=document.getElementById("inner");'+
+      'var wrap=document.getElementById("wrap");'+
+      'if(!inner||!wrap)return;'+
+      'var availH=wrap.offsetHeight;'+
+      'var availW=wrap.offsetWidth;'+
+      'var contentH=inner.scrollHeight;'+
+      'var contentW=inner.scrollWidth||availW;'+
+      'if(contentH>0&&availH>0){'+
+        'var s=Math.min(availH/contentH, availW/contentW);'+
+        'if(s<0.4)s=1;'+ // muy largo → fluye a 2 hojas
+        'if(Math.abs(s-1)>0.02){'+
+          'inner.style.transform="scale("+s+")";'+
+          'inner.style.transformOrigin="top left";'+
+          'inner.style.width=Math.round(100/s)+"%";'+
+        '}'+
+      '}'+
+      'setTimeout(function(){window.print();},400);'+
+    '};'+
+  '<\/script>';
+}
+
+function wrapPrintPage(tipo, datos, bodyHTML){
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8">'+printBaseCSS()+'</head><body>'+
+    '<div class="page">'+
+      printHeader(tipo, datos)+
+      '<div class="pg-body" id="wrap"><div class="pg-body-inner" id="inner">'+bodyHTML+'</div></div>'+
+      printFooter()+
+    '</div>'+
+    printScaleScript()+
+  '</body></html>';
+}
+
+// ── MANTENIMIENTO ─────────────────────────────────────────────
+function buildPrintMant(){
+  var snap = presSnapshot();
+  if(!snap||!snap.cliente) return null;
+  // Calcular total correctamente
+  if(!snap.monto) snap.monto = parseFloat(document.getElementById('p-monto').value)||0;
+
+  var monto=snap.monto||0;
+  var sumMat=(snap.materiales||[]).reduce(function(a,i){return a+(i.price||0);},0);
+  var total=monto+sumMat;
+  var senaPct=snap.senaPct||0; var senaAmt=senaPct>0?Math.round(total*senaPct/100):0;
+  var moLabel=buildMoLabel(snap.jornadas,snap.ayudante);
+
+  var itemsH=(snap.trabajos||[]).length
+    ? (snap.trabajos||[]).map(function(i){return '<li><span class="it">'+i.desc+'</span>'+(i.price>0?'<span class="pr">'+pesos(i.price)+'</span>':'')+'</li>';}).join('')
+    : '<li><span class="it">\u2014</span></li>';
+
+  var matH='';
+  if((snap.materiales||[]).length){
+    matH='<div class="m-sec" style="margin-top:4px">Materiales</div><ul class="m-items">'+
+      (snap.materiales||[]).map(function(i){return '<li><span class="it">'+i.desc+'</span>'+(i.price>0?'<span class="pr">'+pesos(i.price)+'</span>':'')+'</li>';}).join('')+
+    '</ul>';
+  }
+
+  var totH='<div class="m-tr"><span class="l">Mano de obra'+(moLabel?' ('+moLabel+')':'')+'</span><span class="a">'+pesos(monto)+'</span></div>';
+  if(sumMat>0) totH+='<div class="m-tr"><span class="l">Materiales</span><span class="a">'+pesos(sumMat)+'</span></div>';
+  totH+='<div class="m-tr grand"><span class="l">Total</span><span class="a">'+pesos(total)+'</span></div>';
+  if(senaAmt>0){
+    totH+='<div class="m-tr"><span class="l">Se\u00f1a ('+senaPct+'%)</span><span class="a">'+pesos(senaAmt)+'</span></div>';
+    totH+='<div class="m-tr saldo"><span class="l">Saldo al finalizar</span><span class="a">'+pesos(total-senaAmt)+'</span></div>';
+  } else {
+    totH+='<div class="m-tr"><span class="l">Saldo al finalizar</span><span class="a">'+pesos(total)+'</span></div>';
+  }
+
+  var infoH='';
+  if(snap.pago) infoH+='<div class="m-ic"><span class="l">Forma de pago</span><span class="v">'+snap.pago+'</span></div>';
+  if(snap.validez) infoH+='<div class="m-ic"><span class="l">Validez</span><span class="v">'+snap.validez+'</span></div>';
+  if(snap.alias) infoH+='<div class="m-ic"><span class="l">Alias</span><span class="v">'+snap.alias+'</span></div>';
+
+  var body='<div class="m-body">'+
+    '<div class="m-sec">Trabajos a realizar</div><ul class="m-items">'+itemsH+'</ul>'+
+    matH+
+    '<div class="m-tots">'+totH+'</div>'+
+    (infoH?'<div class="m-infogrid">'+infoH+'</div>':'')+
+    (snap.nota?'<div class="m-nota">'+snap.nota+'</div>':'')+
+  '</div>';
+
+  return wrapPrintPage('mantenimiento', snap, body);
+}
+
+// ── OBRA ──────────────────────────────────────────────────────
+function buildPrintObra(){
+  var p = window._lastObraSnap;
+  if(!p){
+    var id = document.getElementById('o-edit-id')?document.getElementById('o-edit-id').value:'';
+    if(id && data.presupuestos[id]) p = data.presupuestos[id];
+  }
+  if(!p){
+    // Leer directamente del form de obra
+    var rubros = getRubrosO();
+    if(!rubros.length) return null;
+    p = {
+      cliente: document.getElementById('o-cliente')?document.getElementById('o-cliente').value.trim():'',
+      fecha: document.getElementById('o-fecha')?document.getElementById('o-fecha').value:'',
+      proyecto: document.getElementById('o-proyecto')?document.getElementById('o-proyecto').value.trim():'',
+      tipoObra: document.getElementById('o-tipo')?document.getElementById('o-tipo').value.trim():'',
+      plazo: document.getElementById('o-plazo')?document.getElementById('o-plazo').value.trim():'',
+      validez: document.getElementById('o-validez')?document.getElementById('o-validez').value.trim():'',
+      rubros: rubros,
+      condiciones: document.getElementById('o-condiciones')?document.getElementById('o-condiciones').value.trim():''
+    };
+  }
+  if(!p||!p.rubros||!p.rubros.length) return null;
+
+  var rubrosH=(p.rubros||[]).map(function(r,i){
+    var sub=r.subitems.reduce(function(a,si){return a+(si.monto||0);},0);
+    var sisH=r.subitems.map(function(si){
+      return '<tr><td>'+si.desc+'</td><td class="ra">'+pesos(si.monto)+'</td></tr>';
+    }).join('');
+    if(r.subitems.length>1){
+      sisH+='<tr class="sub-tr"><td><strong>Subtotal '+r.nombre+'</strong></td><td class="ra"><strong>'+pesos(sub)+'</strong></td></tr>';
+    }
+    return '<div class="o-rubro">'+
+      '<div class="o-r-hdr"><span class="o-r-tit">'+(i+1)+' \u00b7 '+r.nombre.toUpperCase()+'</span><span class="o-r-tot">'+pesos(sub)+'</span></div>'+
+      (r.desc?'<div class="o-r-desc">'+r.desc+'</div>':'')+
+      '<table class="o-si-tbl"><tbody>'+sisH+'</tbody></table>'+
+    '</div>';
+  }).join('');
+
+  var total=(p.rubros||[]).reduce(function(a,r){return a+r.subitems.reduce(function(b,si){return b+(si.monto||0);},0);},0);
+  var resH=(p.rubros||[]).map(function(r,i){
+    var sub=r.subitems.reduce(function(a,si){return a+(si.monto||0);},0);
+    return '<div class="o-res-row"><span class="rl">'+(i+1)+' \u00b7 '+r.nombre+'</span><span class="ra">'+pesos(sub)+'</span></div>';
+  }).join('');
+
+  var condsH=(p.condiciones||'').split('\n').filter(Boolean).map(function(l){return '<div class="o-cond-item">'+l+'</div>';}).join('');
+
+  var body=
+    rubrosH+
+    '<div class="o-resumen">'+
+      '<div class="o-res-hdr">Rubro \u00a0 Mano de obra</div>'+
+      resH+
+      '<div class="o-total-box"><span class="o-total-lbl">Total Llave en Mano</span><span class="o-total-val">'+pesos(total)+'</span></div>'+
+    '</div>'+
+    (condsH?'<div class="o-conds"><div class="o-cond-hdr">Condiciones</div>'+condsH+'</div>':'');
+
+  return wrapPrintPage('obra', p, body);
+}
+
+// ── RECIBO ────────────────────────────────────────────────────
+function buildPrintRecibo(){
+  var id=document.getElementById('r-edit-id')?document.getElementById('r-edit-id').value:'';
+  var r=id?data.recibos[id]:null;
+  if(!r) return null;
+
+  var tipoLabel={sena:'Se\u00f1a',parcial:'Pago parcial',total:'Pago total',anticipo:'Anticipo'};
+  var tipoCls={sena:'rb-sena',parcial:'rb-parcial',total:'rb-total',anticipo:'rb-anticipo'};
+  var fpLabel={efectivo:'Efectivo',transferencia:'Transferencia bancaria',cheque:'Cheque'};
+
+  var body='<div class="r-body">'+
+    '<table class="r-tbl">'+
+      '<tr><td class="rl">Fecha</td><td class="rv">'+fmtFecha(r.fecha)+'</td></tr>'+
+      '<tr><td class="rl">Cliente</td><td class="rv">'+r.cliente+'</td></tr>'+
+      '<tr><td class="rl">Concepto</td><td class="rv">'+r.concepto+'</td></tr>'+
+      '<tr><td class="rl">Forma de pago</td><td class="rv">'+(fpLabel[r.formaPago]||r.formaPago)+'</td></tr>'+
+      (r.notas?'<tr><td class="rl">Notas</td><td class="rv">'+r.notas+'</td></tr>':'')+
+    '</table>'+
+    '<div class="r-monto"><span class="r-monto-lbl">Monto recibido</span><span class="r-monto-val">'+pesos(r.monto)+'</span></div>'+
+    '<span class="r-badge '+(tipoCls[r.tipo]||'')+'">'+(tipoLabel[r.tipo]||r.tipo)+'</span>'+
+    '<div class="r-firmas">'+
+      '<div class="r-firma-box"><div class="r-firma-line"></div><div class="r-firma-lbl">Recib\u00ed conforme</div></div>'+
+      '<div class="r-firma-box"><div class="r-firma-line"></div><div class="r-firma-lbl">Fer Olea</div></div>'+
+    '</div>'+
+  '</div>';
+
+  return wrapPrintPage('recibo', r, body);
+}
+
+// capturePresSnap() reemplazada por presSnapshot()
+
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
