@@ -1013,18 +1013,18 @@ textarea.pres-input{resize:vertical;min-height:60px}
       <div class="pres-field">
         <label class="pres-label">Tipo de pago</label>
         <div class="rec-fp-chips" id="chips-rtp">
-          <button class="rec-fp-chip sel" onclick="selRChip(this,'rtp','sena')">Seña</button>
-          <button class="rec-fp-chip" onclick="selRChip(this,'rtp','parcial')">Pago parcial</button>
-          <button class="rec-fp-chip" onclick="selRChip(this,'rtp','total')">Pago total</button>
-          <button class="rec-fp-chip" onclick="selRChip(this,'rtp','anticipo')">Anticipo</button>
+          <button type="button" class="rec-fp-chip sel" onclick="selRChip(this,'rtp','sena')">Seña</button>
+          <button type="button" class="rec-fp-chip" onclick="selRChip(this,'rtp','parcial')">Pago parcial</button>
+          <button type="button" class="rec-fp-chip" onclick="selRChip(this,'rtp','total')">Pago total</button>
+          <button type="button" class="rec-fp-chip" onclick="selRChip(this,'rtp','anticipo')">Anticipo</button>
         </div>
       </div>
       <div class="pres-field">
         <label class="pres-label">Forma de pago</label>
         <div class="rec-fp-chips" id="chips-rfp">
-          <button class="rec-fp-chip sel" onclick="selRChip(this,'rfp','efectivo')">Efectivo</button>
-          <button class="rec-fp-chip" onclick="selRChip(this,'rfp','transferencia')">Transferencia</button>
-          <button class="rec-fp-chip" onclick="selRChip(this,'rfp','cheque')">Cheque</button>
+          <button type="button" class="rec-fp-chip sel" onclick="selRChip(this,'rfp','efectivo')">Efectivo</button>
+          <button type="button" class="rec-fp-chip" onclick="selRChip(this,'rfp','transferencia')">Transferencia</button>
+          <button type="button" class="rec-fp-chip" onclick="selRChip(this,'rfp','cheque')">Cheque</button>
         </div>
       </div>
       <div class="pres-field">
@@ -1040,8 +1040,8 @@ textarea.pres-input{resize:vertical;min-height:60px}
           <button class="pres-btn-action pres-btn-print" onclick="exportarPDF()">Exportar PDF</button>
         </div>
       </div>
-      <button class="pres-btn-guardar" id="btn-rec-guardar">Guardar recibo</button>
-      <button class="pres-btn-generar" id="btn-rec-preview" style="margin-top:8px">Vista previa</button>
+      <button type="button" class="pres-btn-generar" id="btn-rec-preview">Vista previa</button>
+      <button type="button" class="pres-btn-guardar" id="btn-rec-guardar" style="margin-top:8px">Guardar recibo</button>
     </div>
     <div class="add-form">
       <div class="coll-trig" id="trig-rec-hist" onclick="toggleColl('rec-hist')">
