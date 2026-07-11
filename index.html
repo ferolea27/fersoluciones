@@ -1129,10 +1129,12 @@ textarea.pres-input{resize:vertical;min-height:60px}
 <div class="modal-overlay" id="modal-ambiente" onclick="cerrarModal('ambiente')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
-    <div class="modal-header"><div class="modal-title">Nuevo ambiente</div><button class="modal-close" onclick="cerrarModal('ambiente')">&#xd7;</button></div>
+    <div class="modal-header"><div class="modal-title" id="modal-ambiente-title">Nuevo ambiente</div><button class="modal-close" onclick="cerrarModal('ambiente')">&#xd7;</button></div>
     <div class="modal-body">
       <div class="form-field"><div class="form-label">Nombre del ambiente</div><input class="form-input" id="amb-nombre" type="text" placeholder="Ej: Cocina, Bano, Sala..."></div>
-      <button class="btn-guardar" onclick="guardarAmbiente()">Agregar ambiente</button>
+      <input type="hidden" id="amb-edit-id">
+      <button class="btn-guardar" id="btn-guardar-ambiente" onclick="guardarAmbiente()">Agregar ambiente</button>
+      <button class="btn-peligro" id="btn-del-ambiente" style="display:none" onclick="eliminarAmbiente()">Eliminar ambiente</button>
     </div>
   </div>
 </div>
@@ -2175,7 +2177,10 @@ function renderAmbientes(obraId){
       + '<div class="ambiente-header" onclick="toggleAmbiente(\''+ambId+'\')">'
         + '<div><div class="ambiente-nombre">'+(amb.nombre||'Ambiente')+'</div>'
         + '<div class="ambiente-meta">'+rubroCnt+'</div></div>'
-        + '<span style="color:var(--gris);font-size:13px">'+(isOpen?'&#x25B2;':'&#x25BC;')+'</span>'
+        + '<div style="display:flex;align-items:center;gap:8px">'
+          + '<button class="btn-rub-tiny" onclick="event.stopPropagation();editarAmbiente(\''+ambId+'\')" title="Editar ambiente">&#x270F;</button>'
+          + '<span style="color:var(--gris);font-size:13px">'+(isOpen?'&#x25B2;':'&#x25BC;')+'</span>'
+        + '</div>'
       + '</div>'
       + (isOpen
         ? '<div class="ambiente-body">'
@@ -2328,8 +2333,52 @@ function buildRubroHTML(obraId,ambId,rubId,rub){
   return html;
 }
 
-window.abrirModalNuevoAmbiente=function(){document.getElementById('amb-nombre').value='';abrirModal('ambiente');};
-window.guardarAmbiente=async function(){const nombre=document.getElementById('amb-nombre').value.trim();if(!nombre){snack('Escribe el nombre del ambiente');return;}const o=data.obras[obraActivaId];if(!o)return;const ambId=uid(),amb={id:ambId,nombre,rubros:{}};if(fbOk){await fbSet('obras/'+obraActivaId+'/ambientes/'+ambId,amb);}else{if(!o.ambientes)o.ambientes={};o.ambientes[ambId]=amb;guardarLocal();renderAmbientes(obraActivaId);}ambAbiertos[ambId]=true;cerrarModal('ambiente');snack('Ambiente agregado');};
+window.abrirModalNuevoAmbiente=function(){
+  document.getElementById('amb-nombre').value='';
+  document.getElementById('amb-edit-id').value='';
+  document.getElementById('modal-ambiente-title').textContent='Nuevo ambiente';
+  document.getElementById('btn-guardar-ambiente').textContent='Agregar ambiente';
+  document.getElementById('btn-del-ambiente').style.display='none';
+  abrirModal('ambiente');
+};
+window.editarAmbiente=function(ambId){
+  var o=data.obras[obraActivaId]; if(!o) return;
+  var amb=(o.ambientes||{})[ambId]; if(!amb) return;
+  document.getElementById('amb-nombre').value=amb.nombre||'';
+  document.getElementById('amb-edit-id').value=ambId;
+  document.getElementById('modal-ambiente-title').textContent='Editar ambiente';
+  document.getElementById('btn-guardar-ambiente').textContent='Guardar cambios';
+  document.getElementById('btn-del-ambiente').style.display='block';
+  abrirModal('ambiente');
+};
+window.guardarAmbiente=async function(){
+  const nombre=document.getElementById('amb-nombre').value.trim();
+  if(!nombre){snack('Escribe el nombre del ambiente');return;}
+  const o=data.obras[obraActivaId]; if(!o)return;
+  const editId=document.getElementById('amb-edit-id').value;
+  if(editId){
+    // Editar ambiente existente — solo actualiza el nombre
+    if(fbOk){await fbSet('obras/'+obraActivaId+'/ambientes/'+editId+'/nombre',nombre);}
+    else{o.ambientes[editId].nombre=nombre;guardarLocal();renderAmbientes(obraActivaId);}
+    cerrarModal('ambiente');
+    snack('Ambiente actualizado');
+  } else {
+    const ambId=uid(),amb={id:ambId,nombre,rubros:{}};
+    if(fbOk){await fbSet('obras/'+obraActivaId+'/ambientes/'+ambId,amb);}
+    else{if(!o.ambientes)o.ambientes={};o.ambientes[ambId]=amb;guardarLocal();renderAmbientes(obraActivaId);}
+    ambAbiertos[ambId]=true;
+    cerrarModal('ambiente');
+    snack('Ambiente agregado');
+  }
+};
+window.eliminarAmbiente=async function(){
+  const ambId=document.getElementById('amb-edit-id').value; if(!ambId) return;
+  if(!confirm('¿Eliminar este ambiente y todos sus rubros/items?')) return;
+  cerrarModal('ambiente');
+  if(fbOk){await fbRemove('obras/'+obraActivaId+'/ambientes/'+ambId);}
+  else{var o=data.obras[obraActivaId];delete o.ambientes[ambId];guardarLocal();renderAmbientes(obraActivaId);}
+  snack('Ambiente eliminado');
+};
 window.abrirModalNuevoRubro=function(ambId){
   document.getElementById('rubro-amb-id').value=ambId;
   document.getElementById('rubro-edit-id').value='';
