@@ -286,6 +286,17 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .rubro-st-pend{background:var(--amber-bg);color:var(--amber)}
 .rubro-st-curso{background:var(--verde-bg);color:var(--verde)}
 .rubro-st-hecho{background:var(--gris-bg);color:var(--gris)}
+.rubro-st-pausado{background:var(--violeta-bg);color:var(--violeta)}
+.ritem-row{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 9px;margin-bottom:6px}
+.ritem-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.ritem-desc{flex:1;font-size:12.5px;color:var(--text);font-weight:600}
+.ritem-desc.done{text-decoration:line-through;color:var(--gris)}
+.ritem-money{display:flex;gap:8px;font-size:10.5px;color:var(--text-soft)}
+.ritem-money b{color:var(--madera);font-weight:700}
+.ritem-add-row{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.ritem-add-desc{flex:1;min-width:100px}
+.ritem-add-money{width:72px}
+
 .rubro-quien{font-size:11px;color:var(--gris);margin-bottom:6px}
 .rubro-task{font-size:12px;color:var(--text-soft);padding:4px 0;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);cursor:pointer}
 .rubro-task:last-of-type{border-bottom:none}
@@ -756,9 +767,9 @@ textarea.pres-input{resize:vertical;min-height:60px}
         <div class="pres-field"><label class="pres-label">Plazo estimado</label><input class="pres-input" type="text" id="o-plazo" placeholder="Ej: 15 días"></div>
         <div class="pres-field"><label class="pres-label">Validez</label><input class="pres-input" type="text" id="o-validez" placeholder="15 días"></div>
       </div>
-      <div class="pres-items-label" style="margin-top:12px">Rubros de trabajo</div>
-      <div id="o-rubros-list" style="margin-top:8px"></div>
-      <button type="button" id="btn-add-rubro-o" style="width:100%;padding:9px;border:2px dashed rgba(90,58,26,.25);border-radius:10px;background:transparent;color:rgba(90,58,26,.6);font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.08em;margin:8px 0 12px">+ Agregar rubro</button>
+      <div class="pres-items-label" style="margin-top:12px">Ambientes</div>
+      <div id="o-ambientes-list" style="margin-top:8px"></div>
+      <button type="button" id="btn-add-ambiente-o" style="width:100%;padding:10px;border:2px dashed rgba(90,58,26,.3);border-radius:10px;background:transparent;color:rgba(90,58,26,.7);font-size:12.5px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.08em;margin:8px 0 14px">+ Agregar ambiente</button>
       <div class="pres-items-label">Condiciones</div>
       <textarea class="pres-input" id="o-condiciones" rows="3" placeholder="Condiciones del presupuesto..." style="margin-top:4px"></textarea>
       <input type="hidden" id="o-edit-id">
@@ -1148,11 +1159,8 @@ textarea.pres-input{resize:vertical;min-height:60px}
           <div class="sub-field"><div class="sub-label">Anotacion</div><textarea class="sub-input" id="rubro-sub-nota" rows="2" placeholder="Precio acordado, condiciones, horario..."></textarea></div>
         </div>
       </div>
-      <div class="form-field"><div class="form-label">Tareas (una por linea)</div><textarea class="form-input" id="rubro-tareas" rows="3" placeholder="Reemplazar tomacorrientes&#10;Colocar luces"></textarea></div>
-      <div class="form-field"><div class="form-label">Materiales (desc - $precio, uno por linea)</div><textarea class="form-input" id="rubro-materiales" rows="3" placeholder="Cable 2.5mm - 5000&#10;Tomacorrientes x4 - 8000"></textarea></div>
-      <div class="form-field">
-        <div class="form-label">Mano de obra ($)</div>
-        <input class="form-input" id="rubro-mano-obra" type="number" inputmode="decimal" placeholder="0" style="max-width:180px">
+      <div class="form-field" style="font-size:11px;color:var(--gris);font-style:italic;line-height:1.5">
+        Después de crear el rubro, agregás los ítems (tareas) directamente desde la ficha de la obra — cada uno con su mano de obra, materiales y estado.
       </div>
       <input type="hidden" id="rubro-amb-id"><input type="hidden" id="rubro-edit-id">
       <button class="btn-guardar" onclick="guardarRubro()">Agregar rubro</button>
@@ -1945,8 +1953,9 @@ function renderPresupuestosHist(){
       '</div>'+
       '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
         '<div class="pres-hist-monto">'+pesos(p.total||0)+'</div>'+
-        '<div style="display:flex;gap:5px">'+
+        '<div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">'+
           '<button type="button" onclick="event.stopPropagation();editarPres(\''+p.id+'\',\''+( esObra?'obra':'mantenimiento')+'\');" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px solid var(--madera-mid);color:var(--madera);background:none;cursor:pointer">Editar</button>'+
+          (esObra?'<button type="button" onclick="event.stopPropagation();convertirPresupuestoAObra(\''+p.id+'\');" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px solid var(--verde);color:var(--verde);background:none;cursor:pointer">Convertir a Obra</button>':'')+
           '<button type="button" onclick="event.stopPropagation();eliminarPresById(\''+p.id+'\')" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px solid var(--rojo);color:var(--rojo);background:none;cursor:pointer">Eliminar</button>'+
         '</div>'+
       '</div>'+
@@ -1954,6 +1963,62 @@ function renderPresupuestosHist(){
   }).join('');
 }
 window.abrirModalPresEdit=function(id){document.getElementById('pres-edit-id').value=id;const p=data.presupuestos[id];document.getElementById('modal-pres-edit-title').textContent=(p&&p.cliente?p.cliente:'Presupuesto')+' - '+pesos(p&&p.total?p.total:0);abrirModal('pres-edit');};
+
+// ══ CONVERTIR PRESUPUESTO DE OBRA → OBRA OPERATIVA ══════════════
+window.convertirPresupuestoAObra = async function(id){
+  var p = data.presupuestos[id]; if(!p) return;
+  var ambientesP = p.ambientes || [];
+  if(!ambientesP.length && p.rubros){
+    // compat con formato viejo (flat rubros)
+    ambientesP = [{ nombre:p.proyecto||'General', rubros:(p.rubros||[]).map(function(r){
+      return {nombre:r.nombre, items:(r.subitems||[]).map(function(si){return{desc:si.desc,mo:si.monto||0,mat:0};})};
+    })}];
+  }
+  if(!ambientesP.length){ snack('Este presupuesto no tiene ambientes/rubros para convertir'); return; }
+
+  var nombreDefault = p.proyecto || p.cliente || 'Obra sin nombre';
+  var nombreObra = prompt('Nombre de la obra:', nombreDefault);
+  if(nombreObra===null) return; // cancelado
+  if(!nombreObra.trim()) nombreObra = nombreDefault;
+
+  // Construir estructura de obra operativa
+  var obraId = uid();
+  var ambientesObra = {};
+  ambientesP.forEach(function(amb){
+    var ambId = uid();
+    var rubrosObra = {};
+    (amb.rubros||[]).forEach(function(r){
+      var rubId = uid();
+      var items = (r.items||[]).map(function(it){
+        return { desc: it.desc||'', mo: it.mo||0, mat: it.mat||0, estado: 'Pendiente' };
+      });
+      rubrosObra[rubId] = { id:rubId, nombre:r.nombre||'Rubro', quien:'Yo', estado:'Pendiente', items:items, fotos:[], docs:[] };
+    });
+    ambientesObra[ambId] = { id:ambId, nombre:amb.nombre||'Ambiente', rubros:rubrosObra };
+  });
+
+  var obra = {
+    id: obraId,
+    nombre: nombreObra.trim(),
+    cliente: p.cliente || '',
+    dir: '',
+    estado: 'Presupuestado',
+    presupuestoAprobado: p.total || 0,
+    presupuestoOrigenId: id,
+    fechaInicio: '',
+    ambientes: ambientesObra,
+    pagos: {},
+    notas: []
+  };
+
+  if(fbOk){ await fbSet('obras/'+obraId, obra); }
+  else{ data.obras[obraId]=obra; guardarLocal(); renderObras(); }
+
+  snack('Obra creada desde el presupuesto \u2713');
+  setTab('obras', document.querySelector('[onclick*="obras"]'));
+  setTimeout(function(){ abrirFichaObra(obraId); }, 250);
+};
+
 function cargarDatosEnForm(p,esNuevo){document.getElementById('p-cliente').value=esNuevo?(p.cliente||'')+' (copia)':p.cliente||'';document.getElementById('p-fecha').value=esNuevo?hoy():p.fecha||'';document.getElementById('p-jornadas').value=p.jornadas||'';document.getElementById('p-ayudante').value=p.ayudante||'';document.getElementById('p-pago').value=p.pago||'';document.getElementById('p-validez').value=p.validez||'';document.getElementById('p-nota').value=p.nota||'';document.getElementById('p-sena').value=p.senaPct||'';document.getElementById('p-monto').value=p.monto||'';
   var pjEl=document.getElementById('p-precio-jornada'); if(pjEl) pjEl.value=p.precioJornada||'';
   var paEl=document.getElementById('p-precio-ayudante'); if(paEl) paEl.value=p.precioAyudante||'';
@@ -2127,24 +2192,27 @@ function renderAmbientes(obraId){
 }
 window.toggleAmbiente=function(ambId){ambAbiertos[ambId]=!(ambAbiertos[ambId]!==false);renderAmbientes(obraActivaId);};
 function buildRubroHTML(obraId,ambId,rubId,rub){
-  var stC={'Pendiente':'rubro-st-pend','En curso':'rubro-st-curso','Hecho':'rubro-st-hecho'};
+  var stC={'Pendiente':'rubro-st-pend','En curso':'rubro-st-curso','Pausado':'rubro-st-pausado','Hecho':'rubro-st-hecho'};
   var stCls=stC[rub.estado||'Pendiente']||'rubro-st-pend';
-  var tareas=rub.tareas||[], mats=rub.materiales||[], fotos=rub.fotos||[], docs=rub.docs||[];
-  var sumMat=mats.reduce(function(a,m){return a+(m.price||0);},0);
+  var items=rub.items||[];
+  var fotos=rub.fotos||[], docs=rub.docs||[];
   var esSub=rub.quien==='Subcontratista';
   var esYo=!esSub;
-  var editT=rubroEditState[rubId]&&rubroEditState[rubId].tarea!=null?rubroEditState[rubId].tarea:-1;
-  var editM=rubroEditState[rubId]&&rubroEditState[rubId].mat!=null?rubroEditState[rubId].mat:-1;
 
-  // Header
+  // Progreso a partir de items
+  var totalItems=items.length;
+  var hechos=items.filter(function(i){return i.estado==='Hecho';}).length;
+  var sumMO=items.reduce(function(a,i){return a+(i.mo||0);},0);
+  var sumMat=items.reduce(function(a,i){return a+(i.mat||0);},0);
+  var sumTotal=sumMO+sumMat;
+
   var html='<div class="rubro-item">'
     +'<div class="rubro-header">'
       +'<div class="rubro-nombre">'+(rub.nombre||'Rubro')+'</div>'
-      +'<span class="rubro-estado-chip '+stCls+'" onclick="ciclarEstadoRubro(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">'+( rub.estado||'Pendiente')+'</span>'
-      +'<button class="btn-rub-tiny" onclick="editarRubro(\''+ambId+'\',\''+rubId+'\')" title="Editar nombre/quien/M.O.">&#x270F;</button>'
+      +'<span class="rubro-estado-chip '+stCls+'" onclick="ciclarEstadoRubro(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">'+(rub.estado||'Pendiente')+'</span>'
+      +'<button class="btn-rub-tiny" onclick="editarRubro(\''+ambId+'\',\''+rubId+'\')" title="Editar nombre/quien">&#x270F;</button>'
     +'</div>';
 
-  // Sub info
   if(esSub){
     html+='<div style="background:var(--azul-bg);border:1px solid rgba(12,68,124,.2);border-radius:8px;padding:7px 10px;margin:6px 0;font-size:11px;">'
       +'<div style="font-weight:700;color:var(--azul);margin-bottom:3px">&#x1F527; Subcontratista</div>'
@@ -2153,80 +2221,73 @@ function buildRubroHTML(obraId,ambId,rubId,rub){
       +(rub.subNota?'<div style="color:var(--text-soft);margin-top:3px;font-style:italic">'+rub.subNota+'</div>':'')
     +'</div>';
   }
-
-  // Yo nota
   if(esYo&&rub.yoNota){
     html+='<div style="background:#FFFAEF;border:1px solid #E8D89A;border-radius:8px;padding:7px 10px;margin:4px 0;font-size:11px;color:#5a4a10;font-style:italic">'+rub.yoNota+'</div>';
   }
 
-  // M.O. badge si tiene valor
-  if(rub.manoObra>0){
-    html+='<div style="font-size:11px;font-weight:700;color:var(--madera);margin:4px 0">M.O.: '+pesos(rub.manoObra)+'</div>';
-  }
-
-  // == TAREAS ==
-  html+='<div class="rubro-sec-lbl">Tareas</div>';
-  if(tareas.length){
-    html+='<div>';
-    tareas.forEach(function(t,i){
-      var done=t.done||false;
+  // == COMPATIBILIDAD: datos legado (tareas/materiales/manoObra de versiones anteriores) ==
+  if((rub.tareas&&rub.tareas.length)||(rub.materiales&&rub.materiales.length)||rub.manoObra>0){
+    html+='<div style="background:#F1EFE8;border-radius:8px;padding:8px 10px;margin:6px 0;font-size:11px;color:var(--text-soft)">';
+    html+='<div style="font-weight:700;color:var(--gris);margin-bottom:4px;font-size:10px;text-transform:uppercase;letter-spacing:.05em">Datos anteriores (legado)</div>';
+    if(rub.manoObra>0) html+='<div>M.O. general: '+pesos(rub.manoObra)+'</div>';
+    (rub.tareas||[]).forEach(function(t){
       var texto=typeof t==='string'?t:t.texto;
-      if(i===editT){
-        html+='<div class="rubro-task-edit-row">'
-          +'<input class="rubro-task-edit-inp" id="edit-t-'+rubId+'" value="'+texto.replace(/"/g,'&quot;')+'">'
-          +'<button class="btn-rub-save" onclick="guardarTareaEdit(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">OK</button>'
-          +'<button class="btn-rub-cancel" onclick="cancelarRubroEdit(\''+rubId+'\')">✕</button>'
-        +'</div>';
-      } else {
-        html+='<div class="rubro-task-row">'
-          +'<input type="checkbox" '+(done?'checked':'')+' onclick="toggleTarea(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">'
-          +'<span class="rubro-task-txt '+(done?'done':'')+'" onclick="iniciarTareaEdit(\''+rubId+'\','+i+')">'+texto+'</span>'
-          +'<button class="btn-rub-tiny" onclick="iniciarTareaEdit(\''+rubId+'\','+i+')" title="Editar">&#x270F;</button>'
-          +'<button class="btn-rub-tiny" onclick="deleteTareaInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')" title="Borrar" style="color:var(--rojo)">&#x2715;</button>'
-        +'</div>';
-      }
+      html+='<div style="padding:2px 0">'+(t.done?'&#x2713; ':'&#x25CB; ')+texto+'</div>';
+    });
+    (rub.materiales||[]).forEach(function(m){
+      html+='<div style="padding:2px 0">'+m.desc+(m.price>0?' — '+pesos(m.price):'')+'</div>';
     });
     html+='</div>';
   }
-  html+='<div class="rubro-add-row">'
-    +'<input class="rubro-add-inp" id="new-t-'+rubId+'" placeholder="Nueva tarea..." onkeydown="if(event.key===\'Enter\')addTareaInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">'
-    +'<button class="btn-rub-add" onclick="addTareaInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">+</button>'
-  +'</div>';
 
-  // == MATERIALES ==
-  html+='<div class="rubro-sec-lbl" style="margin-top:10px">Materiales</div>';
-  if(mats.length){
-    html+='<div>';
-    mats.forEach(function(m,i){
-      if(i===editM){
-        html+='<div class="rubro-mat-edit-row">'
-          +'<input class="rubro-mat-edit-desc" id="edit-md-'+rubId+'" value="'+m.desc.replace(/"/g,'&quot;')+'">'
-          +'<input class="rubro-mat-edit-price" id="edit-mp-'+rubId+'" type="number" value="'+(m.price||'')+'" placeholder="$">'
-          +'<button class="btn-rub-save" onclick="guardarMatEdit(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">OK</button>'
+  // == ITEMS (tareas con M.O. + materiales + estado) ==
+  html+='<div class="rubro-sec-lbl">Items <span style="font-weight:400;font-size:9px">'+(totalItems>0?hechos+'/'+totalItems+' terminados':'')+'</span></div>';
+
+  if(items.length){
+    items.forEach(function(it,i){
+      var ist=it.estado||'Pendiente';
+      var istCls=stC[ist]||'rubro-st-pend';
+      var isEdit=(rubroEditState[rubId]&&rubroEditState[rubId].item===i);
+      if(isEdit){
+        html+='<div class="ritem-row">'
+          +'<input class="rubro-task-edit-inp" id="edit-idesc-'+rubId+'" value="'+(it.desc||'').replace(/"/g,'&quot;')+'" placeholder="Descripcion" style="margin-bottom:5px">'
+          +'<div style="display:flex;gap:5px;margin-bottom:5px">'
+            +'<input class="ritem-add-money" id="edit-imo-'+rubId+'" type="number" value="'+(it.mo||'')+'" placeholder="M.O. $">'
+            +'<input class="ritem-add-money" id="edit-imat-'+rubId+'" type="number" value="'+(it.mat||'')+'" placeholder="Mat. $">'
+          +'</div>'
+          +'<button class="btn-rub-save" onclick="guardarItemEdit(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">OK</button>'
           +'<button class="btn-rub-cancel" onclick="cancelarRubroEdit(\''+rubId+'\')">✕</button>'
         +'</div>';
       } else {
-        html+='<div class="rubro-mat-row">'
-          +'<span class="rubro-mat-desc">'+m.desc+'</span>'
-          +(m.price>0?'<span class="rubro-mat-precio">'+pesos(m.price)+'</span>':'')
-          +'<button class="btn-rub-tiny" onclick="iniciarMatEdit(\''+rubId+'\','+i+')" title="Editar">&#x270F;</button>'
-          +'<button class="btn-rub-tiny" onclick="deleteMatInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')" style="color:var(--rojo)" title="Borrar">&#x2715;</button>'
+        html+='<div class="ritem-row">'
+          +'<div class="ritem-top">'
+            +'<span class="ritem-desc '+(ist==='Hecho'?'done':'')+'">'+(it.desc||'')+'</span>'
+            +'<button class="btn-rub-tiny" onclick="iniciarItemEdit(\''+rubId+'\','+i+')" title="Editar">&#x270F;</button>'
+            +'<button class="btn-rub-tiny" onclick="deleteItemInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')" title="Borrar" style="color:var(--rojo)">&#x2715;</button>'
+          +'</div>'
+          +'<div style="display:flex;align-items:center;justify-content:space-between;gap:6px">'
+            +'<div class="ritem-money">'
+              +(it.mo>0?'<span>M.O.: <b>'+pesos(it.mo)+'</b></span>':'')
+              +(it.mat>0?'<span>Mat.: <b>'+pesos(it.mat)+'</b></span>':'')
+            +'</div>'
+            +'<span class="rubro-estado-chip '+istCls+'" onclick="ciclarEstadoItem(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">'+ist+'</span>'
+          +'</div>'
         +'</div>';
       }
     });
-    if(sumMat>0||rub.manoObra>0){
-      html+='<div style="font-size:11px;font-weight:700;color:var(--madera);padding:4px 0;display:flex;justify-content:space-between">';
-      if(sumMat>0) html+='<span>Mat: '+pesos(sumMat)+'</span>';
-      if(rub.manoObra>0) html+='<span>M.O.: '+pesos(rub.manoObra)+'</span>';
-      html+='</div>';
-      if(sumMat>0&&rub.manoObra>0) html+='<div style="font-size:12px;font-weight:700;color:var(--madera-dark);text-align:right;border-top:1px solid var(--border);padding-top:3px">Total: '+pesos(sumMat+rub.manoObra)+'</div>';
-    }
-    html+='</div>';
   }
-  html+='<div class="rubro-add-row">'
-    +'<input class="rubro-add-inp" id="new-md-'+rubId+'" placeholder="Material..." onkeydown="if(event.key===\'Enter\')addMatInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">'
-    +'<input class="rubro-add-inp-price" id="new-mp-'+rubId+'" type="number" placeholder="$">'
-    +'<button class="btn-rub-add" onclick="addMatInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">+</button>'
+
+  if(sumTotal>0){
+    html+='<div style="font-size:12px;font-weight:700;color:var(--madera-dark);text-align:right;padding:4px 0 2px;border-top:1px solid var(--border);margin-top:4px">'
+      +'M.O.: '+pesos(sumMO)+'  &middot;  Mat.: '+pesos(sumMat)+'  &middot;  Total: '+pesos(sumTotal)
+    +'</div>';
+  }
+
+  html+='<div class="ritem-add-row">'
+    +'<input class="rubro-add-inp ritem-add-desc" id="new-idesc-'+rubId+'" placeholder="Nuevo item...">'
+    +'<input class="ritem-add-money" id="new-imo-'+rubId+'" type="number" placeholder="M.O. $">'
+    +'<input class="ritem-add-money" id="new-imat-'+rubId+'" type="number" placeholder="Mat. $">'
+    +'<button class="btn-rub-add" onclick="addItemInline(\''+obraId+'\',\''+ambId+'\',\''+rubId+'\')">+</button>'
   +'</div>';
 
   // == ARCHIVOS (fotos + docs) ==
@@ -2235,7 +2296,6 @@ function buildRubroHTML(obraId,ambId,rubId,rub){
   html+='<div class="rubro-sec-lbl">Archivos <span style="font-weight:400;font-size:9px">('+archTotal+')</span></div>';
   if(archTotal>0){
     html+='<div class="rubro-arch-grid">';
-    // Fotos
     fotos.forEach(function(f,i){
       html+='<div class="rubro-arch-item">'
         +'<div class="rubro-arch-thumb" onclick="verArchivoRubro(\'foto\',\''+obraId+'\',\''+ambId+'\',\''+rubId+'\','+i+')">'
@@ -2245,7 +2305,6 @@ function buildRubroHTML(obraId,ambId,rubId,rub){
         +'<div class="rubro-arch-nombre">foto</div>'
       +'</div>';
     });
-    // Docs
     docs.forEach(function(d,i){
       var iconDoc=d.mime==='application/pdf'?'&#x1F4C4;':d.mime&&d.mime.startsWith('image')?'&#x1F5BC;':'&#x1F4CE;';
       html+='<div class="rubro-arch-item">'
@@ -2269,14 +2328,13 @@ function buildRubroHTML(obraId,ambId,rubId,rub){
   return html;
 }
 
-
 window.abrirModalNuevoAmbiente=function(){document.getElementById('amb-nombre').value='';abrirModal('ambiente');};
 window.guardarAmbiente=async function(){const nombre=document.getElementById('amb-nombre').value.trim();if(!nombre){snack('Escribe el nombre del ambiente');return;}const o=data.obras[obraActivaId];if(!o)return;const ambId=uid(),amb={id:ambId,nombre,rubros:{}};if(fbOk){await fbSet('obras/'+obraActivaId+'/ambientes/'+ambId,amb);}else{if(!o.ambientes)o.ambientes={};o.ambientes[ambId]=amb;guardarLocal();renderAmbientes(obraActivaId);}ambAbiertos[ambId]=true;cerrarModal('ambiente');snack('Ambiente agregado');};
 window.abrirModalNuevoRubro=function(ambId){
   document.getElementById('rubro-amb-id').value=ambId;
   document.getElementById('rubro-edit-id').value='';
   document.getElementById('modal-rubro-title').textContent='Nuevo rubro';
-  ['rubro-nombre','rubro-tareas','rubro-materiales','rubro-mano-obra','rubro-yo-nota','rubro-sub-nombre','rubro-sub-contacto','rubro-sub-nota'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
+  ['rubro-nombre','rubro-yo-nota','rubro-sub-nombre','rubro-sub-contacto','rubro-sub-nota'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
   rubroQuien='Yo';
   document.querySelectorAll('#chips-rubro-quien .tipo-chip').forEach(b=>b.classList.toggle('sel',b.textContent==='Yo'));
   var yf=document.getElementById('yo-fields-rubro'); if(yf) yf.classList.add('show');
@@ -2301,9 +2359,6 @@ window.editarRubro=function(ambId,rubId){
   var snEl=document.getElementById('rubro-sub-nombre'); if(snEl) snEl.value=rub.subNombre||'';
   var scEl=document.getElementById('rubro-sub-contacto'); if(scEl) scEl.value=rub.subContacto||'';
   var snEl2=document.getElementById('rubro-sub-nota'); if(snEl2) snEl2.value=rub.subNota||'';
-  document.getElementById('rubro-tareas').value=(rub.tareas||[]).map(t=>typeof t==='string'?t:t.texto).join('\n');
-  document.getElementById('rubro-materiales').value=(rub.materiales||[]).map(m=>m.desc+(m.price>0?' - '+m.price:'')).join('\n');
-  var moEl=document.getElementById('rubro-mano-obra'); if(moEl) moEl.value=rub.manoObra||'';
   document.getElementById('btn-del-rubro').style.display='block';
   abrirModal('rubro');
 };
@@ -2311,28 +2366,27 @@ window.guardarRubro=async function(){
   const nombre=document.getElementById('rubro-nombre').value.trim();
   if(!nombre){snack('Escribe el nombre del rubro');return;}
   const ambId=document.getElementById('rubro-amb-id').value,editId=document.getElementById('rubro-edit-id').value,rubId=editId||uid();
-  const tareasRaw=document.getElementById('rubro-tareas').value.split('\n').filter(l=>l.trim());
-  const matRaw=document.getElementById('rubro-materiales').value.split('\n').filter(l=>l.trim());
-  const tareas=tareasRaw.map(t=>({texto:t.trim(),done:false}));
-  const materiales=matRaw.map(l=>{const parts=l.split('-');return{desc:parts[0].trim(),price:parseFloat(parts[1])||0};});
   const existingRub=(((data.obras[obraActivaId]||{}).ambientes||{})[ambId]||{}).rubros&&data.obras[obraActivaId].ambientes[ambId].rubros[rubId]||{};
-  const tareasFinales=tareas.map((t,i)=>{const ex=existingRub.tareas&&existingRub.tareas[i];return{texto:t.texto,done:(ex&&ex.texto===t.texto)?ex.done:false};});
   const yoNotaEl=document.getElementById('rubro-yo-nota');
   const subNombreEl=document.getElementById('rubro-sub-nombre');
   const subContactoEl=document.getElementById('rubro-sub-contacto');
   const subNotaEl=document.getElementById('rubro-sub-nota');
-  const moEl=document.getElementById('rubro-mano-obra');
   const rub={
     id:rubId, nombre, quien:rubroQuien,
     estado:existingRub.estado||'Pendiente',
-    tareas:tareasFinales, materiales,
-    manoObra:parseFloat(moEl?moEl.value:0)||0,
+    items:existingRub.items||[],
+    tareas:existingRub.tareas||undefined,
+    materiales:existingRub.materiales||undefined,
+    manoObra:existingRub.manoObra||undefined,
     fotos:existingRub.fotos||[],
+    docs:existingRub.docs||[],
     yoNota:rubroQuien==='Yo'?(yoNotaEl?yoNotaEl.value.trim():''):'',
     subNombre:rubroQuien==='Subcontratista'?(subNombreEl?subNombreEl.value.trim():''):'',
     subContacto:rubroQuien==='Subcontratista'?(subContactoEl?subContactoEl.value.trim():''):'',
     subNota:rubroQuien==='Subcontratista'?(subNotaEl?subNotaEl.value.trim():''):'',
   };
+  // Limpiar claves undefined (Firebase no las acepta)
+  Object.keys(rub).forEach(k=>{ if(rub[k]===undefined) delete rub[k]; });
   if(fbOk){await fbSet('obras/'+obraActivaId+'/ambientes/'+ambId+'/rubros/'+rubId,rub);}
   else{const o=data.obras[obraActivaId];if(!o.ambientes[ambId].rubros)o.ambientes[ambId].rubros={};o.ambientes[ambId].rubros[rubId]=rub;guardarLocal();renderAmbientes(obraActivaId);}
   cerrarModal('rubro');snack(editId?'Rubro actualizado':'Rubro agregado');
@@ -2883,10 +2937,10 @@ window.cerrarLightbox = function() {
 
 
 // ==================== INLINE EDITING RUBROS ====================
-var rubroEditState = {}; // { rubId: {tarea: null|idx, mat: null|idx} }
+var rubroEditState = {}; // { rubId: {tarea: null|idx, mat: null|idx, item: null|idx} }
 
 function cancelarRubroEdit(rubId) {
-  rubroEditState[rubId] = {tarea:null, mat:null};
+  rubroEditState[rubId] = {tarea:null, mat:null, item:null};
   renderAmbientes(obraActivaId);
 }
 window.cancelarRubroEdit = cancelarRubroEdit;
@@ -2965,6 +3019,71 @@ window.deleteMatInline = async function(obraId, ambId, rubId, idx) {
   if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/materiales',mats);}
   else{rub.materiales=mats;guardarLocal();renderAmbientes(obraId);}
 };
+
+// ═══ ITEMS DE RUBRO (desc + mano de obra + materiales + estado) ═══
+var ITEM_ESTADOS = ['Pendiente','En curso','Pausado','Hecho'];
+
+window.addItemInline = async function(obraId, ambId, rubId) {
+  var dEl=document.getElementById('new-idesc-'+rubId);
+  var moEl=document.getElementById('new-imo-'+rubId);
+  var matEl=document.getElementById('new-imat-'+rubId);
+  var desc=dEl?dEl.value.trim():''; if(!desc){ if(dEl) dEl.focus(); return; }
+  var mo=parseFloat(moEl?moEl.value:0)||0;
+  var mat=parseFloat(matEl?matEl.value:0)||0;
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var items=[...(rub.items||[]),{desc:desc,mo:mo,mat:mat,estado:'Pendiente'}];
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/items',items);}
+  else{rub.items=items;guardarLocal();renderAmbientes(obraId);}
+  snack('Item agregado');
+};
+
+window.deleteItemInline = async function(obraId, ambId, rubId, idx) {
+  if(!confirm('¿Eliminar este item?')) return;
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var items=(rub.items||[]).filter(function(_,i){return i!==idx;});
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/items',items);}
+  else{rub.items=items;guardarLocal();renderAmbientes(obraId);}
+  snack('Item eliminado');
+};
+
+window.ciclarEstadoItem = async function(obraId, ambId, rubId, idx) {
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var items=rub.items||[]; if(!items[idx]) return;
+  var actual=items[idx].estado||'Pendiente';
+  var next=ITEM_ESTADOS[(ITEM_ESTADOS.indexOf(actual)+1)%ITEM_ESTADOS.length];
+  items[idx].estado=next;
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/items',items);}
+  else{rub.items=items;guardarLocal();renderAmbientes(obraId);renderObras();}
+  snack('Item: '+next);
+};
+
+window.iniciarItemEdit = function(rubId, idx) {
+  if(!rubroEditState[rubId]) rubroEditState[rubId]={tarea:null,mat:null,item:null};
+  rubroEditState[rubId].item = idx;
+  renderAmbientes(obraActivaId);
+  setTimeout(function(){ var el=document.getElementById('edit-idesc-'+rubId); if(el){el.focus();el.select();} },60);
+};
+
+window.guardarItemEdit = async function(obraId, ambId, rubId, idx) {
+  var dEl=document.getElementById('edit-idesc-'+rubId);
+  var moEl=document.getElementById('edit-imo-'+rubId);
+  var matEl=document.getElementById('edit-imat-'+rubId);
+  var desc=dEl?dEl.value.trim():''; if(!desc){snack('La descripción no puede estar vacía');return;}
+  var mo=parseFloat(moEl?moEl.value:0)||0;
+  var mat=parseFloat(matEl?matEl.value:0)||0;
+  var o=data.obras[obraId]; if(!o) return;
+  var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
+  var items=rub.items||[];
+  var estadoActual=items[idx]?items[idx].estado||'Pendiente':'Pendiente';
+  items[idx]={desc:desc,mo:mo,mat:mat,estado:estadoActual};
+  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/items',items);}
+  else{rub.items=items;guardarLocal();renderAmbientes(obraId);}
+  if(rubroEditState[rubId]) rubroEditState[rubId].item=null;
+};
+
 
 // === ARCHIVOS (fotos ya existentes + docs nuevos) ===
 window.verArchivoRubro = function(tipo, obraId, ambId, rubId, idx) {
@@ -3086,67 +3205,132 @@ window.setPruTipo = function(tipo){
   document.getElementById('pres-preview-actions').style.display='none';
 };
 
-// ══ OBRA — RUBROS ═════════════════════════════════════════════
-window.addRubroO = function(nombre,desc,subitems){
-  rubroCount++;
-  var n=rubroCount;
-  var list=document.getElementById('o-rubros-list');
-  var blk=document.createElement('div');
-  blk.style.cssText='background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.2);border-radius:10px;padding:12px;margin-bottom:10px';
-  blk.id='orb-'+n;
-  blk.innerHTML=
-    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+
-      '<span style="font-family:Oswald,sans-serif;font-size:15px;font-weight:700;color:var(--madera-mid);width:24px;flex-shrink:0">'+n+'\u00b7</span>'+
-      '<input style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(200,149,108,.25);border-radius:6px;padding:8px 10px;color:#ecdfc8;font-family:DM Sans,sans-serif;font-size:13px;outline:none" type="text" placeholder="Nombre del rubro (ej: Electricidad)" value="'+(nombre||'')+'">'+
-      '<button type="button" style="background:none;border:none;color:rgba(200,149,108,.4);cursor:pointer;font-size:18px;padding:2px" onclick="this.closest(\'[id^=orb]\').remove();renumRubrosO()">×</button>'+
+// ══ OBRA — AMBIENTES › RUBROS › ITEMS ═════════════════════════
+var ambienteCountO = 0;
+var oRubroSeq = 0;
+
+window.addAmbienteO = function(nombre, rubros){
+  ambienteCountO++;
+  var aKey = ambienteCountO;
+  var list = document.getElementById('o-ambientes-list');
+  var blk = document.createElement('div');
+  blk.style.cssText = 'background:rgba(255,255,255,.04);border:1.5px solid rgba(200,149,108,.3);border-radius:12px;padding:12px;margin-bottom:12px';
+  blk.id = 'oamb-'+aKey;
+  blk.innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+
+      '<span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:700;color:#c9a060;text-transform:uppercase;letter-spacing:.1em;flex-shrink:0">Ambiente</span>'+
+      '<input class="oamb-nombre" style="flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(200,149,108,.3);border-radius:6px;padding:8px 10px;color:#ecdfc8;font-family:DM Sans,sans-serif;font-size:13.5px;font-weight:600;outline:none" type="text" placeholder="Ej: Cocina, Living, Baño..." value="'+(nombre||'')+'">'+
+      '<button type="button" style="background:none;border:none;color:rgba(200,149,108,.5);cursor:pointer;font-size:18px;padding:2px" onclick="this.closest(\'[id^=oamb-]\').remove()">×</button>'+
     '</div>'+
-    '<input style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:7px 10px;color:rgba(236,223,200,.7);font-family:DM Sans,sans-serif;font-size:12px;outline:none;margin-bottom:8px" type="text" placeholder="Descripción del rubro (opcional)" value="'+(desc||'')+'">'+
-    '<div id="osi-'+n+'"></div>'+
-    '<button type="button" style="width:100%;padding:5px;border:1px dashed rgba(200,149,108,.25);border-radius:6px;background:transparent;color:rgba(200,149,108,.5);font-size:10px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;text-transform:uppercase;letter-spacing:.05em;margin-top:3px" onclick="addSiO(\'osi-'+n+'\','+n+')">+ Subitem</button>'+
-    '<div style="font-family:Oswald,sans-serif;font-size:12px;color:var(--madera-mid);text-align:right;margin-top:5px;padding-top:5px;border-top:1px solid rgba(200,149,108,.2)" id="osub-'+n+'">Subtotal: $0</div>';
+    '<div id="orubs-'+aKey+'"></div>'+
+    '<button type="button" style="width:100%;padding:6px;border:1px dashed rgba(200,149,108,.3);border-radius:7px;background:transparent;color:rgba(200,149,108,.6);font-size:10.5px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;text-transform:uppercase;letter-spacing:.05em;margin-top:2px" onclick="addRubroOA('+aKey+')">+ Agregar rubro</button>'+
+    '<div style="font-family:Oswald,sans-serif;font-size:12.5px;color:#c9a060;text-align:right;margin-top:8px;padding-top:8px;border-top:1px solid rgba(200,149,108,.25)" id="oambsub-'+aKey+'">Subtotal ambiente: $0</div>';
   list.appendChild(blk);
-  (subitems&&subitems.length?subitems:[{desc:'',monto:''}]).forEach(function(si){addSiO('osi-'+n,n,si.desc,si.monto);});
+  (rubros&&rubros.length?rubros:[{nombre:'',desc:'',items:[]}]).forEach(function(r){
+    addRubroOA(aKey, r.nombre, r.desc, r.items);
+  });
 };
 
-window.addSiO = function(listId,rubroN,desc,monto){
-  var list=document.getElementById(listId); if(!list)return;
-  var row=document.createElement('div');row.style.cssText='display:flex;gap:5px;margin-bottom:5px;align-items:center';
-  var d=document.createElement('input');d.type='text';d.style.cssText='flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:6px 9px;color:#ecdfc8;font-family:DM Sans,sans-serif;font-size:12px;outline:none';d.placeholder='Descripción...';d.value=desc||'';
-  var m=document.createElement('input');m.type='number';m.style.cssText='width:110px;background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:6px 8px;color:var(--madera-mid);font-family:DM Sans,sans-serif;font-size:12px;text-align:right;outline:none;-webkit-appearance:none';m.placeholder='$ monto';m.value=monto||'';m.min='0';m.step='1000';
-  m.addEventListener('input',function(){updObraSub(rubroN);});
-  var b=document.createElement('button');b.type='button';b.style.cssText='width:28px;height:28px;border-radius:7px;border:1px solid rgba(200,149,108,.2);background:transparent;color:rgba(200,149,108,.4);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0';b.textContent='×';
-  b.addEventListener('click',function(){row.remove();updObraSub(rubroN);});
-  row.appendChild(d);row.appendChild(m);row.appendChild(b);
+window.addRubroOA = function(aKey, nombre, desc, items){
+  oRubroSeq++;
+  var rKey = oRubroSeq;
+  var list = document.getElementById('orubs-'+aKey);
+  if(!list) return;
+  var blk = document.createElement('div');
+  blk.style.cssText = 'background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.2);border-radius:10px;padding:10px;margin-bottom:8px';
+  blk.id = 'orubA-'+rKey;
+  blk.setAttribute('data-amb', aKey);
+  blk.innerHTML =
+    '<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">'+
+      '<input class="orub-nombre" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(200,149,108,.25);border-radius:6px;padding:7px 9px;color:#ecdfc8;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:600;outline:none" type="text" placeholder="Rubro (ej: Carpintería)" value="'+(nombre||'')+'">'+
+      '<button type="button" style="background:none;border:none;color:rgba(200,149,108,.4);cursor:pointer;font-size:16px;padding:2px" onclick="this.closest(\'[id^=orubA-]\').remove();updateAmbSubO('+aKey+')">×</button>'+
+    '</div>'+
+    '<input class="orub-desc" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:6px 9px;color:rgba(236,223,200,.65);font-family:DM Sans,sans-serif;font-size:11.5px;outline:none;margin-bottom:7px" type="text" placeholder="Descripción del rubro (opcional)" value="'+(desc||'')+'">'+
+    '<div class="pres-col-headers" style="padding-right:32px;margin-bottom:3px"><span class="pres-ch pres-ch-desc" style="font-size:8px">Item</span><span class="pres-ch" style="font-size:8px;width:78px;text-align:right">M. Obra</span><span class="pres-ch" style="font-size:8px;width:78px;text-align:right">Materiales</span></div>'+
+    '<div id="oitemsA-'+rKey+'"></div>'+
+    '<button type="button" style="width:100%;padding:5px;border:1px dashed rgba(200,149,108,.25);border-radius:6px;background:transparent;color:rgba(200,149,108,.5);font-size:10px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;text-transform:uppercase;letter-spacing:.05em;margin-top:2px" onclick="addItemOA('+rKey+','+aKey+')">+ Item</button>'+
+    '<div style="font-family:Oswald,sans-serif;font-size:11.5px;color:var(--madera-mid,#C8956C);text-align:right;margin-top:6px;padding-top:6px;border-top:1px solid rgba(200,149,108,.18)" id="orubsub-'+rKey+'">Subtotal rubro: $0</div>';
+  list.appendChild(blk);
+  (items&&items.length?items:[{desc:'',mo:'',mat:''}]).forEach(function(it){
+    addItemOA(rKey, aKey, it.desc, it.mo, it.mat);
+  });
+};
+
+window.addItemOA = function(rKey, aKey, desc, mo, mat){
+  var list = document.getElementById('oitemsA-'+rKey);
+  if(!list) return;
+  var row = document.createElement('div');
+  row.className = 'oitem-row';
+  row.style.cssText = 'display:flex;gap:5px;margin-bottom:5px;align-items:center';
+  var d = document.createElement('input'); d.type='text'; d.className='oitem-desc';
+  d.style.cssText = 'flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:6px 8px;color:#ecdfc8;font-family:DM Sans,sans-serif;font-size:11.5px;outline:none';
+  d.placeholder='Descripción del item...'; d.value=desc||'';
+  var m1 = document.createElement('input'); m1.type='number'; m1.className='oitem-mo';
+  m1.style.cssText = 'width:78px;background:rgba(255,255,255,.05);border:1px solid rgba(200,149,108,.15);border-radius:6px;padding:6px 6px;color:var(--madera-mid,#C8956C);font-family:DM Sans,sans-serif;font-size:11px;text-align:right;outline:none;-webkit-appearance:none';
+  m1.placeholder='$'; m1.value=mo||''; m1.min='0'; m1.step='500';
+  var m2 = document.createElement('input'); m2.type='number'; m2.className='oitem-mat';
+  m2.style.cssText = m1.style.cssText;
+  m2.placeholder='$'; m2.value=mat||''; m2.min='0'; m2.step='500';
+  m1.addEventListener('input',function(){updateRubSubO(rKey,aKey);});
+  m2.addEventListener('input',function(){updateRubSubO(rKey,aKey);});
+  var b = document.createElement('button'); b.type='button';
+  b.style.cssText = 'width:26px;height:26px;border-radius:6px;border:1px solid rgba(200,149,108,.2);background:transparent;color:rgba(200,149,108,.4);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0';
+  b.textContent='×';
+  b.addEventListener('click',function(){ row.remove(); updateRubSubO(rKey,aKey); });
+  row.appendChild(d); row.appendChild(m1); row.appendChild(m2); row.appendChild(b);
   list.appendChild(row);
 };
 
-function updObraSub(n){
-  var list=document.getElementById('osi-'+n);if(!list)return;
-  var sum=0;list.querySelectorAll('input[type=number]').forEach(function(i){sum+=parseFloat(i.value)||0;});
-  var el=document.getElementById('osub-'+n);if(el)el.textContent='Subtotal: '+pesos(sum);
+function updateRubSubO(rKey, aKey){
+  var list=document.getElementById('oitemsA-'+rKey); if(!list) return;
+  var sum=0;
+  list.querySelectorAll('.oitem-mo, .oitem-mat').forEach(function(i){ sum+=parseFloat(i.value)||0; });
+  var el=document.getElementById('orubsub-'+rKey);
+  if(el) el.textContent='Subtotal rubro: '+pesos(sum);
+  updateAmbSubO(aKey);
 }
-function renumRubrosO(){
-  var i=1;document.querySelectorAll('#o-rubros-list [id^=orb]').forEach(function(blk){
-    var s=blk.querySelector('span');if(s)s.textContent=i+'\u00b7';i++;
+function updateAmbSubO(aKey){
+  var rubsList=document.getElementById('orubs-'+aKey); if(!rubsList) return;
+  var sum=0;
+  rubsList.querySelectorAll('[id^=orubA-]').forEach(function(rubBlk){
+    rubBlk.querySelectorAll('.oitem-mo, .oitem-mat').forEach(function(i){ sum+=parseFloat(i.value)||0; });
   });
+  var el=document.getElementById('oambsub-'+aKey);
+  if(el) el.textContent='Subtotal ambiente: '+pesos(sum);
 }
-function getRubrosO(){
-  var rubros=[];
-  document.querySelectorAll('#o-rubros-list [id^=orb]').forEach(function(blk){
-    var ins=blk.querySelectorAll('input');
-    var nombre=ins[0]?ins[0].value.trim():'';
-    var desc=ins[1]?ins[1].value.trim():'';
-    var subitems=[];
-    blk.querySelectorAll('#o-rubros-list [id^=orb] > [id^=osi] div, '+('#osi-'+blk.id.replace('orb-',''))+' div').forEach(function(){});
-    // Leer rows de subitems
-    var siList=blk.querySelector('[id^=osi]');
-    if(siList){siList.querySelectorAll('div').forEach(function(row){
-      var dinps=row.querySelectorAll('input');
-      if(dinps.length>=2){var d=dinps[0].value.trim(),m=parseFloat(dinps[1].value)||0;if(d||m)subitems.push({desc:d,monto:m});}
-    });}
-    rubros.push({nombre:nombre,desc:desc,subitems:subitems});
+
+function getAmbientesO(){
+  var ambientes=[];
+  document.querySelectorAll('#o-ambientes-list > [id^=oamb-]').forEach(function(ambBlk){
+    var nombreInp=ambBlk.querySelector('.oamb-nombre');
+    var ambNombre=nombreInp?nombreInp.value.trim():'';
+    var rubros=[];
+    var rubsList=ambBlk.querySelector('[id^=orubs-]');
+    if(rubsList){
+      rubsList.querySelectorAll('[id^=orubA-]').forEach(function(rubBlk){
+        var rNombreInp=rubBlk.querySelector('.orub-nombre');
+        var rDescInp=rubBlk.querySelector('.orub-desc');
+        var rNombre=rNombreInp?rNombreInp.value.trim():'';
+        var rDesc=rDescInp?rDescInp.value.trim():'';
+        var items=[];
+        var itemsList=rubBlk.querySelector('[id^=oitemsA-]');
+        if(itemsList){
+          itemsList.querySelectorAll('.oitem-row').forEach(function(row){
+            var d=row.querySelector('.oitem-desc');
+            var mo=row.querySelector('.oitem-mo');
+            var mat=row.querySelector('.oitem-mat');
+            var dv=d?d.value.trim():'';
+            var mov=parseFloat(mo?mo.value:0)||0;
+            var matv=parseFloat(mat?mat.value:0)||0;
+            if(dv||mov||matv) items.push({desc:dv,mo:mov,mat:matv});
+          });
+        }
+        if(rNombre||items.length) rubros.push({nombre:rNombre,desc:rDesc,items:items});
+      });
+    }
+    if(ambNombre||rubros.length) ambientes.push({nombre:ambNombre,rubros:rubros});
   });
-  return rubros;
+  return ambientes;
 }
 
 function cargarFormObra(p){
@@ -3157,8 +3341,19 @@ function cargarFormObra(p){
   document.getElementById('o-plazo').value=p.plazo||'';
   document.getElementById('o-validez').value=p.validez||'15 días';
   document.getElementById('o-condiciones').value=p.condiciones||'Materiales no incluidos.\nMano de obra exclusiva. Incluye herramientas propias.\nValidez sujeta a variaciones económicas.';
-  document.getElementById('o-rubros-list').innerHTML='';rubroCount=0;
-  (p.rubros&&p.rubros.length?p.rubros:[{nombre:'',desc:'',subitems:[]}]).forEach(function(r){addRubroO(r.nombre,r.desc,r.subitems);});
+  document.getElementById('o-ambientes-list').innerHTML='';
+  ambienteCountO=0; oRubroSeq=0;
+  // Compatibilidad con presupuestos viejos (estructura plana rubros[])
+  if(p.ambientes && p.ambientes.length){
+    p.ambientes.forEach(function(a){ addAmbienteO(a.nombre, a.rubros); });
+  } else if(p.rubros && p.rubros.length){
+    var rubrosConvertidos = p.rubros.map(function(r){
+      return { nombre:r.nombre, desc:r.desc, items:(r.subitems||[]).map(function(si){ return {desc:si.desc, mo:si.monto||0, mat:0}; }) };
+    });
+    addAmbienteO(p.proyecto||'General', rubrosConvertidos);
+  } else {
+    addAmbienteO('', []);
+  }
   document.getElementById('o-edit-id').value=p.id||'';
 }
 
@@ -3173,35 +3368,83 @@ window.cargarObraEnForm=function(id){
 
 // ══ OBRA PREVIEW ═════════════════════════════════════════════
 function buildObraDoc(p){
-  if(!p||!p.rubros) return '';
-  var rubrosH=(p.rubros||[]).map(function(r,i){
-    var sub=(r.subitems||[]).reduce(function(a,si){return a+(si.monto||0);},0);
-    var sisH=(r.subitems||[]).map(function(si){return '<tr><td style="padding:5px 0;border-bottom:1px solid #ede8e0;font-size:12.5px">'+si.desc+'</td><td style="text-align:right;font-family:Oswald,sans-serif;font-size:11.5px;color:#6a5035;padding-left:8px;white-space:nowrap;border-bottom:1px solid #ede8e0">'+pesos(si.monto)+'</td></tr>';}).join('');
-    if((r.subitems||[]).length>1)sisH+='<tr><td style="background:#f9f6f0;font-weight:700;font-size:12px;padding:5px 0;border-top:1.5px solid #d4c8b0"><strong>Subtotal '+r.nombre+'</strong></td><td style="background:#f9f6f0;text-align:right;font-family:Oswald,sans-serif;font-size:12px;font-weight:700;padding-left:8px;border-top:1.5px solid #d4c8b0"><strong>'+pesos(sub)+'</strong></td></tr>';
+  if(!p) return '';
+  var ambientes = p.ambientes || [];
+  if(!ambientes.length && p.rubros){
+    // compat con formato viejo
+    ambientes = [{ nombre:p.proyecto||'General', rubros:(p.rubros||[]).map(function(r){
+      return {nombre:r.nombre, desc:r.desc, items:(r.subitems||[]).map(function(si){return{desc:si.desc,mo:si.monto||0,mat:0};})};
+    })}];
+  }
+  if(!ambientes.length) return '';
+
+  function itemSub(it){ return (it.mo||0)+(it.mat||0); }
+  function rubSub(r){ return (r.items||[]).reduce(function(a,it){return a+itemSub(it);},0); }
+  function ambSub(a){ return (a.rubros||[]).reduce(function(x,r){return x+rubSub(r);},0); }
+
+  var ambientesH = ambientes.map(function(amb){
+    var aSub = ambSub(amb);
+    var rubrosH = (amb.rubros||[]).map(function(r){
+      var rSub = rubSub(r);
+      var filasH = (r.items||[]).map(function(it){
+        return '<tr>'+
+          '<td style="padding:5px 8px 5px 0;border-bottom:1px solid #ede8e0;font-size:12px;color:#3a2e20">'+it.desc+'</td>'+
+          '<td style="text-align:right;font-family:Oswald,sans-serif;font-size:11px;color:#6a5035;padding:5px 6px;white-space:nowrap;border-bottom:1px solid #ede8e0">'+(it.mo?pesos(it.mo):'—')+'</td>'+
+          '<td style="text-align:right;font-family:Oswald,sans-serif;font-size:11px;color:#6a5035;padding:5px 6px;white-space:nowrap;border-bottom:1px solid #ede8e0">'+(it.mat?pesos(it.mat):'—')+'</td>'+
+          '<td style="text-align:right;font-family:Oswald,sans-serif;font-size:11.5px;font-weight:700;color:#3a2410;padding:5px 0 5px 6px;white-space:nowrap;border-bottom:1px solid #ede8e0">'+pesos(itemSub(it))+'</td>'+
+        '</tr>';
+      }).join('');
+      return '<div style="margin-bottom:10px">'+
+        '<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;gap:8px">'+
+          '<span style="font-family:Oswald,sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#3a2410">'+(r.nombre||'Rubro')+'</span>'+
+          '<span style="font-family:Oswald,sans-serif;font-size:11.5px;font-weight:700;color:#3a2410">'+pesos(rSub)+'</span>'+
+        '</div>'+
+        (r.desc?'<div style="font-size:10.5px;color:#6a5035;font-style:italic;margin-bottom:5px">'+r.desc+'</div>':'')+
+        '<table style="width:100%;border-collapse:collapse">'+
+          '<thead><tr>'+
+            '<td style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#9a8a70;padding-bottom:3px">Item</td>'+
+            '<td style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#9a8a70;padding-bottom:3px;text-align:right">M.Obra</td>'+
+            '<td style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#9a8a70;padding-bottom:3px;text-align:right">Materiales</td>'+
+            '<td style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#9a8a70;padding-bottom:3px;text-align:right">Subtotal</td>'+
+          '</tr></thead>'+
+          '<tbody>'+filasH+'</tbody>'+
+        '</table>'+
+      '</div>';
+    }).join('');
     return '<div style="padding:16px 24px;border-bottom:1px solid #f0ece8">'+
-      '<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px;gap:8px"><span style="font-family:Oswald,sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#3a2410">'+(i+1)+' \u00b7 '+r.nombre.toUpperCase()+'</span><span style="font-family:Oswald,sans-serif;font-size:12.5px;font-weight:700;color:#3a2410;flex-shrink:0">'+pesos(sub)+'</span></div>'+
-      (r.desc?'<div style="font-size:11px;color:#6a5035;font-style:italic;margin-bottom:8px;line-height:1.4">'+r.desc+'</div>':'')+
-      '<table style="width:100%;border-collapse:collapse"><tbody>'+sisH+'</tbody></table>'+
+      '<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #d4c8b0">'+
+        '<span style="font-family:Oswald,sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#3a2410">'+(amb.nombre||'Ambiente')+'</span>'+
+        '<span style="font-family:Oswald,sans-serif;font-size:13px;font-weight:700;color:#3a2410">'+pesos(aSub)+'</span>'+
+      '</div>'+
+      rubrosH+
     '</div>';
   }).join('');
-  var total=(p.rubros||[]).reduce(function(a,r){return a+(r.subitems||[]).reduce(function(b,si){return b+(si.monto||0);},0);},0);
-  var resH=(p.rubros||[]).map(function(r,i){var sub=(r.subitems||[]).reduce(function(a,si){return a+(si.monto||0);},0);return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 24px;border-bottom:1px solid #ede8e0;font-size:12.5px"><span style="color:#6a5035;font-weight:300">'+(i+1)+' \u00b7 '+r.nombre+'</span><span style="font-family:Oswald,sans-serif;font-size:12.5px;color:#3a2e20">'+pesos(sub)+'</span></div>';}).join('');
+
+  var total = ambientes.reduce(function(a,amb){return a+ambSub(amb);},0);
+  var resH = ambientes.map(function(amb){
+    return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 24px;border-bottom:1px solid #ede8e0;font-size:12.5px">'+
+      '<span style="color:#6a5035;font-weight:300">'+(amb.nombre||'Ambiente')+'</span>'+
+      '<span style="font-family:Oswald,sans-serif;font-size:12.5px;color:#3a2e20">'+pesos(ambSub(amb))+'</span>'+
+    '</div>';
+  }).join('');
+
   var condsH=(p.condiciones||'').split('\n').filter(Boolean).map(function(l){return '<div style="font-size:10.5px;color:rgba(236,223,200,.65);line-height:1.6;margin-bottom:4px;padding-left:9px;position:relative">'+'\u00b7 '+l+'</div>';}).join('');
+
   return '<div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 3px 20px rgba(0,0,0,.12)">'+
     '<div style="background:#3a2410;padding:22px 24px 18px">'+
       '<div style="display:flex;align-items:baseline;gap:4px;margin-bottom:2px"><span style="font-family:Oswald,sans-serif;font-size:26px;font-weight:700;color:#f0e6d0;letter-spacing:.1em">FER </span><span style="font-family:Oswald,sans-serif;font-size:26px;font-weight:700;color:#c9a060;letter-spacing:.1em">OLEA</span></div>'+
       '<div style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;margin-bottom:1px">Mantenimiento \u00b7 Reformas \u00b7 Servicios</div>'+
-      '<div style="font-family:Oswald,sans-serif;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,160,96,.55);margin-bottom:12px">Presupuesto Llave en Mano</div>'+
+      '<div style="font-family:Oswald,sans-serif;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,160,96,.55);margin-bottom:12px">Presupuesto Final \u2014 Trabajos Generales</div>'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
-        oIC('Proyecto',p.proyecto||p.cliente)+oIC('Tipo',p.tipoObra||'\u2014')+
-        oIC('Fecha',fmtFecha(p.fecha))+oIC('Validez',p.validez||'\u2014')+
+        oIC('Cliente',p.cliente||'\u2014')+oIC('Fecha',fmtFecha(p.fecha))+
+        (p.proyecto?oIC('Proyecto',p.proyecto):'')+(p.tipoObra?oIC('Tipo',p.tipoObra):'')+
       '</div>'+
     '</div>'+
-    '<div>'+rubrosH+'</div>'+
+    '<div>'+ambientesH+'</div>'+
     '<div style="background:#f7f4ef;border-top:2px solid #d4c8b0">'+
-      '<div style="font-family:Oswald,sans-serif;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;padding:10px 24px 5px">Rubro \u00a0 Mano de obra</div>'+
+      '<div style="font-family:Oswald,sans-serif;font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;padding:10px 24px 5px">Resumen por ambiente</div>'+
       resH+
-      '<div style="margin:0 16px 16px;background:#3a2410;border-radius:7px;padding:12px 18px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:Oswald,sans-serif;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:#c9a060">Total Llave en Mano</span><span style="font-family:Oswald,sans-serif;font-size:22px;font-weight:700;color:#c9a060">'+pesos(total)+'</span></div>'+
+      '<div style="margin:0 16px 16px;background:#3a2410;border-radius:7px;padding:12px 18px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:Oswald,sans-serif;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:#c9a060">Total Trabajos Generales</span><span style="font-family:Oswald,sans-serif;font-size:22px;font-weight:700;color:#c9a060">'+pesos(total)+'</span></div>'+
     '</div>'+
     (condsH?'<div style="background:#3a2410;padding:14px 24px"><div style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#c9a060;margin-bottom:7px">Condiciones</div>'+condsH+'</div>':'')+
     '<div style="background:#3a2410;padding:12px 24px;display:flex;justify-content:space-between;align-items:center">'+
@@ -3371,19 +3614,24 @@ function buildPrintHTML(tipo){
   } else if(tipo==='obra'){
     var p=window._lastObraSnap;
     if(!p){var oid=document.getElementById('o-edit-id').value;if(oid)p=data.presupuestos[oid];}
-    if(!p){var rubs=getRubrosO();if(!rubs.length)return null;p={cliente:document.getElementById('o-cliente').value.trim(),fecha:document.getElementById('o-fecha').value,proyecto:document.getElementById('o-proyecto').value.trim(),tipoObra:document.getElementById('o-tipo').value.trim(),plazo:document.getElementById('o-plazo').value.trim(),validez:document.getElementById('o-validez').value.trim(),rubros:rubs,condiciones:document.getElementById('o-condiciones').value.trim()};}
+    if(!p){
+      var ambs=getAmbientesO();
+      if(!ambs.length)return null;
+      p={cliente:document.getElementById('o-cliente').value.trim(),fecha:document.getElementById('o-fecha').value,proyecto:document.getElementById('o-proyecto').value.trim(),tipoObra:document.getElementById('o-tipo').value.trim(),plazo:document.getElementById('o-plazo').value.trim(),validez:document.getElementById('o-validez').value.trim(),ambientes:ambs,condiciones:document.getElementById('o-condiciones').value.trim()};
+    }
     if(!p.cliente)return null;
     hdrHTML='<div style="background:#3a2410;padding:20px 24px 16px">'+
       '<div style="display:flex;align-items:baseline;gap:4px;margin-bottom:2px"><span style="font-family:Oswald,sans-serif;font-size:24px;font-weight:700;color:#f0e6d0;letter-spacing:.1em">FER </span><span style="font-family:Oswald,sans-serif;font-size:24px;font-weight:700;color:#c9a060;letter-spacing:.1em">OLEA</span></div>'+
       '<div style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#c9a060;margin-bottom:1px">Mantenimiento \u00b7 Reformas \u00b7 Servicios</div>'+
-      '<div style="font-family:Oswald,sans-serif;font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,160,96,.55);margin-bottom:10px">Presupuesto Llave en Mano \u2014 Mano de Obra</div>'+
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+oIC('Proyecto',p.proyecto||p.cliente)+oIC('Tipo',p.tipoObra||'\u2014')+oIC('Fecha',fmtFecha(p.fecha))+oIC('Validez',p.validez||'\u2014')+'</div>'+
+      '<div style="font-family:Oswald,sans-serif;font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,160,96,.55);margin-bottom:10px">Presupuesto Final \u2014 Trabajos Generales</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+oIC('Cliente',p.cliente||'\u2014')+oIC('Fecha',fmtFecha(p.fecha))+'</div>'+
     '</div>';
-    var rubsH=(p.rubros||[]).map(function(r2,i){var sub=(r2.subitems||[]).reduce(function(a,si){return a+(si.monto||0);},0);var sisH=(r2.subitems||[]).map(function(si){return '<tr><td style="padding:4px 0;border-bottom:1px solid #ede8e0;font-size:12px">'+si.desc+'</td><td style="text-align:right;font-family:Oswald,sans-serif;font-size:11px;color:#6a5035;padding-left:8px;white-space:nowrap;border-bottom:1px solid #ede8e0">'+pesos(si.monto)+'</td></tr>';}).join('');return '<div style="padding:12px 24px;border-bottom:1px solid #f0ece8"><div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px"><span style="font-family:Oswald,sans-serif;font-size:11.5px;font-weight:700;text-transform:uppercase;color:#3a2410">'+(i+1)+' \u00b7 '+r2.nombre.toUpperCase()+'</span><span style="font-family:Oswald,sans-serif;font-size:11.5px;font-weight:700;color:#3a2410">'+pesos(sub)+'</span></div>'+(r2.desc?'<div style="font-size:10.5px;color:#6a5035;font-style:italic;margin-bottom:6px">'+r2.desc+'</div>':'')+'<table style="width:100%;border-collapse:collapse"><tbody>'+sisH+'</tbody></table></div>';}).join('');
-    var total2=(p.rubros||[]).reduce(function(a,r2){return a+(r2.subitems||[]).reduce(function(b,si){return b+(si.monto||0);},0);},0);
-    var resH2=(p.rubros||[]).map(function(r2,i){var sub=(r2.subitems||[]).reduce(function(a,si){return a+(si.monto||0);},0);return '<div style="display:flex;justify-content:space-between;padding:5px 24px;border-bottom:1px solid #ede8e0;font-size:12px"><span style="color:#6a5035;font-weight:300">'+(i+1)+' \u00b7 '+r2.nombre+'</span><span style="font-family:Oswald,sans-serif">'+pesos(sub)+'</span></div>';}).join('');
-    body=rubsH+'<div style="background:#f7f4ef;border-top:2px solid #d4c8b0"><div style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#c9a060;padding:8px 24px 4px">Rubro \u00a0 Mano de obra</div>'+resH2+'<div style="margin:0 16px 14px;background:#3a2410;border-radius:7px;padding:11px 16px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:Oswald,sans-serif;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#c9a060">Total Llave en Mano</span><span style="font-family:Oswald,sans-serif;font-size:20px;font-weight:700;color:#c9a060">'+pesos(total2)+'</span></div></div>'+
-    ((p.condiciones||'').trim()?'<div style="padding:10px 24px 12px"><div style="font-family:Oswald,sans-serif;font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:#9a8070;margin-bottom:5px">Condiciones</div>'+(p.condiciones||'').split('\n').filter(Boolean).map(function(l){return '<div style="font-size:10.5px;color:#6a5035;line-height:1.5;margin-bottom:3px">\u00b7 '+l+'</div>';}).join('')+'</div>':'');
+    // Reutilizamos buildObraDoc completo (ya incluye header propio, lo sacamos con un wrapper)
+    var fullDoc = buildObraDoc(p);
+    // Extraer solo el body (entre el primer </div> de header oscuro y el footer) es complejo;
+    // más simple: usar el doc completo como body y anular el header/footer genéricos de la ventana de impresión.
+    body = '<div style="margin:-1px">'+fullDoc+'</div>';
+    hdrHTML = ''; // el doc ya trae su propio header
   } else {
     // Mantenimiento
     snap=presSnapshot();if(!snap||!snap.cliente)return null;
@@ -3421,11 +3669,11 @@ function buildPrintHTML(tipo){
     '</div>';
   }
 
-  var ftrHTML='<div class="pg-ftr"><div class="fb"><span class="f">FER </span><span class="o">OLEA</span><div style="font-family:Oswald,sans-serif;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a40;margin-top:2px">Tandil, Bs. As.</div></div><div class="fr">2494 066 345<br>@feroleasoluciones<br>feroleasoluciones@gmail.com</div></div>';
+  var ftrHTML = (tipo==='obra') ? '' : '<div class="pg-ftr"><div class="fb"><span class="f">FER </span><span class="o">OLEA</span><div style="font-family:Oswald,sans-serif;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a40;margin-top:2px">Tandil, Bs. As.</div></div><div class="fr">2494 066 345<br>@feroleasoluciones<br>feroleasoluciones@gmail.com</div></div>';
 
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"><style>'+baseCSS+'</style></head><body>'+
     '<div class="page">'+
-      '<div class="pg-hdr">'+hdrHTML+'</div>'+
+      (hdrHTML?'<div class="pg-hdr">'+hdrHTML+'</div>':'')+
       '<div class="pg-body"><div class="pg-inner" id="inner">'+body+'</div></div>'+
       ftrHTML+
     '</div>'+
@@ -3465,14 +3713,14 @@ window.cargarObraEnForm=function(id){
   var rn=document.getElementById('r-numero');if(rn)rn.value=autoNumRecibo();
   var of=document.getElementById('o-fecha');if(of)of.value=hoy();
 
-  var btnAR=document.getElementById('btn-add-rubro-o');
-  if(btnAR)btnAR.addEventListener('click',function(){addRubroO('','',null);});
+  var btnAAmb=document.getElementById('btn-add-ambiente-o');
+  if(btnAAmb)btnAAmb.addEventListener('click',function(){addAmbienteO('',[]);});
 
   var btnOG=document.getElementById('btn-obra-generar');
   if(btnOG)btnOG.addEventListener('click',function(){
-    var rubs=getRubrosO(),cli=document.getElementById('o-cliente').value.trim();
+    var ambientes=getAmbientesO(),cli=document.getElementById('o-cliente').value.trim();
     if(!cli){snack('Escrib\u00ed el cliente');return;}
-    var p={cliente:cli,fecha:document.getElementById('o-fecha').value,proyecto:document.getElementById('o-proyecto').value.trim(),tipoObra:document.getElementById('o-tipo').value.trim(),plazo:document.getElementById('o-plazo').value.trim(),validez:document.getElementById('o-validez').value.trim(),rubros:rubs,condiciones:document.getElementById('o-condiciones').value.trim()};
+    var p={cliente:cli,fecha:document.getElementById('o-fecha').value,proyecto:document.getElementById('o-proyecto').value.trim(),tipoObra:document.getElementById('o-tipo').value.trim(),plazo:document.getElementById('o-plazo').value.trim(),validez:document.getElementById('o-validez').value.trim(),ambientes:ambientes,condiciones:document.getElementById('o-condiciones').value.trim()};
     window._lastObraSnap=p;
     document.getElementById('pres-doc-wrap').innerHTML=buildObraDoc(p);
     document.getElementById('pres-preview-actions').style.display='flex';
@@ -3480,11 +3728,11 @@ window.cargarObraEnForm=function(id){
 
   var btnOGU=document.getElementById('btn-obra-guardar');
   if(btnOGU)btnOGU.addEventListener('click',async function(){
-    var rubs=getRubrosO(),cli=document.getElementById('o-cliente').value.trim();
+    var ambientes=getAmbientesO(),cli=document.getElementById('o-cliente').value.trim();
     if(!cli){snack('Escrib\u00ed el cliente');return;}
-    var total=rubs.reduce(function(a,r){return a+(r.subitems||[]).reduce(function(b,si){return b+(si.monto||0);},0);},0);
+    var total=ambientes.reduce(function(a,amb){return a+(amb.rubros||[]).reduce(function(b,r){return b+(r.items||[]).reduce(function(x,it){return x+(it.mo||0)+(it.mat||0);},0);},0);},0);
     var id=document.getElementById('o-edit-id').value||uid();
-    var p={id:id,tipo:'obra',ts:Date.now(),cliente:cli,fecha:document.getElementById('o-fecha').value,proyecto:document.getElementById('o-proyecto').value.trim(),tipoObra:document.getElementById('o-tipo').value.trim(),plazo:document.getElementById('o-plazo').value.trim(),validez:document.getElementById('o-validez').value.trim(),rubros:rubs,condiciones:document.getElementById('o-condiciones').value.trim(),total:total};
+    var p={id:id,tipo:'obra',ts:Date.now(),cliente:cli,fecha:document.getElementById('o-fecha').value,proyecto:document.getElementById('o-proyecto').value.trim(),tipoObra:document.getElementById('o-tipo').value.trim(),plazo:document.getElementById('o-plazo').value.trim(),validez:document.getElementById('o-validez').value.trim(),ambientes:ambientes,condiciones:document.getElementById('o-condiciones').value.trim(),total:total};
     window._lastObraSnap=p;
     if(fbOk){await fbSet('presupuestos/'+id,p);}else{data.presupuestos[id]=p;guardarLocal();renderPresupuestosHist();}
     document.getElementById('o-edit-id').value=id;
