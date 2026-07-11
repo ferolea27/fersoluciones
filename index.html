@@ -3023,6 +3023,31 @@ window.deleteMatInline = async function(obraId, ambId, rubId, idx) {
 // ═══ ITEMS DE RUBRO (desc + mano de obra + materiales + estado) ═══
 var ITEM_ESTADOS = ['Pendiente','En curso','Pausado','Hecho'];
 
+// Calcula el estado del rubro automáticamente en base a sus items
+function computeRubroEstado(items){
+  if(!items || !items.length) return 'Pendiente';
+  var todosHechos = items.every(function(it){ return (it.estado||'Pendiente')==='Hecho'; });
+  if(todosHechos) return 'Hecho';
+  var algunoIniciado = items.some(function(it){ return (it.estado||'Pendiente')!=='Pendiente'; });
+  if(algunoIniciado) return 'En curso';
+  return 'Pendiente';
+}
+
+// Guarda items y recalcula el estado del rubro automáticamente
+async function guardarItemsYRecalcular(obraId, ambId, rubId, rub, items){
+  var nuevoEstado = computeRubroEstado(items);
+  if(fbOk){
+    await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/items', items);
+    await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/estado', nuevoEstado);
+  } else {
+    rub.items = items;
+    rub.estado = nuevoEstado;
+    guardarLocal();
+    renderAmbientes(obraId);
+    renderObras();
+  }
+}
+
 window.addItemInline = async function(obraId, ambId, rubId) {
   var dEl=document.getElementById('new-idesc-'+rubId);
   var moEl=document.getElementById('new-imo-'+rubId);
@@ -3033,8 +3058,7 @@ window.addItemInline = async function(obraId, ambId, rubId) {
   var o=data.obras[obraId]; if(!o) return;
   var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
   var items=[...(rub.items||[]),{desc:desc,mo:mo,mat:mat,estado:'Pendiente'}];
-  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/items',items);}
-  else{rub.items=items;guardarLocal();renderAmbientes(obraId);}
+  await guardarItemsYRecalcular(obraId, ambId, rubId, rub, items);
   snack('Item agregado');
 };
 
@@ -3043,8 +3067,7 @@ window.deleteItemInline = async function(obraId, ambId, rubId, idx) {
   var o=data.obras[obraId]; if(!o) return;
   var rub=((o.ambientes||{})[ambId]||{}).rubros&&o.ambientes[ambId].rubros[rubId]; if(!rub) return;
   var items=(rub.items||[]).filter(function(_,i){return i!==idx;});
-  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/items',items);}
-  else{rub.items=items;guardarLocal();renderAmbientes(obraId);}
+  await guardarItemsYRecalcular(obraId, ambId, rubId, rub, items);
   snack('Item eliminado');
 };
 
@@ -3055,8 +3078,7 @@ window.ciclarEstadoItem = async function(obraId, ambId, rubId, idx) {
   var actual=items[idx].estado||'Pendiente';
   var next=ITEM_ESTADOS[(ITEM_ESTADOS.indexOf(actual)+1)%ITEM_ESTADOS.length];
   items[idx].estado=next;
-  if(fbOk){await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/items',items);}
-  else{rub.items=items;guardarLocal();renderAmbientes(obraId);renderObras();}
+  await guardarItemsYRecalcular(obraId, ambId, rubId, rub, items);
   snack('Item: '+next);
 };
 
