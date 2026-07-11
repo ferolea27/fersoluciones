@@ -2909,15 +2909,27 @@ function crearFotoInput(id, useCapture) {
   var inp = document.createElement('input');
   inp.type = 'file'; inp.id = id;
   inp.accept = 'image/*';
-  if(useCapture) inp.setAttribute('capture', 'environment');
+  if(useCapture) { inp.setAttribute('capture', 'environment'); }
+  else { inp.multiple = true; } // galería: permite elegir varias fotos a la vez
   inp.style.display = 'none';
   inp.addEventListener('change', function() {
-    var file = inp.files[0]; if(!file) return;
+    var files = Array.prototype.slice.call(inp.files || []);
     inp.value = ''; // reset antes de comprimir por si hay re-selección
-    comprimirImagen(file, 1200, 1200, 0.82, function(b64) {
-      if(!b64) { snack('Error al procesar la imagen'); return; }
-      var ctx = fotoRubroCtx; if(!ctx) return;
-      guardarFotoRubro(ctx.obraId, ctx.ambId, ctx.rubId, b64);
+    if(!files.length) return;
+    var ctx = fotoRubroCtx; if(!ctx) return;
+    if(files.length > 1) snack('Procesando '+files.length+' fotos...');
+    var pendientes = files.length;
+    var resultados = [];
+    files.forEach(function(file, idx) {
+      comprimirImagen(file, 1200, 1200, 0.82, function(b64) {
+        resultados[idx] = b64 || null;
+        pendientes--;
+        if(pendientes === 0) {
+          var validas = resultados.filter(function(b){ return !!b; });
+          if(!validas.length) { snack('Error al procesar las imágenes'); return; }
+          guardarFotosRubro(ctx.obraId, ctx.ambId, ctx.rubId, validas);
+        }
+      });
     });
   });
   document.body.appendChild(inp);
@@ -2942,13 +2954,18 @@ window.abrirCamaraFoto = function(obraId, ambId, rubId) {
 };
 
 async function guardarFotoRubro(obraId, ambId, rubId, b64) {
+  return guardarFotosRubro(obraId, ambId, rubId, [b64]);
+}
+
+async function guardarFotosRubro(obraId, ambId, rubId, b64Array) {
   try {
     var o = data.obras[obraId]; if(!o){ snack('Error: obra no encontrada'); return; }
     var amb = (o.ambientes||{})[ambId]; if(!amb){ snack('Error: ambiente no encontrado'); return; }
     var rub = (amb.rubros||{})[rubId]; if(!rub){ snack('Error: rubro no encontrado'); return; }
     if(!rub.fotos) rub.fotos = [];
-    var nuevaFoto = {b64:b64, ts:Date.now()};
-    rub.fotos.push(nuevaFoto);
+    b64Array.forEach(function(b64){
+      rub.fotos.push({b64:b64, ts:Date.now()});
+    });
     if(fbOk) {
       var ok = await fbSet('obras/'+obraId+'/ambientes/'+ambId+'/rubros/'+rubId+'/fotos', rub.fotos);
       if(!ok) throw new Error('Firebase no respondió');
@@ -2956,10 +2973,10 @@ async function guardarFotoRubro(obraId, ambId, rubId, b64) {
       guardarLocal();
     }
     renderAmbientes(obraId);
-    snack('Foto guardada ✓');
+    snack(b64Array.length>1 ? b64Array.length+' fotos guardadas ✓' : 'Foto guardada ✓');
   } catch(e) {
-    console.error('guardarFotoRubro:', e);
-    snack('Error al guardar la foto — intentá de nuevo');
+    console.error('guardarFotosRubro:', e);
+    snack('Error al guardar — intentá de nuevo');
   }
 }
 
