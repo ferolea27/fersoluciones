@@ -127,10 +127,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 /* FOTOS */
 .fotos-wrap{margin-top:8px}
 .foto-strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
-.foto-thumb{width:56px;height:56px;border-radius:8px;overflow:hidden;border:1px solid var(--gold3);cursor:pointer;background:var(--gold2);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.foto-thumb{width:68px;height:68px;border-radius:9px;overflow:hidden;border:1px solid var(--gold3);cursor:pointer;background:var(--gold2);flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;transition:width .25s,height .25s}
 .foto-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.doc-thumb{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--gold3);border-radius:8px;cursor:pointer;background:var(--gold2);font-size:11px;color:var(--text2);flex-shrink:0}
+.foto-thumb.nuevo{width:98px;height:98px;border:2px solid var(--gold5);box-shadow:0 2px 10px rgba(200,149,108,.3)}
+.foto-nuevo-badge{position:absolute;top:3px;left:3px;background:var(--gold);color:#1c1612;font-size:8px;font-weight:800;padding:2px 6px;border-radius:5px;letter-spacing:.03em;z-index:2;line-height:1.3}
+.doc-thumb{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--gold3);border-radius:8px;cursor:pointer;background:var(--gold2);font-size:11px;color:var(--text2);flex-shrink:0;position:relative}
+.doc-thumb.nuevo{border:1.5px solid var(--gold5)}
 .doc-ico{font-size:18px}
+.doc-nuevo-badge{background:var(--gold);color:#1c1612;font-size:8px;font-weight:800;padding:1px 5px;border-radius:4px;letter-spacing:.03em;margin-left:2px}
 
 /* CONTACTO */
 .contacto-section{margin:16px 18px 0}
@@ -207,6 +211,7 @@ var EST_PILL={
   'Terminado':    'background:rgba(123,63,173,.2);color:#c084fc;border:1px solid rgba(123,63,173,.4)',
   'Cobrado':      'background:rgba(136,135,128,.15);color:#aaa89a;border:1px solid rgba(136,135,128,.3)',
 };
+var VISIT_REF_TS = 0; // timestamp de la ultima visita ANTERIOR (para detectar fotos nuevas)
 var DOT_C={'Pendiente':'#c8956c','En curso':'#f5a623','Pausado':'#b48ce8','Hecho':'rgba(126,216,88,.7)'};
 var RUB_ST={
   'Pendiente':'rub-chip" style="background:rgba(200,149,108,.1);color:#c8956c;border:1px solid rgba(200,149,108,.25)',
@@ -352,11 +357,15 @@ function renderObra(o){
           h+='<div class="fotos-wrap"><div class="det-lbl" style="margin-top:'+(tTot?'10px':'8px')+'">Fotos ('+archN+')</div>';
           h+='<div class="foto-strip">';
           fotos.forEach(function(f,i){
-            h+='<div class="foto-thumb" onclick="event.stopPropagation();verFoto(\''+rid+'\','+i+')"><img src="'+(f.b64||f)+'" loading="lazy" alt="foto"></div>';
+            var esNueva=(f.ts||0)>VISIT_REF_TS;
+            h+='<div class="foto-thumb'+(esNueva?' nuevo':'')+'" onclick="event.stopPropagation();verFoto(\''+rid+'\','+i+')">'
+              +(esNueva?'<span class="foto-nuevo-badge">NUEVO</span>':'')
+              +'<img src="'+(f.b64||f)+'" loading="lazy" alt="foto"></div>';
           });
           docs.forEach(function(d){
             var ic=d.mime==='application/pdf'?'&#x1F4C4;':d.mime&&d.mime.startsWith('image')?'&#x1F5BC;':'&#x1F4CE;';
-            h+='<div class="doc-thumb" onclick="event.stopPropagation();verDoc(this)" data-b64="'+encodeURIComponent(d.b64||'')+'" data-mime="'+encodeURIComponent(d.mime||'')+'" data-nombre="'+encodeURIComponent(d.nombre||'archivo')+'"><span class="doc-ico">'+ic+'</span><span>'+(d.nombre||'Archivo')+'</span></div>';
+            var esNuevoDoc=(d.ts||0)>VISIT_REF_TS;
+            h+='<div class="doc-thumb'+(esNuevoDoc?' nuevo':'')+'" onclick="event.stopPropagation();verDoc(this)" data-b64="'+encodeURIComponent(d.b64||'')+'" data-mime="'+encodeURIComponent(d.mime||'')+'" data-nombre="'+encodeURIComponent(d.nombre||'archivo')+'"><span class="doc-ico">'+ic+'</span><span>'+(d.nombre||'Archivo')+'</span>'+(esNuevoDoc?'<span class="doc-nuevo-badge">NUEVO</span>':'')+'</div>';
           });
           h+='</div></div>';
         }
@@ -411,6 +420,18 @@ document.addEventListener('keydown',function(e){if(!document.getElementById('lb'
 window.verDoc=function(el){try{var b64=decodeURIComponent(el.dataset.b64||''),mime=decodeURIComponent(el.dataset.mime||'application/octet-stream'),raw=b64.split(',')[1]||b64,byteStr=atob(raw),arr=new Uint8Array(byteStr.length);for(var i=0;i<byteStr.length;i++)arr[i]=byteStr.charCodeAt(i);var url=URL.createObjectURL(new Blob([arr],{type:mime}));window.open(url,'_blank');setTimeout(function(){URL.revokeObjectURL(url);},8000);}catch(e){alert('No se pudo abrir el archivo');}};
 
 var params=new URLSearchParams(location.search),obraId=params.get('obra');
+
+// Registrar visita: guardamos cuándo fue la ÚLTIMA vez que este cliente vio esta obra,
+// para poder marcar como "nuevas" las fotos/docs cargados desde entonces.
+if(obraId){
+  try{
+    var visitStore = JSON.parse(localStorage.getItem('fs_last_visit')||'{}');
+    VISIT_REF_TS = visitStore[obraId] || 0;
+    visitStore[obraId] = Date.now();
+    localStorage.setItem('fs_last_visit', JSON.stringify(visitStore));
+  }catch(e){ VISIT_REF_TS = 0; }
+}
+
 if(!obraId){document.getElementById('content').innerHTML='<div class="error-box"><h2>Sin obra especificada</h2><p>Pedile a Fer el link correcto.</p></div>';}
 else{try{firebase.initializeApp(FB);var db=firebase.database();db.ref('obras/'+obraId).on('value',function(snap){var o=snap.val();if(!o){document.getElementById('content').innerHTML='<div class="error-box"><h2>Obra no encontrada</h2><p>El link puede estar desactualizado.</p></div>';return;}renderObra(o);});}catch(e){document.getElementById('content').innerHTML='<div class="error-box"><h2>Error de conexión</h2><p>'+e.message+'</p></div>';}}
 </script>
