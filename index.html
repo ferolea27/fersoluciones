@@ -19,6 +19,8 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>FerSoluciones</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1181,7 +1183,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
     <div class="modal-header"><div class="modal-title">Backup a Drive / PC</div><button class="modal-close" onclick="cerrarModal('backup')">&#xd7;</button></div>
     <div class="modal-body">
       <div style="font-size:12.5px;color:var(--text-soft);line-height:1.6;margin-bottom:14px">
-        Se respaldan <b>Presupuestos</b>, <b>Obras</b> y <b>Recibos</b> (la Agenda no se incluye). Cada archivo se nombra con el cliente/obra — si lo repetís, actualiza el mismo archivo en vez de duplicar.
+        Se respaldan <b>Presupuestos</b> y <b>Recibos</b> como PDF (con el mismo diseño de la app), y <b>Obras</b> como archivo de datos (conserva fotos y toda la estructura). La Agenda no se incluye. Cada archivo se nombra con el cliente/obra — si lo repetís, actualiza el mismo archivo en vez de duplicar.
       </div>
 
       <div style="border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:10px">
@@ -3705,13 +3707,13 @@ window.exportarPDF = function(){
   win.document.open();win.document.write(html);win.document.close();
 };
 
-function buildPrintHTML(tipo){
+function buildPrintHTML(tipo, overrideData, skipAutoPrint){
   var snap,body,hdrHTML;
   var baseCSS='@page{margin:0;size:A4 portrait}*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{font-family:"Source Sans 3",sans-serif;background:#fff;margin:0;width:210mm;height:297mm;overflow:hidden}.page{width:210mm;height:297mm;display:flex;flex-direction:column;overflow:hidden}.pg-hdr{flex-shrink:0}.pg-ftr{flex-shrink:0;background:#3a2410;padding:12px 24px;display:flex;justify-content:space-between;align-items:center}.pg-ftr .fb{font-family:Oswald,sans-serif;font-size:13px;font-weight:600}.pg-ftr .fb .f{color:#f0e6d0}.pg-ftr .fb .o{color:#c9a060}.pg-ftr .fr{text-align:right;font-size:10px;color:#9a7e58;line-height:1.5}.pg-body{flex:1;overflow:hidden;position:relative}.pg-inner{position:absolute;top:0;left:0;width:100%;transform-origin:top left}';
 
   if(tipo==='recibo'){
     var id=document.getElementById('r-edit-id').value;
-    var r=id?data.recibos[id]:null;
+    var r=overrideData || (id?data.recibos[id]:null);
     if(!r){snack('Guard\u00e1 el recibo primero');return null;}
     hdrHTML='<div style="background:#3a2410;padding:16px 22px 12px"><div style="display:flex;align-items:baseline;gap:4px;margin-bottom:2px"><span style="font-family:Oswald,sans-serif;font-size:20px;font-weight:700;color:#f0e6d0;letter-spacing:.1em">FER </span><span style="font-family:Oswald,sans-serif;font-size:20px;font-weight:700;color:#c9a060;letter-spacing:.1em">OLEA</span></div><div style="font-family:Oswald,sans-serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#c9a060;margin-bottom:8px">Recibo de pago</div><div style="font-family:Oswald,sans-serif;font-size:28px;font-weight:700;color:#f0e6d0">N\u00b0 '+r.numero+'</div></div>';
     var tipoCss={sena:'background:#EDE0F5;color:#7B3FAD',parcial:'background:#E6F1FB;color:#0C447C',total:'background:#E8F5E2;color:#2E6B1F',anticipo:'background:#FAEEDA;color:#854F0B'};
@@ -3729,7 +3731,7 @@ function buildPrintHTML(tipo){
       '</div>'+
     '</div>';
   } else if(tipo==='obra'){
-    var p=window._lastObraSnap;
+    var p=overrideData || window._lastObraSnap;
     if(!p){var oid=document.getElementById('o-edit-id').value;if(oid)p=data.presupuestos[oid];}
     if(!p){
       var ambs=getAmbientesO();
@@ -3751,7 +3753,7 @@ function buildPrintHTML(tipo){
     hdrHTML = ''; // el doc ya trae su propio header
   } else {
     // Mantenimiento
-    snap=presSnapshot();if(!snap||!snap.cliente)return null;
+    snap=overrideData || presSnapshot();if(!snap||!snap.cliente)return null;
     var monto=snap.monto||0,sumMat=(snap.materiales||[]).reduce(function(a,i){return a+(i.price||0);},0);
     var total=monto+sumMat,senaPct=snap.senaPct||0,senaAmt=senaPct>0?Math.round(total*senaPct/100):0;
     var moLabel=buildMoLabel(snap.jornadas,snap.ayudante);
@@ -3788,6 +3790,9 @@ function buildPrintHTML(tipo){
 
   var ftrHTML = (tipo==='obra') ? '' : '<div class="pg-ftr"><div class="fb"><span class="f">FER </span><span class="o">OLEA</span><div style="font-family:Oswald,sans-serif;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a40;margin-top:2px">Tandil, Bs. As.</div></div><div class="fr">2494 066 345<br>@feroleasoluciones<br>feroleasoluciones@gmail.com</div></div>';
 
+  var printCall = skipAutoPrint ? '' : 'setTimeout(function(){window.print();},400);';
+  var printCallEmpty = skipAutoPrint ? '' : 'setTimeout(function(){window.print();},300);';
+
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"><style>'+baseCSS+'</style></head><body>'+
     '<div class="page">'+
       (hdrHTML?'<div class="pg-hdr">'+hdrHTML+'</div>':'')+
@@ -3798,7 +3803,7 @@ function buildPrintHTML(tipo){
       'window.onload=function(){'+
         'var inner=document.getElementById("inner");'+
         'var wrap=inner?inner.parentElement:null;'+
-        'if(!inner||!wrap){setTimeout(function(){window.print();},300);return;}'+
+        'if(!inner||!wrap){'+printCallEmpty+'return;}'+
         'var aH=wrap.offsetHeight,aW=wrap.offsetWidth;'+
         'var cH=inner.scrollHeight,cW=inner.scrollWidth||aW;'+
         'if(cH>0&&aH>0){'+
@@ -3806,13 +3811,64 @@ function buildPrintHTML(tipo){
           'if(s<0.4)s=1;'+
           'if(Math.abs(s-1)>0.02){inner.style.transform="scale("+s+")";inner.style.width=Math.round(100/s)+"%";}'+
         '}'+
-        'setTimeout(function(){window.print();},400);'+
+        printCall+
       '};'+
     '<\/script>'+
   '</body></html>';
 }
 
 function rRow(l,v){return '<tr><td style="color:#888780;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;width:36%;padding:8px 0;border-bottom:1px solid #e8e2d8;vertical-align:top;padding-right:8px">'+l+'</td><td style="padding:8px 0;border-bottom:1px solid #e8e2d8;font-size:12.5px;color:#2c2c2a">'+v+'</td></tr>';}
+
+// ══ Convertir una página HTML (buildPrintHTML) en un PDF real ═════
+async function htmlPageToPdfBlob(pageHTML){
+  if(typeof html2canvas==='undefined' || !window.jspdf){
+    throw new Error('Las librerías de PDF no cargaron todavía — esperá unos segundos y probá de nuevo');
+  }
+  var iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:800px;height:1131px;border:none;visibility:hidden;';
+  document.body.appendChild(iframe);
+  try{
+    await new Promise(function(resolve){
+      iframe.onload = function(){ resolve(); };
+      iframe.srcdoc = pageHTML;
+    });
+    // pequeña espera extra para que termine de aplicarse el escalado + pintarse
+    await new Promise(function(r){ setTimeout(r, 220); });
+    var doc = iframe.contentDocument;
+    var target = (doc.querySelector('.page')) || doc.body;
+    var canvas = await html2canvas(target, {scale:2, useCORS:true, backgroundColor:'#ffffff', windowWidth:800, windowHeight:1131});
+
+    var pageWmm = 210, pageHmm = 297;
+    var imgWpx = canvas.width, imgHpx = canvas.height;
+    var ratio = imgHpx/imgWpx;
+    var renderHmm = pageWmm*ratio;
+    var pdf = new window.jspdf.jsPDF('p','mm','a4');
+
+    if(renderHmm <= pageHmm+2){
+      var imgData = canvas.toDataURL('image/jpeg', 0.92);
+      pdf.addImage(imgData,'JPEG',0,0,pageWmm,Math.min(renderHmm,pageHmm));
+    } else {
+      var pxPerMM = imgWpx/pageWmm;
+      var pageHpx = Math.floor(pageHmm*pxPerMM);
+      var totalPages = Math.ceil(imgHpx/pageHpx);
+      for(var pI=0; pI<totalPages; pI++){
+        if(pI>0) pdf.addPage();
+        var sy = pI*pageHpx;
+        var sh = Math.min(pageHpx, imgHpx-sy);
+        var pageCanvas = document.createElement('canvas');
+        pageCanvas.width = imgWpx; pageCanvas.height = sh;
+        pageCanvas.getContext('2d').drawImage(canvas, 0, sy, imgWpx, sh, 0, 0, imgWpx, sh);
+        var sliceData = pageCanvas.toDataURL('image/jpeg', 0.92);
+        var sliceHmm = pageWmm*(sh/imgWpx);
+        pdf.addImage(sliceData,'JPEG',0,0,pageWmm,sliceHmm);
+      }
+    }
+    return pdf.output('blob');
+  } finally {
+    document.body.removeChild(iframe);
+  }
+}
+
 
 // ══ HISTORIAL PRESUPUESTOS (actualizar para obra) ═════════════
 window.cargarObraEnForm=function(id){
@@ -4003,19 +4059,20 @@ async function driveFindOrCreateFolder(name, parentId){
   return d2.id;
 }
 
-async function driveUploadFile(folderId, filename, contentStr){
+async function driveUploadFile(folderId, filename, content, mimeType){
+  mimeType = mimeType || 'application/json';
   var q = "name='"+filename.replace(/'/g,"\\'")+"' and '"+folderId+"' in parents and trashed=false";
   var res = await driveApiFetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id)');
   var d = await res.json();
   var existingId = (d.files && d.files[0]) ? d.files[0].id : null;
   if(existingId){
-    await driveApiFetch('https://www.googleapis.com/upload/drive/v3/files/'+existingId+'?uploadType=media', {method:'PATCH', headers:{'Content-Type':'application/json'}, body:contentStr});
+    await driveApiFetch('https://www.googleapis.com/upload/drive/v3/files/'+existingId+'?uploadType=media', {method:'PATCH', headers:{'Content-Type':mimeType}, body:content});
     return existingId;
   } else {
     var createRes = await driveApiFetch('https://www.googleapis.com/drive/v3/files', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:filename, parents:[folderId]})});
     var created = await createRes.json();
     if(!created.id) throw new Error('Google Drive no devolvió un ID de archivo válido');
-    await driveApiFetch('https://www.googleapis.com/upload/drive/v3/files/'+created.id+'?uploadType=media', {method:'PATCH', headers:{'Content-Type':'application/json'}, body:contentStr});
+    await driveApiFetch('https://www.googleapis.com/upload/drive/v3/files/'+created.id+'?uploadType=media', {method:'PATCH', headers:{'Content-Type':mimeType}, body:content});
     return created.id;
   }
 }
@@ -4083,8 +4140,8 @@ async function saveFileLocal(dirHandle, subfolder, filename, contentStr){
   await writable.close();
 }
 
-function fallbackDownload(filename, contentStr){
-  var blob = new Blob([contentStr], {type:'application/json'});
+function fallbackDownload(filename, content, mimeType){
+  var blob = (content instanceof Blob) ? content : new Blob([content], {type:mimeType||'application/json'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
   a.href=url; a.download=filename;
@@ -4092,21 +4149,114 @@ function fallbackDownload(filename, contentStr){
   setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
 }
 
+// ══ Backup de Obra como HTML legible y autocontenido (con fotos) ══
+function buildObraBackupHTML(o){
+  var ambientes = Object.values(o.ambientes||{});
+  var pagos = Object.values(o.pagos||{});
+  var totalPagado = pagos.reduce(function(a,p){return a+(p.monto||0);},0);
+
+  var pagosHTML = pagos.length
+    ? '<table><thead><tr><th>Fecha</th><th>Concepto</th><th style="text-align:right">Monto</th></tr></thead><tbody>'+
+        pagos.map(function(p){return '<tr><td>'+fmtFecha(p.fecha||'')+'</td><td>'+(p.concepto||'')+'</td><td style="text-align:right">'+pesos(p.monto||0)+'</td></tr>';}).join('')+
+      '</tbody></table>'
+    : '<p class="muted">Sin movimientos registrados</p>';
+
+  var ambientesHTML = ambientes.map(function(amb){
+    var rubros = Object.values(amb.rubros||{});
+    var rubrosHTML = rubros.map(function(r){
+      var items = r.items||[];
+      var itemsHTML = items.length
+        ? '<table><thead><tr><th>Item</th><th style="text-align:right">M.Obra</th><th style="text-align:right">Materiales</th><th>Estado</th></tr></thead><tbody>'+
+            items.map(function(it){return '<tr><td>'+(it.desc||'')+'</td><td style="text-align:right">'+(it.mo?pesos(it.mo):'\u2014')+'</td><td style="text-align:right">'+(it.mat?pesos(it.mat):'\u2014')+'</td><td>'+(it.estado||'Pendiente')+'</td></tr>';}).join('')+
+          '</tbody></table>'
+        : '<p class="muted">Sin items cargados</p>';
+
+      var fotos = r.fotos||[];
+      var docs = r.docs||[];
+      var fotosHTML = fotos.length
+        ? '<div class="galeria">'+fotos.map(function(f){var src=f.b64||f;return '<a href="'+src+'" download="foto.jpg" target="_blank"><img src="'+src+'"></a>';}).join('')+'</div>'
+        : '';
+      var docsHTML = docs.length
+        ? '<div class="doclist">'+docs.map(function(d){return '<a href="'+(d.b64||'')+'" download="'+(d.nombre||'archivo')+'">\uD83D\uDCCE '+(d.nombre||'Archivo')+'</a>';}).join('')+'</div>'
+        : '';
+
+      var quienBadge = r.quien==='Subcontratista'
+        ? '<span class="badge sub">Subcontratista'+(r.subNombre?': '+r.subNombre:'')+(r.subContacto?' \u00b7 '+r.subContacto:'')+'</span>'
+        : '';
+
+      return '<div class="rubro">'+
+        '<h3>'+(r.nombre||'Rubro')+' <span class="badge">'+(r.estado||'Pendiente')+'</span>'+quienBadge+'</h3>'+
+        itemsHTML + fotosHTML + docsHTML +
+      '</div>';
+    }).join('');
+    return '<div class="ambiente"><h2>'+(amb.nombre||'Ambiente')+'</h2>'+(rubrosHTML||'<p class="muted">Sin rubros cargados</p>')+'</div>';
+  }).join('');
+
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+(o.nombre||'Obra')+'</title><style>'+
+    'body{font-family:Arial,Helvetica,sans-serif;max-width:900px;margin:24px auto;padding:0 16px 60px;color:#2c2c2a;background:#faf8f4}'+
+    'h1{color:#5A3A1A;margin-bottom:16px}'+
+    'h2{color:#5A3A1A;border-bottom:2px solid #d4c8b0;padding-bottom:6px;margin-top:34px}'+
+    'h3{color:#6a5035;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}'+
+    '.badge{font-size:11px;font-weight:700;background:#F1EFE8;color:#888780;padding:2px 8px;border-radius:6px}'+
+    '.badge.sub{background:#E6F1FB;color:#0C447C}'+
+    'table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:13px;background:#fff}'+
+    'th,td{padding:7px 9px;border-bottom:1px solid #e8e2d8;text-align:left}'+
+    'th{color:#9a8a70;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em}'+
+    '.muted{color:#999;font-style:italic;font-size:13px}'+
+    '.galeria{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}'+
+    '.galeria img{width:120px;height:120px;object-fit:cover;border-radius:7px;border:1px solid #d4c8b0;display:block}'+
+    '.doclist{margin:10px 0;font-size:13px}'+
+    '.doclist a{display:block;color:#0C447C;margin-bottom:5px;text-decoration:none}'+
+    '.doclist a:hover{text-decoration:underline}'+
+    '.rubro{margin-bottom:26px;padding-bottom:18px;border-bottom:1px dashed #d4c8b0}'+
+    '.info{background:#fff;border:1px solid #d4c8b0;border-radius:10px;padding:16px 20px;margin-bottom:22px}'+
+    '.info div{margin-bottom:5px;font-size:13.5px}'+
+  '</style></head><body>'+
+    '<h1>'+(o.nombre||'Obra sin nombre')+'</h1>'+
+    '<div class="info">'+
+      '<div><b>Cliente:</b> '+(o.cliente||'\u2014')+'</div>'+
+      '<div><b>Direcci\u00f3n:</b> '+(o.dir||'\u2014')+'</div>'+
+      '<div><b>Estado:</b> '+(o.estado||'\u2014')+'</div>'+
+      '<div><b>Fecha de inicio:</b> '+(o.fechaInicio?fmtFecha(o.fechaInicio):'\u2014')+'</div>'+
+      '<div><b>Presupuesto aprobado:</b> '+(o.presupuestoAprobado?pesos(o.presupuestoAprobado):'\u2014')+'</div>'+
+      '<div><b>Total en movimientos:</b> '+pesos(totalPagado)+'</div>'+
+    '</div>'+
+    '<h2>Movimientos</h2>'+pagosHTML+
+    '<h2>Ambientes y rubros</h2>'+(ambientesHTML||'<p class="muted">Sin ambientes cargados</p>')+
+  '</body></html>';
+}
+
+
 function collectBackupItems(){
   var items=[];
   Object.values(data.presupuestos||{}).forEach(function(p){
-    var tipoLbl = p.tipo==='obra'?'Obra':'Mantenimiento';
+    var esObra = p.tipo==='obra';
+    var tipoLbl = esObra?'Obra':'Mantenimiento';
     var nombre = sanitizeNombre(p.proyecto||p.cliente||'presupuesto');
     var fecha = p.fecha||hoy();
-    items.push({categoria:'Presupuestos', filename:'Presupuesto_'+tipoLbl+'_'+nombre+'_'+fecha+'.json', contenido: JSON.stringify(p, null, 2)});
+    items.push({
+      categoria:'Presupuestos',
+      filename:'Presupuesto_'+tipoLbl+'_'+nombre+'_'+fecha+'.pdf',
+      esPdf:true,
+      pdfTipo: esObra?'obra':'mantenimiento',
+      datos: p
+    });
   });
   Object.values(data.obras||{}).forEach(function(o){
     var nombre = sanitizeNombre(o.nombre||o.cliente||'obra');
-    items.push({categoria:'Obras', filename:'Obra_'+nombre+'.json', contenido: JSON.stringify(o, null, 2)});
+    // Las obras se respaldan como HTML autocontenido: se abre con doble click
+    // en cualquier navegador, sin la app ni Firebase, y las fotos se ven como fotos reales.
+    items.push({categoria:'Obras', filename:'Obra_'+nombre+'.html', contenido: buildObraBackupHTML(o), mime:'text/html'});
   });
   Object.values(data.recibos||{}).forEach(function(r){
     var nombre = sanitizeNombre(r.cliente||'recibo');
-    items.push({categoria:'Recibos', filename:'Recibo'+(r.numero||'')+'_'+nombre+'_'+(r.fecha||hoy())+'.json', contenido: JSON.stringify(r, null, 2)});
+    items.push({
+      categoria:'Recibos',
+      filename:'Recibo'+(r.numero||'')+'_'+nombre+'_'+(r.fecha||hoy())+'.pdf',
+      esPdf:true,
+      pdfTipo:'recibo',
+      datos: r
+    });
   });
   return items;
 }
@@ -4209,19 +4359,38 @@ window.ejecutarBackup = async function(){
   else if('showDirectoryPicker' in window) backupLog('&#x2139; No elegiste carpeta en la compu (Paso 2) — se descargan los archivos individualmente');
   else backupLog('&#x2139; Este navegador no permite elegir carpeta — se descargan los archivos individualmente');
 
-  var okDrive=0, okLocal=0, okDescargados=0;
+  var okDrive=0, okLocal=0, okDescargados=0, okErrPdf=0;
   for(var i=0;i<items.length;i++){
     var it = items[i];
+    var contenido = it.contenido;
+    var mimeType = it.mime || 'application/json';
+
+    if(it.esPdf){
+      btn.textContent = 'Generando PDF '+(i+1)+'/'+items.length+'...';
+      try{
+        var pageHTML = buildPrintHTML(it.pdfTipo, it.datos, true);
+        if(!pageHTML) throw new Error('No se pudo armar el documento');
+        contenido = await htmlPageToPdfBlob(pageHTML);
+        mimeType = 'application/pdf';
+      }catch(e){
+        backupLog('&#x26A0; PDF: '+it.filename+' — '+e.message+' (se guarda como JSON en su lugar)');
+        contenido = JSON.stringify(it.datos, null, 2);
+        mimeType = 'application/json';
+        it.filename = it.filename.replace(/\.pdf$/,'.json');
+        okErrPdf++;
+      }
+    }
+
     btn.textContent = 'Subiendo '+(i+1)+'/'+items.length+'...';
     if(driveOk){
-      try{ await driveUploadFile(folderIds[it.categoria], it.filename, it.contenido); okDrive++; }
+      try{ await driveUploadFile(folderIds[it.categoria], it.filename, contenido, mimeType); okDrive++; }
       catch(e){ backupLog('&#x26A0; Drive: '+it.filename+' — '+e.message); }
     }
     if(localHandle){
-      try{ await saveFileLocal(localHandle, it.categoria, it.filename, it.contenido); okLocal++; }
+      try{ await saveFileLocal(localHandle, it.categoria, it.filename, contenido); okLocal++; }
       catch(e){ backupLog('&#x26A0; Local: '+it.filename+' — '+e.message); }
     } else {
-      fallbackDownload(it.filename, it.contenido);
+      fallbackDownload(it.filename, contenido, mimeType);
       okDescargados++;
       await new Promise(function(r){ setTimeout(r, 250); });
     }
@@ -4230,7 +4399,7 @@ window.ejecutarBackup = async function(){
   var resumenLocal = localHandle
     ? okLocal+' guardados en la compu'
     : (okDescargados+' descargados individualmente'+(okDescargados>0?' (revisá tu carpeta de Descargas)':''));
-  backupLog('<b>Listo:</b> '+okDrive+' subidos a Drive, '+resumenLocal+'.');
+  backupLog('<b>Listo:</b> '+okDrive+' subidos a Drive, '+resumenLocal+(okErrPdf>0?' — '+okErrPdf+' no se pudieron convertir a PDF':'')+'.');
   btn.disabled=false; btn.textContent='Hacer backup ahora';
   snack('Backup completo ✓');
 };
