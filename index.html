@@ -18,6 +18,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>FerSoluciones</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -566,6 +567,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
     <div class="header-right">
       <div class="sync-dot" id="sync-dot"></div>
       <button class="sync-btn" id="sync-btn" onclick="syncSheets()">&#x27F3;</button>
+      <button class="sync-btn" id="backup-btn" onclick="abrirModalBackup()" title="Backup a Drive / PC">&#x2601;</button>
       <button class="logout-btn" onclick="cerrarSesion()" title="Cerrar sesión">&#x1F512;</button>
     </div>
   </div>
@@ -1007,11 +1009,6 @@ textarea.pres-input{resize:vertical;min-height:60px}
 
 
 <!-- FOTO VIEWER -->
-<div class="foto-viewer" id="foto-viewer" onclick="cerrarFotoViewer()">
-  <button class="foto-viewer-close" onclick="cerrarFotoViewer()">&#xd7;</button>
-  <img id="foto-viewer-img" src="" alt="">
-</div>
-
 <!-- FICHA OBRA -->
 <div class="obra-ficha" id="obra-ficha">
   <div class="obra-ficha-header">
@@ -1172,6 +1169,21 @@ textarea.pres-input{resize:vertical;min-height:60px}
 </div>
 
 <!-- MODAL PAGO -->
+<div class="modal-overlay" id="modal-backup" onclick="cerrarModal('backup')">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><div class="modal-title">Backup a Drive / PC</div><button class="modal-close" onclick="cerrarModal('backup')">&#xd7;</button></div>
+    <div class="modal-body">
+      <div style="font-size:12.5px;color:var(--text-soft);line-height:1.6;margin-bottom:14px">
+        Se respaldan <b>Presupuestos</b>, <b>Obras</b> y <b>Recibos</b> (la Agenda no se incluye). Se sube a una carpeta "FerSoluciones Backups" en tu Google Drive y, si tu navegador lo permite (Chrome/Edge en compu), también se guarda en una carpeta de tu PC que elijas. Cada archivo se nombra con el cliente/obra — si lo repetís, se actualiza el mismo archivo en vez de duplicar.
+      </div>
+      <div id="backup-status" style="font-size:12px;font-weight:700;color:var(--madera);margin-bottom:12px">No conectado todavía</div>
+      <button class="btn-guardar" id="btn-backup-run" onclick="ejecutarBackup()">Hacer backup ahora</button>
+      <div id="backup-log" style="margin-top:12px;font-size:11.5px;color:var(--gris);max-height:220px;overflow-y:auto;line-height:1.6"></div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-pago" onclick="cerrarModal('pago')">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
@@ -2066,8 +2078,7 @@ function renderObras(){
     const est=OBRA_EST[o.estado]||OBRA_EST['Presupuestado'];
     const ambientes=Object.values(o.ambientes||{}),rubros=ambientes.flatMap(a=>Object.values(a.rubros||{}));
     const total=rubros.length,hechos=rubros.filter(r=>r.estado==='Hecho').length,pct=total>0?Math.round(hechos/total*100):0;
-    const cobrado=Object.values(o.pagos||{}).reduce((a,p)=>a+(p.monto||0),0);
-    return '<div class="obra-card" onclick="abrirFichaObra(\''+o.id+'\')"><div class="obra-card-header"><div class="obra-estado-dot" style="background:'+est.dot+'"></div><div class="obra-card-body"><div class="obra-nombre">'+(o.nombre||'Sin nombre')+'</div><div class="obra-cliente">'+(o.cliente||'')+(o.dir?' - '+o.dir:'')+'</div><div class="obra-tags"><span class="obra-tag" style="background:'+est.bg+';color:'+est.dot+'">'+est.label+'</span>'+(o.fechaInicio?'<span class="obra-tag" style="background:#F1EFE8;color:#888780">Inicio: '+fmtFecha(o.fechaInicio)+'</span>':'')+(o.presupuestoAprobado?'<span class="obra-tag" style="background:#E8F5E2;color:#2E6B1F">'+pesos(o.presupuestoAprobado)+'</span>':'')+(cobrado>0?'<span class="obra-tag" style="background:#E6F1FB;color:#0C447C">Cobrado: '+pesos(cobrado)+'</span>':'')+'</div></div></div>'+(total>0?'<div class="obra-card-footer"><div class="obra-progreso-wrap"><div class="obra-progreso-bar" style="width:'+pct+'%"></div></div><div class="obra-progreso-lbl">'+hechos+'/'+total+' rubros</div></div>':'')+'</div>';
+    return '<div class="obra-card" onclick="abrirFichaObra(\''+o.id+'\')"><div class="obra-card-header"><div class="obra-estado-dot" style="background:'+est.dot+'"></div><div class="obra-card-body"><div class="obra-nombre">'+(o.nombre||'Sin nombre')+'</div><div class="obra-cliente">'+(o.cliente||'')+(o.dir?' - '+o.dir:'')+'</div><div class="obra-tags"><span class="obra-tag" style="background:'+est.bg+';color:'+est.dot+'">'+est.label+'</span>'+(o.fechaInicio?'<span class="obra-tag" style="background:#F1EFE8;color:#888780">Inicio: '+fmtFecha(o.fechaInicio)+'</span>':'')+(o.presupuestoAprobado?'<span class="obra-tag" style="background:#E8F5E2;color:#2E6B1F">'+pesos(o.presupuestoAprobado)+'</span>':'')+'</div></div></div>'+(total>0?'<div class="obra-card-footer"><div class="obra-progreso-wrap"><div class="obra-progreso-bar" style="width:'+pct+'%"></div></div><div class="obra-progreso-lbl">'+hechos+'/'+total+' rubros</div></div>':'')+'</div>';
   }).join('');
 }
 window.abrirModalNuevaObra=function(){
@@ -3907,6 +3918,230 @@ window.eliminarReciboById = async function(id){
     document.getElementById('r-notas').value='';
   }
   snack('Recibo eliminado');
+};
+
+
+// ══ BACKUP A GOOGLE DRIVE + CARPETA LOCAL ══════════════════════
+const DRIVE_CLIENT_ID = '1054742018951-8m8k3iadnduq3tl1ed6ucadnav52v53h.apps.googleusercontent.com';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+var driveAccessToken = null;
+var driveTokenClient = null;
+var localDirHandle = null;
+
+function sanitizeNombre(s){
+  return (s||'sin_nombre').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-zA-Z0-9-_ ]/g,'').trim().replace(/\s+/g,'_').slice(0,80) || 'sin_nombre';
+}
+
+function initDriveTokenClient(){
+  if(driveTokenClient || typeof google==='undefined' || !google.accounts || !google.accounts.oauth2) return;
+  driveTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: DRIVE_CLIENT_ID,
+    scope: DRIVE_SCOPE,
+    callback: ''
+  });
+}
+
+function ensureDriveAuth(){
+  return new Promise(function(resolve,reject){
+    initDriveTokenClient();
+    if(!driveTokenClient){ reject(new Error('Google Identity no cargó todavía — esperá unos segundos y probá de nuevo')); return; }
+    if(driveAccessToken){ resolve(driveAccessToken); return; }
+    driveTokenClient.callback = function(resp){
+      if(resp.error){ reject(new Error('No se autorizó el acceso a Google Drive')); return; }
+      driveAccessToken = resp.access_token;
+      resolve(driveAccessToken);
+    };
+    driveTokenClient.requestAccessToken({prompt:''});
+  });
+}
+
+async function driveApiFetch(url, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({}, opts.headers, {Authorization:'Bearer '+driveAccessToken});
+  var res = await fetch(url, opts);
+  if(res.status===401){ driveAccessToken=null; throw new Error('Token vencido, volvé a intentar'); }
+  return res;
+}
+
+async function driveFindOrCreateFolder(name, parentId){
+  var q = "mimeType='application/vnd.google-apps.folder' and name='"+name.replace(/'/g,"\\'")+"' and trashed=false"+(parentId?" and '"+parentId+"' in parents":"");
+  var res = await driveApiFetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id,name)');
+  var d = await res.json();
+  if(d.files && d.files.length) return d.files[0].id;
+  var body = {name:name, mimeType:'application/vnd.google-apps.folder'};
+  if(parentId) body.parents=[parentId];
+  var res2 = await driveApiFetch('https://www.googleapis.com/drive/v3/files', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  var d2 = await res2.json();
+  return d2.id;
+}
+
+async function driveUploadFile(folderId, filename, contentStr){
+  var q = "name='"+filename.replace(/'/g,"\\'")+"' and '"+folderId+"' in parents and trashed=false";
+  var res = await driveApiFetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id)');
+  var d = await res.json();
+  var existingId = (d.files && d.files[0]) ? d.files[0].id : null;
+  if(existingId){
+    await driveApiFetch('https://www.googleapis.com/upload/drive/v3/files/'+existingId+'?uploadType=media', {method:'PATCH', headers:{'Content-Type':'application/json'}, body:contentStr});
+    return existingId;
+  } else {
+    var createRes = await driveApiFetch('https://www.googleapis.com/drive/v3/files', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:filename, parents:[folderId]})});
+    var created = await createRes.json();
+    await driveApiFetch('https://www.googleapis.com/upload/drive/v3/files/'+created.id+'?uploadType=media', {method:'PATCH', headers:{'Content-Type':'application/json'}, body:contentStr});
+    return created.id;
+  }
+}
+
+// ── Carpeta local (File System Access API — solo Chrome/Edge desktop) ──
+function idbGet(key){
+  return new Promise(function(resolve){
+    try{
+      var req = indexedDB.open('fs_backup_db', 1);
+      req.onupgradeneeded = function(){ req.result.createObjectStore('handles'); };
+      req.onsuccess = function(){
+        var tx = req.result.transaction('handles','readonly');
+        var r = tx.objectStore('handles').get(key);
+        r.onsuccess=function(){ resolve(r.result||null); };
+        r.onerror=function(){ resolve(null); };
+      };
+      req.onerror=function(){ resolve(null); };
+    }catch(e){ resolve(null); }
+  });
+}
+function idbSet(key,val){
+  return new Promise(function(resolve){
+    try{
+      var req = indexedDB.open('fs_backup_db', 1);
+      req.onupgradeneeded = function(){ req.result.createObjectStore('handles'); };
+      req.onsuccess = function(){
+        var tx = req.result.transaction('handles','readwrite');
+        tx.objectStore('handles').put(val,key);
+        tx.oncomplete=function(){ resolve(true); };
+      };
+      req.onerror=function(){ resolve(false); };
+    }catch(e){ resolve(false); }
+  });
+}
+
+async function ensureLocalFolder(){
+  if(!('showDirectoryPicker' in window)) return null; // Safari/iPad: no soportado
+  if(localDirHandle){
+    try{ var p=await localDirHandle.queryPermission({mode:'readwrite'}); if(p==='granted') return localDirHandle; }catch(e){}
+  }
+  var stored = await idbGet('dirHandle');
+  if(stored){
+    try{
+      var perm2 = await stored.queryPermission({mode:'readwrite'});
+      if(perm2==='granted'){ localDirHandle=stored; return localDirHandle; }
+      if(perm2==='prompt'){
+        var reqPerm = await stored.requestPermission({mode:'readwrite'});
+        if(reqPerm==='granted'){ localDirHandle=stored; return localDirHandle; }
+      }
+    }catch(e){}
+  }
+  try{
+    var handle = await window.showDirectoryPicker({mode:'readwrite'});
+    localDirHandle = handle;
+    await idbSet('dirHandle', handle);
+    return handle;
+  }catch(e){ return null; }
+}
+
+async function saveFileLocal(dirHandle, subfolder, filename, contentStr){
+  var folder = await dirHandle.getDirectoryHandle(subfolder, {create:true});
+  var fileHandle = await folder.getFileHandle(filename, {create:true});
+  var writable = await fileHandle.createWritable();
+  await writable.write(contentStr);
+  await writable.close();
+}
+
+function fallbackDownload(filename, contentStr){
+  var blob = new Blob([contentStr], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+}
+
+function collectBackupItems(){
+  var items=[];
+  Object.values(data.presupuestos||{}).forEach(function(p){
+    var tipoLbl = p.tipo==='obra'?'Obra':'Mantenimiento';
+    var nombre = sanitizeNombre(p.proyecto||p.cliente||'presupuesto');
+    var fecha = p.fecha||hoy();
+    items.push({categoria:'Presupuestos', filename:'Presupuesto_'+tipoLbl+'_'+nombre+'_'+fecha+'.json', contenido: JSON.stringify(p, null, 2)});
+  });
+  Object.values(data.obras||{}).forEach(function(o){
+    var nombre = sanitizeNombre(o.nombre||o.cliente||'obra');
+    items.push({categoria:'Obras', filename:'Obra_'+nombre+'.json', contenido: JSON.stringify(o, null, 2)});
+  });
+  Object.values(data.recibos||{}).forEach(function(r){
+    var nombre = sanitizeNombre(r.cliente||'recibo');
+    items.push({categoria:'Recibos', filename:'Recibo'+(r.numero||'')+'_'+nombre+'_'+(r.fecha||hoy())+'.json', contenido: JSON.stringify(r, null, 2)});
+  });
+  return items;
+}
+
+function backupLog(msg){
+  var el = document.getElementById('backup-log');
+  if(el){ el.innerHTML += '<div>'+msg+'</div>'; el.scrollTop = el.scrollHeight; }
+}
+
+window.abrirModalBackup = function(){
+  var logEl=document.getElementById('backup-log'); if(logEl) logEl.innerHTML='';
+  document.getElementById('backup-status').textContent = driveAccessToken ? 'Conectado a Google Drive' : 'No conectado todavía';
+  abrirModal('backup');
+};
+
+window.ejecutarBackup = async function(){
+  var btn = document.getElementById('btn-backup-run');
+  btn.disabled = true; btn.textContent='Preparando...';
+  document.getElementById('backup-log').innerHTML='';
+  var items = collectBackupItems();
+  if(!items.length){ snack('No hay presupuestos, obras ni recibos para respaldar'); btn.disabled=false; btn.textContent='Hacer backup ahora'; return; }
+
+  var driveOk = false, folderIds = {};
+  try{
+    backupLog('Conectando con Google Drive...');
+    await ensureDriveAuth();
+    document.getElementById('backup-status').textContent = 'Conectado a Google Drive';
+    var rootId = await driveFindOrCreateFolder('FerSoluciones Backups', null);
+    folderIds['Presupuestos'] = await driveFindOrCreateFolder('Presupuestos', rootId);
+    folderIds['Obras'] = await driveFindOrCreateFolder('Obras', rootId);
+    folderIds['Recibos'] = await driveFindOrCreateFolder('Recibos', rootId);
+    driveOk = true;
+    backupLog('&#x2713; Carpeta de Drive lista');
+  }catch(e){
+    backupLog('&#x26A0; No se pudo conectar a Drive: '+e.message);
+  }
+
+  var localHandle = null;
+  try{
+    localHandle = await ensureLocalFolder();
+    if(localHandle) backupLog('&#x2713; Carpeta local elegida: '+localHandle.name);
+    else backupLog('&#x2139; Carpeta local no disponible en este navegador — se descargan los archivos individualmente');
+  }catch(e){
+    backupLog('&#x26A0; Carpeta local: '+e.message);
+  }
+
+  var okDrive=0, okLocal=0;
+  for(var i=0;i<items.length;i++){
+    var it = items[i];
+    btn.textContent = 'Subiendo '+(i+1)+'/'+items.length+'...';
+    try{
+      if(driveOk){ await driveUploadFile(folderIds[it.categoria], it.filename, it.contenido); okDrive++; }
+    }catch(e){ backupLog('&#x26A0; Drive: '+it.filename+' — '+e.message); }
+
+    try{
+      if(localHandle){ await saveFileLocal(localHandle, it.categoria, it.filename, it.contenido); okLocal++; }
+      else if(!driveOk){ fallbackDownload(it.filename, it.contenido); }
+    }catch(e){ backupLog('&#x26A0; Local: '+it.filename+' — '+e.message); }
+  }
+
+  backupLog('<b>Listo:</b> '+okDrive+' subidos a Drive, '+okLocal+' guardados en la compu.');
+  btn.disabled=false; btn.textContent='Hacer backup ahora';
+  snack('Backup completo ✓');
 };
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
