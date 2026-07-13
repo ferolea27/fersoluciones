@@ -1009,6 +1009,11 @@ textarea.pres-input{resize:vertical;min-height:60px}
 
 
 <!-- FOTO VIEWER -->
+<div class="foto-viewer" id="foto-viewer" onclick="cerrarFotoViewer()">
+  <button class="foto-viewer-close" onclick="cerrarFotoViewer()">&#xd7;</button>
+  <img id="foto-viewer-img" src="" alt="">
+</div>
+
 <!-- FICHA OBRA -->
 <div class="obra-ficha" id="obra-ficha">
   <div class="obra-ficha-header">
@@ -3923,7 +3928,7 @@ window.eliminarReciboById = async function(id){
 
 // ══ BACKUP A GOOGLE DRIVE + CARPETA LOCAL ══════════════════════
 const DRIVE_CLIENT_ID = '1054742018951-8m8k3iadnduq3tl1ed6ucadnav52v53h.apps.googleusercontent.com';
-const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
 var driveAccessToken = null;
 var driveTokenClient = null;
 var localDirHandle = null;
@@ -3961,6 +3966,14 @@ async function driveApiFetch(url, opts){
   opts.headers = Object.assign({}, opts.headers, {Authorization:'Bearer '+driveAccessToken});
   var res = await fetch(url, opts);
   if(res.status===401){ driveAccessToken=null; throw new Error('Token vencido, volvé a intentar'); }
+  if(!res.ok){
+    var msg = 'Error '+res.status;
+    try{
+      var errJson = await res.clone().json();
+      if(errJson && errJson.error && errJson.error.message) msg += ': '+errJson.error.message;
+    }catch(e){}
+    throw new Error(msg);
+  }
   return res;
 }
 
@@ -3973,6 +3986,7 @@ async function driveFindOrCreateFolder(name, parentId){
   if(parentId) body.parents=[parentId];
   var res2 = await driveApiFetch('https://www.googleapis.com/drive/v3/files', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
   var d2 = await res2.json();
+  if(!d2.id) throw new Error('Google Drive no devolvió un ID de carpeta válido');
   return d2.id;
 }
 
@@ -3987,6 +4001,7 @@ async function driveUploadFile(folderId, filename, contentStr){
   } else {
     var createRes = await driveApiFetch('https://www.googleapis.com/drive/v3/files', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:filename, parents:[folderId]})});
     var created = await createRes.json();
+    if(!created.id) throw new Error('Google Drive no devolvió un ID de archivo válido');
     await driveApiFetch('https://www.googleapis.com/upload/drive/v3/files/'+created.id+'?uploadType=media', {method:'PATCH', headers:{'Content-Type':'application/json'}, body:contentStr});
     return created.id;
   }
@@ -4106,6 +4121,16 @@ window.ejecutarBackup = async function(){
     backupLog('Conectando con Google Drive...');
     await ensureDriveAuth();
     document.getElementById('backup-status').textContent = 'Conectado a Google Drive';
+    try{
+      var uiRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {headers:{Authorization:'Bearer '+driveAccessToken}});
+      if(uiRes.ok){
+        var uiData = await uiRes.json();
+        if(uiData.email){
+          document.getElementById('backup-status').textContent = 'Conectado como '+uiData.email;
+          backupLog('Cuenta: '+uiData.email);
+        }
+      }
+    }catch(e){}
     var rootId = await driveFindOrCreateFolder('FerSoluciones Backups', null);
     folderIds['Presupuestos'] = await driveFindOrCreateFolder('Presupuestos', rootId);
     folderIds['Obras'] = await driveFindOrCreateFolder('Obras', rootId);
@@ -4125,7 +4150,7 @@ window.ejecutarBackup = async function(){
     backupLog('&#x26A0; Carpeta local: '+e.message);
   }
 
-  var okDrive=0, okLocal=0;
+  var okDrive=0, okLocal=0, okDescargados=0;
   for(var i=0;i<items.length;i++){
     var it = items[i];
     btn.textContent = 'Subiendo '+(i+1)+'/'+items.length+'...';
@@ -4134,12 +4159,22 @@ window.ejecutarBackup = async function(){
     }catch(e){ backupLog('&#x26A0; Drive: '+it.filename+' — '+e.message); }
 
     try{
-      if(localHandle){ await saveFileLocal(localHandle, it.categoria, it.filename, it.contenido); okLocal++; }
-      else if(!driveOk){ fallbackDownload(it.filename, it.contenido); }
+      if(localHandle){
+        await saveFileLocal(localHandle, it.categoria, it.filename, it.contenido);
+        okLocal++;
+      } else {
+        // Sin File System Access API (Safari, iPad, Firefox, etc.) -> descarga individual siempre
+        fallbackDownload(it.filename, it.contenido);
+        okDescargados++;
+        await new Promise(function(r){ setTimeout(r, 250); }); // pequeña pausa para que el navegador no bloquee las descargas múltiples
+      }
     }catch(e){ backupLog('&#x26A0; Local: '+it.filename+' — '+e.message); }
   }
 
-  backupLog('<b>Listo:</b> '+okDrive+' subidos a Drive, '+okLocal+' guardados en la compu.');
+  var resumenLocal = localHandle
+    ? okLocal+' guardados en la compu'
+    : (okDescargados+' descargados individualmente'+(okDescargados>0?' (revisá tu carpeta de Descargas)':''));
+  backupLog('<b>Listo:</b> '+okDrive+' subidos a Drive, '+resumenLocal+'.');
   btn.disabled=false; btn.textContent='Hacer backup ahora';
   snack('Backup completo ✓');
 };
