@@ -21,6 +21,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -300,6 +301,18 @@ textarea.pres-input{resize:vertical;min-height:60px}
 .ritem-add-row{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
 .ritem-add-desc{flex:1;min-width:100px}
 .ritem-add-money{width:72px}
+
+.gasto-row{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.gasto-desc{flex:1;font-size:12.5px;color:var(--text);font-weight:600}
+.gasto-monto{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--madera);font-weight:700;flex-shrink:0}
+.gasto-add-row{display:flex;gap:6px;margin-top:6px}
+.gasto-add-desc{flex:1;font-size:13px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.gasto-add-monto{width:80px;font-size:13px;padding:8px 8px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none}
+.ganancia-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-top:10px}
+.ganancia-row{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;color:var(--text-soft)}
+.ganancia-row.total{border-top:1px solid var(--border);margin-top:5px;padding-top:7px;font-weight:700;color:var(--text)}
+.ganancia-row.total .val{font-size:15px;color:var(--madera)}
+.btn-export-excel{width:100%;padding:11px;background:var(--verde);color:#fff;border:none;border-radius:11px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:10px}
 
 .rubro-quien{font-size:11px;color:var(--gris);margin-bottom:6px}
 .rubro-task{font-size:12px;color:var(--text-soft);padding:4px 0;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);cursor:pointer}
@@ -840,6 +853,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
       <div class="card-title" id="r-hist-titulo">Historial del mes</div>
       <div id="r-historial"></div>
     </div>
+    <button class="btn-export-excel" onclick="exportarGastosExcel()">Exportar gastos a Excel</button>
   </div>
 
 
@@ -967,7 +981,7 @@ textarea.pres-input{resize:vertical;min-height:60px}
       </div>
       <div class="form-field">
         <div class="form-label">Monto ($)</div>
-        <input class="form-input" id="e-monto" type="number" inputmode="numeric">
+        <input class="form-input" id="e-monto" type="number" inputmode="numeric" oninput="actualizarGananciaBox(trabajoEditActual)">
       </div>
       <div id="e-sena-field" style="display:none">
         <div class="form-row">
@@ -984,6 +998,22 @@ textarea.pres-input{resize:vertical;min-height:60px}
         <div class="form-label">Descripcion / Notas</div>
         <input class="form-input" id="e-desc" type="text">
       </div>
+
+      <div class="rubro-sec-lbl" style="margin-top:14px">Gastos de este trabajo</div>
+      <div id="e-gastos-list"></div>
+      <div class="gasto-add-row">
+        <input class="gasto-add-desc" id="e-gasto-desc" type="text" placeholder="Ej: Bisagras x4">
+        <input class="gasto-add-monto" id="e-gasto-monto" type="number" inputmode="numeric" placeholder="$">
+        <button class="btn-rub-add" type="button" onclick="addGastoTrabajo()">+</button>
+      </div>
+
+      <div class="form-field" style="margin-top:12px">
+        <div class="form-label">Mi mano de obra / tiempo ($)</div>
+        <input class="form-input" id="e-mano-obra-costo" type="number" inputmode="numeric" placeholder="0" oninput="actualizarGananciaBox(trabajoEditActual)">
+      </div>
+
+      <div class="ganancia-box" id="e-ganancia-box"></div>
+
       <input type="hidden" id="e-id">
       <input type="hidden" id="e-fecha-orig">
       <button class="btn-guardar" onclick="guardarEdicion()">Guardar cambios</button>
@@ -1271,6 +1301,7 @@ let estadoEdit = 'Contacto', tipoEdit = 'Carpinteria';
 let diaActivo = '';
 let filtroResumen = 'mes';
 let pendingEdit = null;
+let trabajoEditActual = null;
 let rubroCount = 0;
 let presActualTipo = 'mantenimiento';
 let tipoRecibo = 'sena';
@@ -1534,6 +1565,7 @@ function buildTrabajoItem(id,t){
         (t.estado==='Senado'?'<span class="sena-badge">Sena: '+pesos(t.montoSena||0)+'</span>':'')+
       '</div>'+
       (t.monto?'<div class="monto-chip">'+pesos(t.monto)+'</div>':'')+
+      ((computeGastosTotal(t)>0||t.manoObraCosto>0)?'<div class="monto-chip" style="background:var(--verde-bg);color:var(--verde)">Neto: '+pesos(computeGananciaNeta(t))+'</div>':'')+
       '<button class="del-btn" onclick="editarTrabajo(\''+id+'\')" style="color:var(--madera-mid);font-size:16px">&#x270F;&#xFE0F;</button>'+
     '</div>'+
     '<select class="estado-select" onchange="cambiarEstado(\''+id+'\',this.value)">'+
@@ -1570,8 +1602,71 @@ window.delTrabajo = async function(id){
 };
 
 // ── EDITAR ───────────────────────────────────────────────
+function computeGastosTotal(t){
+  return (t.gastos||[]).reduce(function(a,g){return a+(g.monto||0);},0);
+}
+function computeGananciaNeta(t){
+  var gastos=computeGastosTotal(t);
+  var mo=t.manoObraCosto||0;
+  var monto=t.monto||0;
+  return monto-gastos-mo;
+}
+
+function renderGastosEdit(t){
+  var list=document.getElementById('e-gastos-list');
+  var gastos=t.gastos||[];
+  list.innerHTML = gastos.length ? gastos.map(function(g,i){
+    return '<div class="gasto-row"><span class="gasto-desc">'+g.desc+'</span><span class="gasto-monto">'+pesos(g.monto)+'</span>'+
+      '<button class="btn-rub-tiny" type="button" onclick="deleteGastoTrabajo('+i+')" style="color:var(--rojo)">&#x2715;</button></div>';
+  }).join('') : '<div class="empty" style="padding:6px 0;font-size:12px">Sin gastos cargados todavia</div>';
+  actualizarGananciaBox(t);
+}
+
+window.actualizarGananciaBox = function(t){
+  if(!t) return;
+  var monto=parseFloat(document.getElementById('e-monto').value)||0;
+  var mo=parseFloat(document.getElementById('e-mano-obra-costo').value)||0;
+  var gastos=computeGastosTotal(t);
+  var neta=monto-gastos-mo;
+  document.getElementById('e-ganancia-box').innerHTML=
+    '<div class="ganancia-row"><span>Monto acordado</span><span>'+pesos(monto)+'</span></div>'+
+    '<div class="ganancia-row"><span>Gastos reales</span><span>-'+pesos(gastos)+'</span></div>'+
+    '<div class="ganancia-row"><span>Mi mano de obra/tiempo</span><span>-'+pesos(mo)+'</span></div>'+
+    '<div class="ganancia-row total"><span>Ganancia neta</span><span class="val">'+pesos(neta)+'</span></div>';
+};
+
+window.addGastoTrabajo = async function(){
+  var id=document.getElementById('e-id').value; if(!id) return;
+  var descEl=document.getElementById('e-gasto-desc');
+  var montoEl=document.getElementById('e-gasto-monto');
+  var desc=descEl.value.trim(); if(!desc){ descEl.focus(); return; }
+  var monto=parseFloat(montoEl.value)||0;
+  var t=data.trabajos[id]; if(!t) return;
+  var gastos=(t.gastos||[]).concat([{desc:desc,monto:monto,ts:Date.now()}]);
+  if(fbOk){ await fbSet('trabajos/'+id+'/gastos',gastos); }
+  else{ guardarLocal(); }
+  t.gastos=gastos;
+  descEl.value=''; montoEl.value='';
+  renderGastosEdit(t);
+  renderTrabajos();
+  snack('Gasto agregado');
+};
+
+window.deleteGastoTrabajo = async function(idx){
+  var id=document.getElementById('e-id').value; if(!id) return;
+  var t=data.trabajos[id]; if(!t) return;
+  var gastos=(t.gastos||[]).filter(function(_,i){return i!==idx;});
+  if(fbOk){ await fbSet('trabajos/'+id+'/gastos',gastos); }
+  else{ guardarLocal(); }
+  t.gastos=gastos;
+  renderGastosEdit(t);
+  renderTrabajos();
+  snack('Gasto eliminado');
+};
+
 window.editarTrabajo = function(id){
   const t=data.trabajos[id]; if(!t) return;
+  trabajoEditActual=t;
   estadoEdit=t.estado||'Contacto';
   tipoEdit=t.tipo||'Carpinteria';
   document.querySelectorAll('#chips-estado-e .tipo-chip').forEach(b=>b.classList.toggle('sel',b.textContent===estadoEdit));
@@ -1586,9 +1681,11 @@ window.editarTrabajo = function(id){
   document.getElementById('e-desc').value=t.desc||'';
   document.getElementById('e-id').value=id;
   document.getElementById('e-fecha-orig').value=t.fecha||'';
+  document.getElementById('e-mano-obra-costo').value=t.manoObraCosto||'';
   const senaField=document.getElementById('e-sena-field');
   if(t.estado==='Senado'){ senaField.style.display='block'; document.getElementById('e-sena').value=t.montoSena||''; calcSena('e'); }
   else { senaField.style.display='none'; document.getElementById('e-sena').value=''; }
+  renderGastosEdit(t);
   abrirModal('edit');
 };
 
@@ -1607,6 +1704,7 @@ window.guardarEdicion = async function(){
     dir:document.getElementById('e-dir').value.trim(),
     monto:parseFloat(document.getElementById('e-monto').value)||0,
     materiales:0,
+    manoObraCosto:parseFloat(document.getElementById('e-mano-obra-costo').value)||0,
     montoSena:estadoEdit==='Senado'?(parseFloat(document.getElementById('e-sena').value)||0):0,
     desc:document.getElementById('e-desc').value.trim(),
   };
@@ -1692,8 +1790,8 @@ function renderResumen(){
 
   const totalCobr=cobrPer.reduce((a,t)=>a+(t.monto||0),0);
   const totalSenas=senasPer.reduce((a,t)=>a+(t.montoSena||0),0);
-  const matCobr=cobrPer.reduce((a,t)=>a+(t.materiales||0),0);
-  const netoCobr=totalCobr+totalSenas-matCobr;
+  const gastosCobr=cobrPer.reduce((a,t)=>a+computeGastosTotal(t)+(t.manoObraCosto||0),0);
+  const netoCobr=totalCobr+totalSenas-gastosCobr;
 
   const porCobrar=
     terminados.reduce((a,t)=>a+(t.monto||0),0)+
@@ -1705,7 +1803,7 @@ function renderResumen(){
   document.getElementById('r-cobrado-lbl').textContent='Cobrado - '+lbl;
   document.getElementById('r-cobrado').textContent=pesos(totalCobr);
   document.getElementById('r-cobrado-n').textContent=cobrPer.length+' cobrado'+(cobrPer.length!==1?'s':'');
-  document.getElementById('r-cobrado-neta').textContent=matCobr>0?'Mat: -'+pesos(matCobr):'';
+  document.getElementById('r-cobrado-neta').textContent=gastosCobr>0?'Gastos: -'+pesos(gastosCobr):'';
 
   document.getElementById('r-porcobr').textContent=pesos(porCobrar);
   document.getElementById('r-porcobr-n').textContent=
@@ -1717,7 +1815,7 @@ function renderResumen(){
   document.getElementById('r-senas-n').textContent=senasPer.length+' sena'+(senasPer.length!==1?'s':'');
 
   document.getElementById('r-neto').textContent=pesos(netoCobr);
-  document.getElementById('r-neto-n').textContent='cobrado + senas - mat';
+  document.getElementById('r-neto-n').textContent='cobrado + senas - gastos reales';
 
   const titulos={dia:'Hoy',semana:'Esta semana',mes:'Este mes',anio:'Este ano'};
   document.getElementById('r-hist-titulo').textContent='Historial - '+titulos[filtroResumen];
@@ -4402,6 +4500,73 @@ window.ejecutarBackup = async function(){
   backupLog('<b>Listo:</b> '+okDrive+' subidos a Drive, '+resumenLocal+(okErrPdf>0?' — '+okErrPdf+' no se pudieron convertir a PDF':'')+'.');
   btn.disabled=false; btn.textContent='Hacer backup ahora';
   snack('Backup completo ✓');
+};
+
+// ══ EXPORTAR GASTOS A EXCEL ═══════════════════════════════════
+window.exportarGastosExcel = function(){
+  if(typeof XLSX==='undefined'){
+    snack('La librería de Excel no cargó todavía — esperá unos segundos y probá de nuevo');
+    return;
+  }
+  var trabajos = Object.values(data.trabajos||{});
+  var detalle = [];
+  var resumenPorTrabajo = [];
+
+  trabajos.forEach(function(t){
+    var gastos = t.gastos||[];
+    var manoObra = t.manoObraCosto||0;
+    var totalGastos = computeGastosTotal(t);
+    var neta = computeGananciaNeta(t);
+
+    if(gastos.length>0 || manoObra>0){
+      gastos.forEach(function(g){
+        detalle.push({
+          'Cliente': t.cliente||'',
+          'Trabajo': t.tipo||'',
+          'Fecha del trabajo': t.fecha||'',
+          'Descripción del gasto': g.desc||'',
+          'Monto ($)': g.monto||0
+        });
+      });
+      if(manoObra>0){
+        detalle.push({
+          'Cliente': t.cliente||'',
+          'Trabajo': t.tipo||'',
+          'Fecha del trabajo': t.fecha||'',
+          'Descripción del gasto': 'Mi mano de obra / tiempo',
+          'Monto ($)': manoObra
+        });
+      }
+    }
+
+    if(t.monto>0 || totalGastos>0 || manoObra>0){
+      resumenPorTrabajo.push({
+        'Cliente': t.cliente||'',
+        'Trabajo': t.tipo||'',
+        'Fecha': t.fecha||'',
+        'Estado': t.estado||'',
+        'Monto acordado ($)': t.monto||0,
+        'Gastos reales ($)': totalGastos,
+        'Mi mano de obra ($)': manoObra,
+        'Ganancia neta ($)': neta
+      });
+    }
+  });
+
+  if(!detalle.length && !resumenPorTrabajo.length){
+    snack('Todavía no hay gastos cargados en ningún trabajo');
+    return;
+  }
+
+  var wb = XLSX.utils.book_new();
+  var wsResumen = XLSX.utils.json_to_sheet(resumenPorTrabajo);
+  var wsDetalle = XLSX.utils.json_to_sheet(detalle);
+  XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen por trabajo');
+  XLSX.utils.book_append_sheet(wb, wsDetalle, 'Detalle de gastos');
+
+  var fechaHoy = hoy();
+  XLSX.writeFile(wb, 'Gastos_FerSoluciones_'+fechaHoy+'.xlsx');
+  snack('Excel descargado ✓');
 };
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
